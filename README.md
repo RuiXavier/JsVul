@@ -17,6 +17,8 @@ This repository holds the dataset of JsVul version 1.0.0, `js_vul.zip` on Zenodo
 
 * The labeled functions, in chronologically sorted JSON Lines files: **train.jsonl**, **val.jsonl** and
   **test.jsonl**.
+* The changes from the original dataset (the functions kept for taint analysis with jelly-taint) in
+  **DIFF_WITH_ORIGINAL.md**.
 
 ## The records
 
