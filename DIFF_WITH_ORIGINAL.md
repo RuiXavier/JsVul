@@ -4,9 +4,9 @@ This repository holds the JsVul dataset of vulnerable and fixed JavaScript and T
 taint analysis with jelly-taint (`benchmarks/` of github.com/cs-au-dk/jelly-taint, where it is the JsVul benchmark).
 The original dataset is `js_vul.zip` of JsVul version 1.0.0 on Zenodo (doi 10.5281/zenodo.18195839, MD5
 `087fb7cfa213bde26135bae7874efe7f`), the first commit of this repository (`4c88872`): 21,901 functions, 2,039 of
-them vulnerable. This repository differs from it in one way: it holds only the vulnerable functions of a CWE that
-jelly-taint's taint analysis is evaluated on, and their fixed versions. It holds 1,182 functions, 714 of them
-vulnerable, from 681 vulnerable commits. Every function kept is the line of the original as it is, in the same
+them vulnerable. This repository differs from it in two ways: it holds only the vulnerable functions of a CWE that
+jelly-taint's taint analysis is evaluated on, and their fixed versions, and 3 projects whose repository is gone are
+removed. It holds 1,179 functions, 711 of them vulnerable, from 678 vulnerable commits. Every function kept is the line of the original as it is, in the same
 file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order.
 
 ## 1. Kept functions
@@ -30,3 +30,14 @@ file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order.
 - The fixed version of a kept function (its `paired_id`, `label` 0, in the fixing commit) is kept: 468 of them.
   The other 19,394 functions of `label` 0 are removed.
 - jelly-taint makes one case of each vulnerable commit (a `project` and `sha`): 681 cases.
+
+## 2. Removed projects
+
+The repositories of 3 projects are gone from GitHub (checked on 2026-10-19 and 2026-10-30), so their commits can't
+be fetched, and jelly-taint can't analyze them. Their 3 vulnerable functions are removed; none has a fixed version.
+
+| project | vulnerable commit | file | CVE | CWE |
+| --- | --- | --- | --- | --- |
+| soontao/cycle-import-check | `3e0eb4fd05` | `src/file.ts` | CVE-2022-24377 | CWE-78 |
+| turistforeningen/node-im-metadata | `049ce24dbb` | `index.js` | CVE-2019-10788 | CWE-78 |
+| turistforeningen/node-im-resize | `499fe82028` | `index.js` | CVE-2019-10787 | CWE-78 |
