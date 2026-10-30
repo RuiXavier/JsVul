@@ -1,0 +1,6 @@
+# What jelly-taint fetches and installs here (its benchmarks/data/jsvul/): each case's commit in repos/ (fixed/ for
+# a fixing commit), JsVul's function extractor, and the list of the files its installs edit
+/repos/
+/fixed/
+/js-function-extractor/
+/edited.txt
