@@ -6,8 +6,8 @@ The original dataset is `js_vul.zip` of JsVul version 1.0.0 on Zenodo (doi 10.52
 `087fb7cfa213bde26135bae7874efe7f`), the first commit of this repository (`4c88872`): 21,901 functions, 2,039 of
 them vulnerable. This repository differs from it in three ways: it holds only the vulnerable functions of a CWE
 that jelly-taint's taint analysis is evaluated on, and their fixed versions, 3 projects whose repository is gone are
-removed, and 150 vulnerable commits that are also cases of jelly-taint's other two benchmarks, SecBench.js and
-VulcaN, are removed. It holds 927 functions, 557 of them vulnerable, from 528 vulnerable commits. Every function kept is the line of the original as it is, in the same
+removed, and 160 vulnerable commits that are also cases of jelly-taint's other two benchmarks, SecBench.js and
+VulcaN, are removed (sections 3 and 4). It holds 912 functions, 547 of them vulnerable, from 518 vulnerable commits. Every function kept is the line of the original as it is, in the same
 file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order.
 
 ## 1. Kept functions
@@ -223,3 +223,49 @@ finds them. The 150 have 154 vulnerable functions and 98 fixed versions.
 | yola/promisehelpers | `6e42c7bfe7` | secbench/promisehelpers_0.0.5, vulcan/GHSA-rj5f-7c8x-gjg4 |
 | yuanqing/gulp-tape | `84830d193e` | vulcan/GHSA-x67x-98x7-wv26 |
 | zjonsson/node-unzipper | `48bd69eaa3` | vulcan/680_GHSA-884w-698f-927f |
+
+## 4. Removed cases that are SecBench.js or VulcaN cases under another advisory id
+
+Section 3 finds a case only when it lists an advisory id that the other case lists too. But the advisories of one
+vulnerability don't always name each other: an npm or Snyk advisory from the time and a CVE given years later to the
+same fix, or a wrong id. 10 more vulnerable commits are such cases, found on 2026-11-02, against the same SecBench.js
+and VulcaN commits:
+
+- **Same package:** the vulnerable commit's repository, or the `name` in a `package.json` from the vulnerable file's
+  folder up to the repository's root, is the repository or the name of a SecBench.js or VulcaN package. 179 of the
+  528 vulnerable commits left by section 3 have one.
+- **Same version:** the vulnerable file is the same as a file of the same name anywhere in that package, but for
+  whitespace and comments, as in section 3: 20 vulnerable commits. 3 of them share an advisory id but have
+  vulnerable functions in several files, and stay (section 3). Comparing with every file of that name in every
+  SecBench.js and VulcaN package, whatever the package, finds no other, but requirejs's `require.js` inside
+  VulcaN's jQuery, another vulnerability.
+- **Same vulnerability, checked by hand:** the other case's sink (SecBench.js's, or a location of VulcaN's review)
+  is inside the vulnerable function, and the advisories, as OSV (osv.dev) and Snyk give them, are of the same
+  vulnerability: aliases of one another, citing the same fixing commit or report, or describing the same flaw,
+  fixed in the same version. 10 of the 17 are.
+
+| project | vulnerable commit | the same SecBench.js or VulcaN case | why it's the same vulnerability |
+| --- | --- | --- | --- |
+| christian-bromann/rgb2hex | `e4e0c7c38f` | vulcan/647_GHSA-65p8-3hm4-h9h8 | CVE-2018-25061 (GHSA-7599-fqgm-v84p) and GHSA-65p8-3hm4-h9h8 are both ReDoS on the color value, fixed in 0.1.6; GHSA-7599-fqgm-v84p cites this commit's fix |
+| firebase/superstatic | `6628c8b63b` | vulcan/652_GHSA-wm77-q74p-5763 | GHSA-wm77-q74p-5763 cites this commit's fix, `e396ff62f5` (JsVul has npm:superstatic:20180516) |
+| hughsk/flat | `e8fb281aa6` | secbench/flat_5.0.0 | SecBench.js's SNYK-JS-FLAT-596927 is CVE-2020-36632 (Snyk); its CVE-2021-25927 and GHSA-33rv-m2gp-mm2r are safe-flat's |
+| mongoosejs/mquery | `2268a48083` | secbench/mquery_3.2.1 | GHSA-45q2-34rf-mr94 is CVE-2020-35149 (OSV), and SecBench.js's PoC pollutes through `__proto__`, which this commit's fix stops |
+| peterbraden/node-opencv | `cfc96ba0af` | vulcan/789_GHSA-f698-m2v9-5fh3 | GHSA-f698-m2v9-5fh3 cites this commit's fix, `81a4b86201` (JsVul has CVE-2019-10061, GHSA-mc7w-4cjf-c973) |
+| pkrumins/node-tree-kill | `3b5b8feeb3` | vulcan/1432_GHSA-884p-74jh-xrg2 | GHSA-884p-74jh-xrg2 (CVE-2019-15599) and CVE-2019-15598 (GHSA-j7fq-p9q7-5wfv) cite the same HackerOne report, 701183 |
+| segmentio/is-url | `1498b0da8e` | secbench/is-url_1.2.2 | SecBench.js's npm:is-url:20180319 is CVE-2018-25079 (Snyk) |
+| tikonen/blog | `08ab167d21` | vulcan/968 | VulcaN's npm advisory 968 (path traversal, no other id) has its location in the request handler that this commit's fix, `d85f8cf063` ("Dont return paths outside webroot"), adds the path checks to; JsVul's CVE-2018-16478 is VulcaN's `744_GHSA-vwr2-wj63-86gr`, of 0.3.0, after this fix, whose file differs |
+| vercel/serve | `2fece040fb` | vulcan/594_GHSA-wm7q-rxch-43mx | CVE-2018-3718 (GHSA-5rc4-8qqh-vq7f) and GHSA-wm7q-rxch-43mx are both ignored files served when their name is URL-encoded, fixed in 6.5.2 |
+| youngerheart/nodeserver | `56b51bd4bd` | secbench/web-node-server_0.1.0 | CVE-2020-36651 (GHSA-3fwq-qv5v-2wxf) and SecBench.js's npm:web-node-server:20180306 are both path traversal in web-node-server, fixed in 0.0.11 |
+
+The 10 have 10 vulnerable functions and 5 fixed versions. The other 7 stay, as another vulnerability in the same
+file:
+
+| project | vulnerable commit | its advisory | the SecBench.js or VulcaN case's |
+| --- | --- | --- | --- |
+| codecov/codecov-node | `bac0787351` | CVE-2020-7597 | secbench/codecov_3.6.4: CVE-2020-15123, at the same `execSync(gcov)` |
+| js-data/js-data | `0e2b07f8db` | CVE-2020-28442 | secbench/js-data_3.0.9: CVE-2021-23574, its sink outside the function |
+| lodash/lodash | `67389a8c78` | CVE-2018-16487 | secbench/lodash_4.17.10: CVE-2019-10744 |
+| markedjs/marked | `900e50e22a` | CVE-2017-17461 | vulcan/531_GHSA-x5pg-88wf-qq4p: CVE-2017-16114 |
+| prismjs/prism | `de79636a8a` | CVE-2021-32723 | vulcan/GHSA-h4hr-7fg3-h35w: CVE-2021-23341 |
+| richardgirges/express-fileupload | `e9848fc1b5` | CVE-2020-7699, prototype pollution | vulcan/1216_GHSA-q3w9-g74q-vp5f: a denial of service, although its review's location is the same `parseNested` flow |
+| websockets/ws | `f7cfc51a9f` | GHSA-5v72-xg48-5rpm | vulcan/120_GHSA-6663-c963-2gqg and vulcan/67_GHSA-2mhh-w6q8-5hxw: CVE-2016-10542 and CVE-2016-10518, their sinks in other files |
