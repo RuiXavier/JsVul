@@ -36,7 +36,7 @@ of this repository that `.gitignore` leaves out:
 * `edited.txt`: the files jelly-taint changed in a repository so that pnpm could install it, one change per line.
 
 The code isn't committed here: it is on GitHub at those commits, under its projects' own licenses, and it is large
-(fetched without dependencies, the 678 vulnerable commits of DIFF_WITH_ORIGINAL.md's section 2 take 14 GB).
+(on our server, the vulnerable commits take about 25 GB with their dependencies installed).
 
 There is no exploit to run either, so jelly-taint judges a case statically. Jelly analyzes the vulnerable file's
 package, with the arguments of the package's exported functions as taint sources besides its usual ones, and a
