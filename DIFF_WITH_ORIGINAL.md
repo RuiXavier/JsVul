@@ -10,6 +10,46 @@ removed, and 160 vulnerable commits that are also cases of jelly-taint's other t
 VulcaN, are removed (sections 3 and 4). It holds 912 functions, 547 of them vulnerable, from 518 vulnerable commits. Every function kept is the line of the original as it is, in the same
 file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order.
 
+## The numbers
+
+**Why only 2,039 of JsVul's 21,901 functions are vulnerable.** JsVul was made to train and test machine-learning
+vulnerability detectors, which learn from non-vulnerable code as well. For each vulnerability fix, JsVul took the
+files the fixing commit changed, before and after the fix, and split them into functions (its paper, arXiv
+2609.38012, section "Data Processing"):
+
+- A function of a file before the fix that the fix changed is **vulnerable** (`label` 1): 2,039 functions. A function
+  that the fix only moved or reformatted doesn't count.
+- Every other function is **not vulnerable** (`label` 0): 19,862 functions. 1,342 of them are the **fixed versions**
+  of vulnerable functions, the same function after the fix: a vulnerable function and its fixed version name each
+  other in `paired_id`. The other 18,520 are functions of the same files that the fix didn't change.
+
+The other 697 vulnerable functions have no fixed version in JsVul; its paper doesn't say why.
+
+**Functions and cases.** JsVul counts functions; jelly-taint counts cases too. A **case** is one vulnerable commit (a
+`project` and a `sha`): jelly-taint fetches the repository at that commit, installs it, and runs jelly on it once. A
+fix can change several functions, so a case can have several vulnerable functions, and each is checked on its own:
+jelly-taint's recall is the share of vulnerable functions with a report of the case's class inside them. Of the 518
+cases here, 497 have one vulnerable function, 15 have two, 4 have three and 2 have four: 547 vulnerable functions.
+Most have one because JsVul keeps a fix only when it changes exactly one function, or when the vulnerability's NVD
+entry names the changed functions, or a file with only one of them (the paper's "onefunc" and "nvdcheck"). A project
+can have several cases, other vulnerabilities fixed at other commits: the 518 cases come from 402 projects. Of the
+518, 341 have the fixed version of every vulnerable function, 2 of only some of them, and 175 of none.
+
+**Step by step:**
+
+| | vulnerable functions | fixed versions | other functions | all functions | cases | projects |
+| --- | --- | --- | --- | --- | --- | --- |
+| JsVul 1.0.0 | 2,039 | 1,342 | 18,520 | 21,901 | 1,935 | 1,162 |
+| only the CWEs of jelly-taint's five classes (section 1) | 714 | 468 | 0 | 1,182 | 681 | 528 |
+| without the 3 projects gone from GitHub (section 2) | 711 | 468 | 0 | 1,179 | 678 | 525 |
+| without 150 cases that are SecBench.js or VulcaN cases too (section 3) | 557 | 370 | 0 | 927 | 528 | 410 |
+| without 10 more, under another advisory id (section 4) | 547 | 365 | 0 | 912 | 518 | 402 |
+
+**The three files** are JsVul's split for machine learning, by the vulnerability's publication date: the oldest 80% of
+the vulnerable functions (published up to November 2024) are in `train.jsonl`, the next 10% (up to May 2025) in
+`val.jsonl` and the newest 10% (up to November 2025) in `test.jsonl`, each fixed version in the same file as its
+vulnerable function. jelly-taint trains nothing and uses all three alike.
+
 ## 1. Kept functions
 
 - A vulnerable function (`label` 1) is kept when one of its `cwe` is in one of the five classes of jelly-taint's

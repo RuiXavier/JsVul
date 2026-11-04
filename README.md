@@ -18,7 +18,30 @@ This repository holds the dataset of JsVul version 1.0.0, `js_vul.zip` on Zenodo
 * The labeled functions, in chronologically sorted JSON Lines files: **train.jsonl**, **val.jsonl** and
   **test.jsonl**.
 * The changes from the original dataset (the functions kept for taint analysis with jelly-taint) in
-  **DIFF_WITH_ORIGINAL.md**.
+  **DIFF_WITH_ORIGINAL.md**, with what each of its numbers counts.
+
+## Why there is no code here
+
+JsVul holds functions, not programs: a line is the text of one function, with the repository, commit and file it
+comes from (`project`, `sha`, `file`). There is no package, no test and no exploit in it, so there are none in this
+repository either. jelly-taint fetches and installs the code itself, the first time it analyzes a case, into folders
+of this repository that `.gitignore` leaves out:
+
+* `repos/<owner>__<repo>@<sha>/`: the repository at the vulnerable commit, fetched alone from GitHub
+  (`git fetch --depth 1 origin <sha>`), with the production dependencies of the vulnerable file's package installed
+  by pnpm. `fixed/` holds the fixing commits in the same way.
+* `js-function-extractor/`: JsVul's own function extractor (github.com/jsvul/js-function-extractor). jelly-taint runs
+  it on the original file to find the function's lines there, as JsVul's `loc` are lines of a copy that JsVul
+  reformatted with ESLint and Prettier.
+* `edited.txt`: the files jelly-taint changed in a repository so that pnpm could install it, one change per line.
+
+The code isn't committed here: it is on GitHub at those commits, under its projects' own licenses, and it is large
+(fetched without dependencies, the 678 vulnerable commits of DIFF_WITH_ORIGINAL.md's section 2 take 14 GB).
+
+There is no exploit to run either, so jelly-taint judges a case statically. Jelly analyzes the vulnerable file's
+package, with the arguments of the package's exported functions as taint sources besides its usual ones, and a
+vulnerable function is found when jelly reports a sink of the case's class (command injection, code injection, path
+traversal, prototype pollution or ReDoS) inside it. jelly-taint's `benchmarks/jsvul.md` explains each step and why.
 
 ## The records
 
