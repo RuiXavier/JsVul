@@ -4,11 +4,14 @@ This repository holds the JsVul dataset of vulnerable and fixed JavaScript and T
 taint analysis with jelly-taint (`benchmarks/` of github.com/cs-au-dk/jelly-taint, where it is the JsVul benchmark).
 The original dataset is `js_vul.zip` of JsVul version 1.0.0 on Zenodo (doi 10.5281/zenodo.18195839, MD5
 `087fb7cfa213bde26135bae7874efe7f`), the first commit of this repository (`4c88872`): 21,901 functions, 2,039 of
-them vulnerable. This repository differs from it in three ways: it holds only the vulnerable functions of a CWE
+them vulnerable. This repository differs from it in five ways: it holds only the vulnerable functions of a CWE
 that jelly-taint's taint analysis is evaluated on, and their fixed versions, 3 projects whose repository is gone are
-removed, and 160 vulnerable commits that are also cases of jelly-taint's other two benchmarks, SecBench.js and
-VulcaN, are removed (sections 3 and 4). It holds 912 functions, 547 of them vulnerable, from 518 vulnerable commits. Every function kept is the line of the original as it is, in the same
-file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order.
+removed, 160 vulnerable commits that are also cases of jelly-taint's other two benchmarks, SecBench.js and
+VulcaN, are removed (sections 3 and 4), the wrong labels that a hand check found are corrected (section 5), and so
+are the CWEs of 7 vulnerable commits whose CWEs name the wrong class first (section 6). It holds 897 functions, 537
+of them vulnerable, from 511 vulnerable commits. Every function kept is the line of the original as it is, in the
+same file (`train.jsonl`, `val.jsonl` or `test.jsonl`) and in the same order, except the 20 lines of section 5 and
+the 6 of section 6.
 
 ## The numbers
 
@@ -28,12 +31,12 @@ The other 697 vulnerable functions have no fixed version in JsVul; its paper doe
 **Functions and cases.** JsVul counts functions; jelly-taint counts cases too. A **case** is one vulnerable commit (a
 `project` and a `sha`): jelly-taint fetches the repository at that commit, installs it, and runs jelly on it once. A
 fix can change several functions, so a case can have several vulnerable functions, and each is checked on its own:
-jelly-taint's recall is the share of vulnerable functions with a report of the case's class inside them. Of the 518
-cases here, 497 have one vulnerable function, 15 have two, 4 have three and 2 have four: 547 vulnerable functions.
+jelly-taint's recall is the share of vulnerable functions with a report of the case's class inside them. Of the 511
+cases here, 491 have one vulnerable function, 15 have two, 4 have three and 1 has four: 537 vulnerable functions.
 Most have one because JsVul keeps a fix only when it changes exactly one function, or when the vulnerability's NVD
 entry names the changed functions, or a file with only one of them (the paper's "onefunc" and "nvdcheck"). A project
-can have several cases, other vulnerabilities fixed at other commits: the 518 cases come from 402 projects. Of the
-518, 341 have the fixed version of every vulnerable function, 2 of only some of them, and 175 of none.
+can have several cases, other vulnerabilities fixed at other commits: the 511 cases come from 399 projects. Of the
+511, 338 have the fixed version of every vulnerable function, 1 of only some of them, and 172 of none.
 
 **Step by step:**
 
@@ -44,6 +47,8 @@ can have several cases, other vulnerabilities fixed at other commits: the 518 ca
 | without the 3 projects gone from GitHub (section 2) | 711 | 468 | 0 | 1,179 | 678 | 525 |
 | without 150 cases that are SecBench.js or VulcaN cases too (section 3) | 557 | 370 | 0 | 927 | 528 | 410 |
 | without 10 more, under another advisory id (section 4) | 547 | 365 | 0 | 912 | 518 | 402 |
+| with the corrected labels (section 5) | 539 | 361 | 0 | 900 | 513 | 401 |
+| with the corrected classes (section 6) | 537 | 360 | 0 | 897 | 511 | 399 |
 
 **The three files** are JsVul's split for machine learning, by the vulnerability's publication date: the oldest 80% of
 the vulnerable functions (published up to November 2024) are in `train.jsonl`, the next 10% (up to May 2025) in
@@ -309,3 +314,98 @@ file:
 | prismjs/prism | `de79636a8a` | CVE-2021-32723 | vulcan/GHSA-h4hr-7fg3-h35w: CVE-2021-23341 |
 | richardgirges/express-fileupload | `e9848fc1b5` | CVE-2020-7699, prototype pollution | vulcan/1216_GHSA-q3w9-g74q-vp5f: a denial of service, although its review's location is the same `parseNested` flow |
 | websockets/ws | `f7cfc51a9f` | GHSA-5v72-xg48-5rpm | vulcan/120_GHSA-6663-c963-2gqg and vulcan/67_GHSA-2mhh-w6q8-5hxw: CVE-2016-10542 and CVE-2016-10518, their sinks in other files |
+
+## 5. Corrected labels
+
+A hand check of jelly-taint's run `jsvul-2026-11-03-0221` found 49 vulnerable functions whose label is wrong, or
+that no taint analysis of their case can find. jelly-taint's `LABELS-jsvul-2026-11-03-0221.md` gives the evidence
+for each (lines, commits, advisories); the corrections were made on 2026-11-12.
+
+A new line is made with JsVul's own extractor (`js-function-extractor`, `-d 1`, top-level functions only, as JsVul
+labels) from the original file at its commit. So its `body` and `loc` are of the original file, not of a copy
+reformatted with ESLint and Prettier as JsVul's own are. Its `cve`, `cwe`, `publish_time` and `snyk` are those of
+the line it corrects, and it takes that line's place. A fixed version is the same function at the fixing commit of
+the line it corrects, and the two name each other in `paired_id`, as in JsVul.
+
+**Relabelled (9).** The labelled function is not on the attack's route. The new label is the function the attack's
+data passes through:
+
+| project | vulnerable commit | old label | new label | fixed version |
+| --- | --- | --- | --- | --- |
+| haxtheweb/haxcms-nodejs | `b970f827d5` | `src/routes/connectionSettings.js` (connectionSettings) | `src/routes/gitImportSite.js:41-81` (gitImportSite) | none: the fix `5131fea6b6` deletes the file |
+| vitejs/vite | `122bfbabeb` | `packages/vite/src/node/preview.ts` (preview) | `packages/vite/src/node/server/middlewares/indexHtml.ts:438-478` (indexHtmlMiddleware) | `14015d794f` |
+| vitejs/vite | `bdde0f9e50` | the same | `indexHtml.ts:438-478` | `6f01ff4fe0` |
+| vitejs/vite | `a0a835f80e` | the same | `indexHtml.ts:414-455` | `482000f57f` |
+| vitejs/vite | `7d9922972b` | the same | `indexHtml.ts:431-471` | `0ab19ea9fc` |
+| pedroetb/tts-api | `7bf548835b` | `app.js` (onSpeechDone) | `app.js:33-48` (processData) | none, as before |
+| sjwall/mdx-mermaid | `138147d303` | `src/Mermaid.tsx` (Mermaid) | `src/mdxast-mermaid.ts:24-80` (plugin) | `f2b9938666` |
+| steveukx/git-js | `0a623e53fd` | `simple-git/src/lib/plugins/block-unsafe-operations-plugin.ts` (preventUploadPack) | the same file, `44-61` (blockUnsafeOperationsPlugin) | `ec97a39ab6` |
+| vitejs/vite | `5adbc53066` | `packages/vite/src/node/server/middlewares/static.ts` (isFileLoadingAllowed) | the same file, `124-199` (serveStaticMiddleware) | `f479cc57c4` |
+
+The last two depart from JsVul's rule that a vulnerable function is one the fix changes: there, the fix changes
+only a check beside the route, a function that tests the attacker's value and returns true or false (or throws),
+and the value reaches the sink through the new label, which the fix doesn't change.
+
+**New commit pairs (3 functions, 2 cases).** JsVul's commits are not the vulnerability's:
+
+- tootallnate/node-degenerator (CVE-2021-23406): `ccc3445354` and `dc10ee9daa` come after the fix, which is
+  `852043f962` ("Use `vm2` module to prevent privilege escalation of untrusted code"). Both are replaced by one case,
+  its parent `7ad1041853`, with `src/index.ts:132-165` (compile) and its fixed version at `852043f962`.
+- vitest-dev/vitest (CVE-2025-24963): JsVul's "fix" of `382694158a`, `2d62051f13`, is the commit that added the
+  vulnerable handler. The case is replaced by `45085cf8f7`, the parent of the fix `ed9aeba212` that the advisory
+  links, with `packages/browser/src/node/plugin.ts:24-550` (the default export) and its fixed version at `ed9aeba212`.
+
+**Removed (4 cases, 7 vulnerable functions and their 4 fixed versions):**
+
+- sebhildebrandt/systeminformation `7922366d70` (4 functions) and `0be6fcd575` (1), CVE-2021-21388: `7922366d70` is
+  the fix itself, and `0be6fcd575` comes after it. The vulnerable commit, `b106e41538`, is already a case, with the
+  same functions.
+- shy2850/node-server `ecb0ea6904`, CVE-2017-16038: the commit already holds the fix (it is the merge of the fixing
+  pull request). At the right commit, `b6d7e49d10`, the file is the same as VulcaN's `346_GHSA-g7j3-p357-cw8p`, so
+  the case goes by the rule of section 3.
+- angular/angular.js `1adf29af13`: labelled CWE-78, but the advisory is cross-site scripting in the browser (CWE-79),
+  which is not one of the five classes (section 1).
+
+**Listed in `excluded.json` (28).** These labels stay as they are, but the function can't be found by a taint
+analysis of its case. `excluded.json` gives, for each function `id`, the `kind`, the `reason` and the function's
+number in jelly-taint's trace check (`trace_check`). Whether jelly-taint's evaluation leaves them out is decided
+there. There were 30: dojo's and express-fileupload's functions, prototype pollution labelled code or command
+injection, left the list when section 6 gave them their class.
+
+| kind | functions |
+| --- | --- |
+| the right function is labelled already | 1 (node-mysql2's binary parser; the text parser is the case's other label) |
+| cannot be fixed within JsVul: the attack is in another package, in Python code, or not in the labelled function at this commit | 9 |
+| not a taint flow: prototype pollution (5), link following on disk (3), the user's own GitHub workflow (2), a library without a sink of its own (3), a sandbox escape (1), a missing check (2), dead code (1), a value that reaches the sink only as a number (1) | 18 |
+
+## 6. Corrected classes
+
+A vulnerable commit's class is the first of its functions' CWEs' classes, in jelly-taint's order (path traversal,
+command injection, code injection, prototype pollution, ReDoS), and only reports of that class count. JsVul's `cwe`
+merges the CWEs that every source and advisory of the fix gives, so 22 vulnerable commits had CWEs of two or more
+classes, cross-site scripting included. The OSSF CVE Benchmark gives lodash's, express-fileupload's and dojo's
+prototype pollution the same five CWEs (CWE-400, CWE-78, CWE-79, CWE-915, CWE-94); pixl-class's commit carries
+fun-map's advisory too (CVE-2020-7644, GHSA-p33m-7w7f-gmj8); and advisories often name CWE-94 beside CWE-79 or
+CWE-78.
+
+Each of the 22 was checked on 2026-11-14 against three things: the advisory's text (osv.dev), the fixing commit's
+change, and where the attacker's data ends up in the labelled function. 7 had the wrong class first and are
+corrected:
+
+| project | vulnerable commit | advisory | `cwe` before | evidence | now |
+| --- | --- | --- | --- | --- | --- |
+| lodash/lodash | `67389a8c78` | CVE-2018-16487 | CWE-400, 78, 79, 915, 94 | advisory: `merge`, `mergeWith` and `defaultsDeep` add or modify properties of `Object.prototype`; fix `90e6199a16`: `safeGet` skips `__proto__` and `Object.prototype` | CWE-1321 |
+| lodash/lodash | `e7b28ea6cb` | CVE-2020-8203 | CWE-400, 78, 79, 915, 94 | advisory: prototype pollution through `_.zipObjectDeep`; fix `c84fe82760`: skips the keys `__proto__`, `constructor` and `prototype` | CWE-1321 |
+| richardgirges/express-fileupload | `e9848fc1b5` | CVE-2020-7699 | CWE-400, 78, 79, 915, 94 | advisory: a request with `parseNested` leads to denial of service or code execution; fix `d81bee9bc0`: `processNested` skips the key `__proto__` ("Ensure we don't allow prototype pollution") | CWE-1321 |
+| dojo/dojo | `35d1141221` | CVE-2020-5258 | CWE-1321, CWE-94 | advisory: `deepCopy` is vulnerable to prototype pollution; fix `20a00afb68`: `deepCopy` skips `__proto__` | CWE-1321 |
+| jhuckaby/pixl-class | `cd79906612` | CVE-2020-7640 | CWE-1321, CWE-78 | advisory: "execution of arbitrary commands" through `create`'s `members`; the code passes `members.__parent`'s text to `eval`, and fix `47677a3638` removes the `eval`; no shell is involved. The fixed version (`47677a3638`) gets the same CWE | CWE-94 |
+| codex-team/editor.js | `cd06bfc9c5` | CVE-2022-23474 | CWE-79, CWE-94 | advisory: `processHTML` passes pasted input into `innerHTML`: HTML parsed in the browser, cross-site scripting; fix `f659015be6`: a sanitizer rule for each tool's tags | removed, with its fixed version |
+| jakowenko/double-take | `8e2728d283` | CVE-2025-11360 | CWE-79, CWE-94 | advisory: cross-site scripting through `X-Ingress-Path`; the handler writes the header into a `<script>` of the HTML it sends, and fix `e11de9dd6b` writes it with `JSON.stringify` | removed |
+
+The two cross-site scripting cases are removed, as cross-site scripting is not one of the five classes (section 1),
+like angular.js in section 5. The other 15 have the right class first, or are left as they are:
+- sebhildebrandt/systeminformation `7b46935058` (CVE-2020-26245, CWE-471 and CWE-78) keeps its class (command
+  injection): its advisory is "prototype pollution leading to command injection", and its fix (`8113ff0e87`) restores
+  `toLowerCase` on the strings it sanitizes, in case another package has polluted it. Its function is in
+  `excluded.json` (section 5).
+- nodebb/nodebb `c8b2fc46dc` and pyload/pyload `903c53644e` are not npm packages, which jelly-taint doesn't run.

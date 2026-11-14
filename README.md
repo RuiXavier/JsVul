@@ -17,8 +17,10 @@ This repository holds the dataset of JsVul version 1.0.0, `js_vul.zip` on Zenodo
 
 * The labeled functions, in chronologically sorted JSON Lines files: **train.jsonl**, **val.jsonl** and
   **test.jsonl**.
-* The changes from the original dataset (the functions kept for taint analysis with jelly-taint) in
-  **DIFF_WITH_ORIGINAL.md**, with what each of its numbers counts.
+* The changes from the original dataset (the functions kept for taint analysis with jelly-taint, and the corrected
+  labels and classes) in **DIFF_WITH_ORIGINAL.md**, with what each of its numbers counts.
+* The vulnerable functions that no taint analysis of their case can find, each with its reason, in
+  **excluded.json** (DIFF_WITH_ORIGINAL.md, section 5).
 
 ## Why there is no code here
 
@@ -33,7 +35,9 @@ of this repository that `.gitignore` leaves out:
 * `js-function-extractor/`: JsVul's own function extractor (github.com/jsvul/js-function-extractor). jelly-taint runs
   it on the original file to find the function's lines there, as JsVul's `loc` are lines of a copy that JsVul
   reformatted with ESLint and Prettier.
-* `edited.txt`: the files jelly-taint changed in a repository so that pnpm could install it, one change per line.
+* `edited.txt`: the files jelly-taint changed in a repository so that pnpm could install it, or so that its
+  `package.json` names source files instead of build output (jelly-taint's `benchmarks/jsvul.md`, "Entry files"),
+  one change per line.
 
 The code isn't committed here: it is on GitHub at those commits, under its projects' own licenses, and it is large
 (on our server, the vulnerable commits take about 25 GB with their dependencies installed).
