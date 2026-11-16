@@ -1,0 +1,49 @@
+{
+  "name": "node-tar",
+  "version": null,
+  "repo": "isaacs/node-tar",
+  "sha": "52237e39d2eb68d22a32d9a98f1d762189fe6a3d",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2018-20834",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-20834"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/fstream/lib/file-writer.js",
+          "startline": 36,
+          "startcol": 18,
+          "endline": 36,
+          "endcol": 54,
+          "range": false,
+          "code": "fs.createWriteStream(self._path, so)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "4f8585178af78f8f64c5ca38e923c306613278b9",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

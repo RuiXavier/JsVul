@@ -1,0 +1,64 @@
+{
+  "name": "nemo-appium",
+  "version": null,
+  "repo": "paypal/nemo-appium",
+  "sha": "0eef7aff5158c82aac4dfe2725c56783d7de6f3e",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-c6rx-gxqv-vr5j",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-21129"
+      ],
+      "ghsa": [
+        "GHSA-c6rx-gxqv-vr5j"
+      ],
+      "snyk": [
+        "SNYK-JS-NEMOAPPIUM-3183747"
+      ],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 27,
+          "startcol": 33,
+          "endline": 32,
+          "endcol": 15,
+          "range": false,
+          "code": "cp.exec(appiumPath, function (err) {\n                if (err) {\n                    error(err);\n                    once(err);\n                }\n            })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 10,
+          "startcol": 24,
+          "endline": 54,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "name": "evernote-mcp-server",
+  "version": null,
+  "repo": "brentmid/evernote-mcp-server",
+  "sha": "39ca9f67f010295d507f6df30b84eb7d747aa877",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "mcp",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-12489",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-12489"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/auth.js",
+          "startline": 347,
+          "startcol": 3,
+          "endline": 355,
+          "endcol": 5,
+          "range": false,
+          "code": "exec(`${command} \"${url}\"`, (error) => {\n    if (error) {\n      console.error('❌ Failed to open browser:', error.message);\n      console.error('📋 Please manually open this URL in your browser:');\n      console.error(url);\n    } else {\n      console.error('🌐 Browser opened for Evernote authorization');\n    }\n  })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/auth.js",
+          "startline": 343,
+          "startcol": 1,
+          "endline": 356,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "1e66c78c4ce6ea294ac6b0eb289a9eae9c5e9579",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/auth.js",
+            "startline": 344,
+            "startcol": 1,
+            "endline": 378,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

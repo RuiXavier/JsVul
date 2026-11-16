@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+      "outDir": "./dist",
+      "pretty": true,
+      "target": "es2015",
+      "lib": [
+        "es2015",
+      ],
+      "noImplicitThis": false,
+      "module": "commonjs",
+      "allowJs": true,
+      "sourceMap": true,
+      "strict": true,
+      "useUnknownInCatchVariables": false,
+      // "declaration": true,
+      "importHelpers": true,
+      "noImplicitAny": false // Needed to compile tap and ansi-escapes
+  },
+  "include": [
+      "./lib/**/*"
+  ]
+}

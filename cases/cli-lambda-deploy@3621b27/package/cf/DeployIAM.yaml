@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+    TestRole:
+        Type: AWS::IAM::Role
+        Properties:
+          AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal: {Service: [lambda.amazonaws.com]}
+              Action: ['sts:AssumeRole']
+          Path: /
+          ManagedPolicyArns:
+          - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
+    DeployIAMUser:
+      Type: AWS::IAM::User
+      DependsOn: [ TestRole ]
+      Properties:
+        Path: /
+        UserName: cli-lambda-deploy
+        Policies:
+        - PolicyName: LambdaDeploy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+               - Effect: Allow
+                 # Sid: uploadFunctiononTestFunctions
+                 Action:
+                   - 'lambda:CreateFunction'
+                   - 'lambda:DeleteFunction'
+                   - 'lambda:UpdateFunctionConfiguration'
+                   - 'lambda:UpdateFunctionCode'
+                   - 'lambda:InvokeFunction'
+                   - 'lambda:ListTags'
+                   - 'lambda:TagResource'
+                   # old api
+                   - 'lambda:UploadFunction'
+                 Resource:
+                    # - '*'
+                    - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:new-function-v*'
+               - Effect: Allow
+                 Action:
+                   - 'iam:GetRole'
+                   - 'iam:PassRole'
+                 Resource: !GetAtt TestRole.Arn
+
+    DeployIAMKey:
+      Type: AWS::IAM::AccessKey
+      Properties:
+        UserName:
+          !Ref DeployIAMUser
+
+Outputs:
+    AccessKeyId:
+        Value: !Ref DeployIAMKey
+        Export:
+            Name: AccessKeyId
+    SecretAccessKey:
+        Value: !GetAtt DeployIAMKey.SecretAccessKey
+        Export:
+            Name: SecretAccessKey
+    RoleArn:
+        Value: !GetAtt TestRole.Arn
+        Export:
+            Name: RoleArn

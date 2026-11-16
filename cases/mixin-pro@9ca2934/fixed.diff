@@ -1,0 +1,42 @@
+diff --git a/mixin.js b/mixin.js
+index 13c0f67..e553cd7 100644
+--- a/mixin.js
++++ b/mixin.js
+@@ -157,6 +157,9 @@ function mixin(base, mixin) {
+ }
+ 
+ function mixin_constructor(name, ctor) {
++  // validate base name to avoid evil code injection
++  if(!/^[$A-Z_][0-9A-Z_$]*$/i.test(name)) return;
++
+   var str = "function __ctor() { var c = ctor.constructors; for (var i in c) { c[i].apply(this, arguments); } };".replace(/__ctor/g, name);
+   eval(str);
+   return eval(name);
+diff --git a/package.json b/package.json
+index 9bfca77..31629e8 100644
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "mixin-pro",
+   "description": "Javascript multi-inheritance with mixin for code reuse",
+-  "version": "0.6.6",
++  "version": "0.6.7",
+   "author": "Raymond Xie <rjfun.mobile@gmail.com>",
+   "repository": {
+     "type": "git",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+deleted file mode 100644
+index 9b60ae1..0000000
+--- a/pnpm-lock.yaml
++++ /dev/null
+@@ -1,9 +0,0 @@
+-lockfileVersion: '9.0'
+-
+-settings:
+-  autoInstallPeers: true
+-  excludeLinksFromLockfile: false
+-
+-importers:
+-
+-  .: {}

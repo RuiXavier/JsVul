@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0", "omit": ["@backstage/backend-common", "@backstage/catalog-model", "@backstage/config", "@backstage/errors", "@backstage/integration"], "siblings": ["@backstage/backend-common", "@backstage/catalog-model", "@backstage/cli-common", "@backstage/config", "@backstage/config-loader", "@backstage/errors", "@backstage/integration"]}
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "nginx-proxy-manager",
+  "version": null,
+  "repo": "nginxproxymanager/nginx-proxy-manager",
+  "sha": "120d50e5c08b39d540c4579d7388f746b2d4a8a2",
+  "subdir": "backend",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-39935",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-39935"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/utils.js",
+          "startline": 14,
+          "startcol": 18,
+          "endline": 20,
+          "endcol": 6,
+          "range": false,
+          "code": "exec(cmd, options, (isError, stdout, stderr) => {\n\t\t\t\tif (isError) {\n\t\t\t\t\treject(new error.CommandError(stderr, isError));\n\t\t\t\t} else {\n\t\t\t\t\tresolve({ stdout, stderr });\n\t\t\t\t}\n\t\t\t})"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/internal/certificate.js",
+          "startline": 858,
+          "startcol": 41,
+          "endline": 914,
+          "endcol": 2,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "99cce7e2b0da2978411cedd7cac5fffbe15bc466",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/internal/certificate.js",
+            "startline": 858,
+            "startcol": 41,
+            "endline": 911,
+            "endcol": 2,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

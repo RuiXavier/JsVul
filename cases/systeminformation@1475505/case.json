@@ -1,0 +1,161 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "147550532ab11cac4b609844a519a1d945f5c103",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-fj59-f6c3-3vw4",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-26300"
+      ],
+      "ghsa": [
+        "GHSA-fj59-f6c3-3vw4"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/internet.js",
+          "startline": 49,
+          "startcol": 11,
+          "endline": 56,
+          "endcol": 13,
+          "range": false,
+          "code": "exec(cmd + args, function (error, stdout) {\n            let statusCode = parseInt(stdout.toString());\n            result.status = statusCode || 404;\n            result.ok = !error && (statusCode === 200 || statusCode === 301 || statusCode === 302 || statusCode === 304);\n            result.ms = (result.ok ? Date.now() - t : -1);\n            if (callback) { callback(result); }\n            resolve(result);\n          })"
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 127,
+          "startcol": 9,
+          "endline": 140,
+          "endcol": 11,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n          let result = -1;\n          if (!error) {\n            const line = stdout.toString().split('=');\n            if (line.length > 1) {\n              const parts = line[1].split('/');\n              if (parts.length > 1) {\n                result = parseFloat(parts[1]);\n              }\n            }\n          }\n          if (callback) { callback(result); }\n          resolve(result);\n        })"
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 143,
+          "startcol": 9,
+          "endline": 156,
+          "endcol": 11,
+          "range": false,
+          "code": "exec('ping -s -a ' + hostSanitized + ' 56 2 | grep avg', { timeout: 3000 }, function (error, stdout) {\n          let result = -1;\n          if (!error) {\n            const line = stdout.toString().split('=');\n            if (line.length > 1) {\n              const parts = line[1].split('/');\n              if (parts.length > 1) {\n                result = parseFloat(parts[1].replace(',', '.'));\n              }\n            }\n          }\n          if (callback) { callback(result); }\n          resolve(result);\n        })"
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 161,
+          "startcol": 11,
+          "endline": 176,
+          "endcol": 13,
+          "range": false,
+          "code": "exec('ping ' + hostSanitized + ' -n 1', util.execOptsWin, function (error, stdout) {\n            if (!error) {\n              let lines = stdout.toString().split('\\r\\n');\n              lines.shift();\n              lines.forEach(function (line) {\n                if ((line.toLowerCase().match(/ms/g) || []).length === 3) {\n                  let l = line.replace(/ +/g, ' ').split(' ');\n                  if (l.length > 6) {\n                    result = parseFloat(l[l.length - 1]);\n                  }\n                }\n              });\n            }\n            if (callback) { callback(result); }\n            resolve(result);\n          })"
+        },
+        {
+          "file": "package/lib/processes.js",
+          "startline": 126,
+          "startcol": 13,
+          "endline": 254,
+          "endcol": 15,
+          "range": false,
+          "code": "exec(comm + ' | grep -v grep | grep -iE \"' + srvString + '\"', { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n              if (!error) {\n                let lines = stdout.toString().replace(/ +/g, ' ').replace(/,+/g, '.').split('\\n');\n                srvs.forEach(function (srv) {\n                  let ps;\n                  if (_darwin) {\n                    ps = lines.filter(function (e) {\n                      return (e.toLowerCase().indexOf(srv) !== -1);\n                    });\n\n                  } else {\n                    ps = lines.filter(function (e) {\n                      return (e.toLowerCase().indexOf(' ' + srv + ':') !== -1) || (e.toLowerCase().indexOf('/' + srv) !== -1);\n                    });\n                  }\n                  let singleSrv = allSrv.filter(item => { return item.name === srv; });\n                  const pids = [];\n                  for (const p of ps) {\n                    const pid = p.trim().split(' ')[2];\n                    if (pid) {\n                      pids.push(parseInt(pid, 10));\n                    }\n                  }\n                  result.push({\n                    name: srv,\n                    running: (allSrv.length && singleSrv.length ? singleSrv[0].running : ps.length > 0),\n                    startmode: '',\n                    pids: pids,\n                    pcpu: parseFloat((ps.reduce(function (pv, cv) {\n                      return pv + parseFloat(cv.trim().split(' ')[0]);\n                    }, 0)).toFixed(2)),\n                    pmem: parseFloat((ps.reduce(function (pv, cv) {\n                      return pv + parseFloat(cv.trim().split(' ')[1]);\n                    }, 0)).toFixed(2))\n                  });\n                });\n                if (_linux) {\n                  // calc process_cpu - ps is not accurate in linux!\n                  let cmd = 'cat /proc/stat | grep \"cpu \"';\n                  for (let i in result) {\n                    for (let j in result[i].pids) {\n                      cmd += (';cat /proc/' + result[i].pids[j] + '/stat');\n                    }\n                  }\n                  exec(cmd, { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n                    let curr_processes = stdout.toString().split('\\n');\n\n                    // first line (all - /proc/stat)\n                    let all = parseProcStat(curr_processes.shift()).slice();\n\n                    // process\n                    let list_new = {};\n                    let resultProcess = {};\n                    for (let i = 0; i < curr_processes.length; i++) {\n                      resultProcess = calcProcStatLinux(curr_processes[i], all, _services_cpu);\n\n                      if (resultProcess.pid) {\n                        let listPos = -1;\n                        for (let i in result) {\n                          for (let j in result[i].pids) {\n                            if (parseInt(result[i].pids[j]) === parseInt(resultProcess.pid)) {\n                              listPos = i;\n                            }\n                          }\n                        }\n                        if (listPos >= 0) {\n                          result[listPos].pcpu += resultProcess.pcpuu + resultProcess.pcpus;\n                        }\n\n                        // save new values\n                        list_new[resultProcess.pid] = {\n                          pcpuu: resultProcess.pcpuu,\n                          pcpus: resultProcess.pcpus,\n                          utime: resultProcess.utime,\n                          stime: resultProcess.stime,\n                          cutime: resultProcess.cutime,\n                          cstime: resultProcess.cstime\n                        };\n                      }\n                    }\n\n                    // store old values\n                    _services_cpu.all = all;\n                    // _services_cpu.list = list_new;\n                    _services_cpu.list = list_new.slice();\n                    _services_cpu.ms = Date.now() - _services_cpu.ms;\n                    // _services_cpu.result = result;\n                    _services_cpu.result = Object.assign({}, result);\n                    if (callback) { callback(result); }\n                    resolve(result);\n                  });\n                } else {\n                  if (callback) { callback(result); }\n                  resolve(result);\n                }\n              } else {\n                exec('ps -o comm | grep -v grep | egrep \"' + srvString + '\"', { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n                  if (!error) {\n                    let lines = stdout.toString().replace(/ +/g, ' ').replace(/,+/g, '.').split('\\n');\n                    srvs.forEach(function (srv) {\n                      let ps = lines.filter(function (e) {\n                        return e.indexOf(srv) !== -1;\n                      });\n                      result.push({\n                        name: srv,\n                        running: ps.length > 0,\n                        startmode: '',\n                        pcpu: 0,\n                        pmem: 0\n                      });\n                    });\n                    if (callback) { callback(result); }\n                    resolve(result);\n                  } else {\n                    srvs.forEach(function (srv) {\n                      result.push({\n                        name: srv,\n                        running: false,\n                        startmode: '',\n                        pcpu: 0,\n                        pmem: 0\n                      });\n                    });\n                    if (callback) { callback(result); }\n                    resolve(result);\n                  }\n                });\n              }\n            })"
+        },
+        {
+          "file": "package/lib/processes.js",
+          "startline": 222,
+          "startcol": 17,
+          "endline": 252,
+          "endcol": 19,
+          "range": false,
+          "code": "exec('ps -o comm | grep -v grep | egrep \"' + srvString + '\"', { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n                  if (!error) {\n                    let lines = stdout.toString().replace(/ +/g, ' ').replace(/,+/g, '.').split('\\n');\n                    srvs.forEach(function (srv) {\n                      let ps = lines.filter(function (e) {\n                        return e.indexOf(srv) !== -1;\n                      });\n                      result.push({\n                        name: srv,\n                        running: ps.length > 0,\n                        startmode: '',\n                        pcpu: 0,\n                        pmem: 0\n                      });\n                    });\n                    if (callback) { callback(result); }\n                    resolve(result);\n                  } else {\n                    srvs.forEach(function (srv) {\n                      result.push({\n                        name: srv,\n                        running: false,\n                        startmode: '',\n                        pcpu: 0,\n                        pmem: 0\n                      });\n                    });\n                    if (callback) { callback(result); }\n                    resolve(result);\n                  }\n                })"
+        },
+        {
+          "file": "package/lib/processes.js",
+          "startline": 933,
+          "startcol": 11,
+          "endline": 1015,
+          "endcol": 13,
+          "range": false,
+          "code": "exec('ps -axo pid,pcpu,pmem,comm | grep -i ' + procSanitized + ' | grep -v grep', { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n            if (!error) {\n              let lines = stdout.toString().split('\\n');\n\n              let pid = 0;\n              let pids = [];\n              let cpu = 0;\n              let mem = 0;\n\n              lines.forEach(function (line) {\n                let data = line.trim().replace(/ +/g, ' ').split(' ');\n                if (data.length > 3) {\n                  pid = (!pid ? parseInt(data[0]) : 0);\n                  pids.push(parseInt(data[0], 10));\n                  cpu = cpu + parseFloat(data[1].replace(',', '.'));\n                  mem = mem + parseFloat(data[2].replace(',', '.'));\n                }\n              });\n\n              result = {\n                'proc': procSanitized,\n                'pid': pid,\n                'pids': pids,\n                'cpu': parseFloat((cpu / lines.length).toFixed(2)),\n                'mem': parseFloat((mem / lines.length).toFixed(2))\n              };\n              if (_linux) {\n                // calc process_cpu - ps is not accurate in linux!\n                let cmd = 'cat /proc/stat | grep \"cpu \"';\n                for (let i = 0; i < result.pids.length; i++) {\n                  cmd += (';cat /proc/' + result.pids[i] + '/stat');\n                }\n\n                exec(cmd, { maxBuffer: 1024 * 20000 }, function (error, stdout) {\n                  let curr_processes = stdout.toString().split('\\n');\n\n                  // first line (all - /proc/stat)\n                  let all = parseProcStat(curr_processes.shift());\n\n                  // process\n                  let list_new = {};\n                  let resultProcess = {};\n                  result.cpu = 0;\n                  for (let i = 0; i < curr_processes.length; i++) {\n                    resultProcess = calcProcStatLinux(curr_processes[i], all, _process_cpu);\n\n                    if (resultProcess.pid) {\n\n                      // store pcpu in outer result\n                      result.cpu += resultProcess.pcpuu + resultProcess.pcpus;\n\n                      // save new values\n                      list_new[resultProcess.pid] = {\n                        pcpuu: resultProcess.pcpuu,\n                        pcpus: resultProcess.pcpus,\n                        utime: resultProcess.utime,\n                        stime: resultProcess.stime,\n                        cutime: resultProcess.cutime,\n                        cstime: resultProcess.cstime\n                      };\n                    }\n                  }\n\n                  result.cpu = Math.round(result.cpu * 100) / 100;\n\n                  _process_cpu.all = all;\n                  // _process_cpu.list = list_new;\n                  _process_cpu.list = list_new.slice();\n                  _process_cpu.ms = Date.now() - _process_cpu.ms;\n                  // _process_cpu.result = result;\n                  _process_cpu.result = Object.assign({}, result);\n                  if (callback) { callback(result); }\n                  resolve(result);\n                });\n              } else {\n                if (callback) { callback(result); }\n                resolve(result);\n              }\n            } else {\n              if (callback) { callback(result); }\n              resolve(result);\n            }\n          })"
+        },
+        {
+          "file": "package/lib/network.js",
+          "startline": 1057,
+          "startcol": 13,
+          "endline": 1072,
+          "endcol": 15,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n              if (!error) {\n                lines = stdout.toString().split('\\n');\n                operstate = lines[0].trim();\n                rx_bytes = parseInt(lines[1], 10);\n                tx_bytes = parseInt(lines[2], 10);\n                rx_dropped = parseInt(lines[3], 10);\n                rx_errors = parseInt(lines[4], 10);\n                tx_dropped = parseInt(lines[5], 10);\n                tx_errors = parseInt(lines[6], 10);\n\n                result = calcNetworkSpeed(ifaceSanitized, rx_bytes, tx_bytes, operstate, rx_dropped, rx_errors, tx_dropped, tx_errors);\n\n              }\n              resolve(result);\n            })"
+        },
+        {
+          "file": "package/lib/network.js",
+          "startline": 1079,
+          "startcol": 11,
+          "endline": 1097,
+          "endcol": 13,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n            if (!error) {\n              lines = stdout.toString().split('\\n');\n              for (let i = 1; i < lines.length; i++) {\n                const line = lines[i].replace(/ +/g, ' ').split(' ');\n                if (line && line[0] && line[7] && line[10]) {\n                  rx_bytes = rx_bytes + parseInt(line[7]);\n                  if (line[6].trim() !== '-') { rx_dropped = rx_dropped + parseInt(line[6]); }\n                  if (line[5].trim() !== '-') { rx_errors = rx_errors + parseInt(line[5]); }\n                  tx_bytes = tx_bytes + parseInt(line[10]);\n                  if (line[12].trim() !== '-') { tx_dropped = tx_dropped + parseInt(line[12]); }\n                  if (line[9].trim() !== '-') { tx_errors = tx_errors + parseInt(line[9]); }\n                  operstate = 'up';\n                }\n              }\n              result = calcNetworkSpeed(ifaceSanitized, rx_bytes, tx_bytes, operstate, rx_dropped, rx_errors, tx_dropped, tx_errors);\n            }\n            resolve(result);\n          })"
+        },
+        {
+          "file": "package/lib/network.js",
+          "startline": 1101,
+          "startcol": 11,
+          "endline": 1126,
+          "endcol": 13,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n            result.operstate = (stdout.toString().split(':')[1] || '').trim();\n            result.operstate = (result.operstate || '').toLowerCase();\n            result.operstate = (result.operstate === 'active' ? 'up' : (result.operstate === 'inactive' ? 'down' : 'unknown'));\n            cmd = 'netstat -bdI ' + ifaceSanitized;\n            exec(cmd, function (error, stdout) {\n              if (!error) {\n                lines = stdout.toString().split('\\n');\n                // if there is less than 2 lines, no information for this interface was found\n                if (lines.length > 1 && lines[1].trim() !== '') {\n                  // skip header line\n                  // use the second line because it is tied to the NIC instead of the ipv4 or ipv6 address\n                  stats = lines[1].replace(/ +/g, ' ').split(' ');\n                  rx_bytes = parseInt(stats[6]);\n                  rx_dropped = parseInt(stats[11]);\n                  rx_errors = parseInt(stats[5]);\n                  tx_bytes = parseInt(stats[9]);\n                  tx_dropped = parseInt(stats[11]);\n                  tx_errors = parseInt(stats[8]);\n\n                  result = calcNetworkSpeed(ifaceSanitized, rx_bytes, tx_bytes, result.operstate, rx_dropped, rx_errors, tx_dropped, tx_errors);\n                }\n              }\n              resolve(result);\n            });\n          })"
+        },
+        {
+          "file": "package/lib/network.js",
+          "startline": 1106,
+          "startcol": 13,
+          "endline": 1125,
+          "endcol": 15,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n              if (!error) {\n                lines = stdout.toString().split('\\n');\n                // if there is less than 2 lines, no information for this interface was found\n                if (lines.length > 1 && lines[1].trim() !== '') {\n                  // skip header line\n                  // use the second line because it is tied to the NIC instead of the ipv4 or ipv6 address\n                  stats = lines[1].replace(/ +/g, ' ').split(' ');\n                  rx_bytes = parseInt(stats[6]);\n                  rx_dropped = parseInt(stats[11]);\n                  rx_errors = parseInt(stats[5]);\n                  tx_bytes = parseInt(stats[9]);\n                  tx_dropped = parseInt(stats[11]);\n                  tx_errors = parseInt(stats[8]);\n\n                  result = calcNetworkSpeed(ifaceSanitized, rx_bytes, tx_bytes, result.operstate, rx_dropped, rx_errors, tx_dropped, tx_errors);\n                }\n              }\n              resolve(result);\n            })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/util.js",
+          "startline": 488,
+          "startcol": 1,
+          "endline": 507,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bad372e654cdd549e7d786acbba0035ded54c607",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/util.js",
+            "startline": 488,
+            "startcol": 1,
+            "endline": 510,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

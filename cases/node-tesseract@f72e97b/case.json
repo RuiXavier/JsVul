@@ -1,0 +1,69 @@
+{
+  "name": "node-tesseract",
+  "version": null,
+  "repo": "rona-dinihari/node-tesseract",
+  "sha": "f72e97bf56869a3e7e64d05fb16903520ab479ee",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2023-29566",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-29566"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-77",
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/tesseract.js",
+          "startline": 84,
+          "startcol": 5,
+          "endline": 120,
+          "endcol": 7,
+          "range": false,
+          "code": "exec(command, opts, function(err, stdout, stderr) {\n      if (err) {\n        // Something went wrong executing the assembled command\n        callback(err, null);\n        return;\n      }\n\n      let extra = {};\n\n      const regex = /OSD:[\\s\\w\\d\\(\\),.]+: ([\\d]+)/;\n      if (regex.test(stderr)) {\n        let match = regex.exec(stderr);\n        let orientation = parseInt(match[1]);\n        extra.orientation = orientation;\n      }\n\n      // Find one of the three possible extension\n      glob(output + '.+(html|hocr|txt)', function(err, files){\n        if (err) {\n          callback(err, null);\n          return;\n        }\n        fs.readFile(files[0], Tesseract.outputEncoding, function(err, data) {\n          if (err) {\n            callback(err, null);\n            return;\n          }\n\n          var index = Tesseract.tmpFiles.indexOf(output);\n          if (~index) Tesseract.tmpFiles.splice(index, 1);\n\n          fs.unlinkSync(files[0]);\n\n          callback(null, data, extra);\n        });\n      })\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/tesseract.js",
+          "startline": 42,
+          "startcol": 12,
+          "endline": 122,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "81d1664f0b9fe521534acfae1d5b9c40127b36c1",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/tesseract.js",
+            "startline": 42,
+            "startcol": 12,
+            "endline": 124,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "node-bestzip",
+  "version": null,
+  "repo": "nfriedly/node-bestzip",
+  "sha": "fcea252e52b6078eff6caf5531bd32c53fccb59f",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-6xv6-jpvw-cx6q",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7730"
+      ],
+      "ghsa": [
+        "GHSA-6xv6-jpvw-cx6q"
+      ],
+      "snyk": [
+        "SNYK-JS-BESTZIP-609371"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/bestzip.js",
+          "startline": 74,
+          "startcol": 24,
+          "endline": 77,
+          "endcol": 7,
+          "range": false,
+          "code": "cp.exec(command, {\n      stdio: \"inherit\",\n      cwd: options.cwd\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/bestzip.js",
+          "startline": 66,
+          "startcol": 19,
+          "endline": 93,
+          "endcol": 4,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "45d4a901478c6a8f396c8b959dd6cf8fd3f955b6",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/bestzip.js",
+            "startline": 66,
+            "startcol": 19,
+            "endline": 95,
+            "endcol": 4,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "name": "hfs",
+  "version": null,
+  "repo": "rejetto/hfs",
+  "sha": "e57e55fe3dcfc7938267017eef571e5318948a4c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-39943",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-39943"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-284",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/util-os.ts",
+          "startline": 21,
+          "startcol": 28,
+          "endline": 21,
+          "endcol": 55,
+          "range": false,
+          "code": "execSync(`df -k \"${path}\"`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/util-os.ts",
+          "startline": 10,
+          "startcol": 8,
+          "endline": 28,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "305381bd36eee074fb238b64302a252668daad1d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/util-os.ts",
+            "startline": 10,
+            "startcol": 8,
+            "endline": 28,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

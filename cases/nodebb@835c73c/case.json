@@ -1,0 +1,61 @@
+{
+  "name": "nodebb",
+  "version": null,
+  "repo": "nodebb/nodebb",
+  "sha": "835c73c431865771bf6e9ded8bddd26e6c9d3570",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/app.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-pfj7-2qfw-vwgm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-43788"
+      ],
+      "ghsa": [
+        "GHSA-pfj7-2qfw-vwgm"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/languages.js",
+          "startline": 16,
+          "startcol": 21,
+          "endline": 16,
+          "endcol": 106,
+          "range": false,
+          "code": "fs.promises.readFile(path.join(languagesPath, language, `${namespace}.json`), 'utf8')"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/languages.js",
+          "startline": 15,
+          "startcol": 17,
+          "endline": 24,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

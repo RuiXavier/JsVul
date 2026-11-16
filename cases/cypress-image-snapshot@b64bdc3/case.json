@@ -1,0 +1,187 @@
+{
+  "name": "cypress-image-snapshot",
+  "version": null,
+  "repo": "simonsmith/cypress-image-snapshot",
+  "sha": "b64bdc31943c3eb862efadef32586f96fbf787f5",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/plugin.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-vxjg-hchx-cc4g",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-38695"
+      ],
+      "ghsa": [
+        "GHSA-vxjg-hchx-cc4g"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 106,
+          "startcol": 11,
+          "endline": 106,
+          "endcol": 61,
+          "range": false,
+          "code": "fs.copyFile(snapshotDotPath, snapshotNameFullPath)"
+        },
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 130,
+          "startcol": 11,
+          "endline": 130,
+          "endcol": 51,
+          "range": false,
+          "code": "fs.copyFile(diffOutputPath, diffDotPath)"
+        },
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 131,
+          "startcol": 11,
+          "endline": 131,
+          "endcol": 32,
+          "range": false,
+          "code": "fs.rm(diffOutputPath)"
+        },
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 132,
+          "startcol": 11,
+          "endline": 132,
+          "endcol": 38,
+          "range": false,
+          "code": "fs.rm(snapshotNameFullPath)"
+        },
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 152,
+          "startcol": 9,
+          "endline": 152,
+          "endcol": 59,
+          "range": false,
+          "code": "fs.copyFile(snapshotNameFullPath, snapshotDotPath)"
+        },
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 153,
+          "startcol": 9,
+          "endline": 153,
+          "endcol": 36,
+          "range": false,
+          "code": "fs.rm(snapshotNameFullPath)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/src/diff-snapshot.js",
+          "startline": 244,
+          "startcol": 44,
+          "endline": 244,
+          "endcol": 81,
+          "range": false,
+          "code": "fs.readFileSync(baselineSnapshotPath)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/src/diff-snapshot.js",
+          "startline": 230,
+          "startcol": 5,
+          "endline": 230,
+          "endcol": 64,
+          "range": false,
+          "code": "fs.writeFileSync(baselineSnapshotPath, receivedImageBuffer)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/src/diff-snapshot.js",
+          "startline": 298,
+          "startcol": 9,
+          "endline": 298,
+          "endcol": 68,
+          "range": false,
+          "code": "fs.writeFileSync(receivedSnapshotPath, receivedImageBuffer)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/src/diff-snapshot.js",
+          "startline": 324,
+          "startcol": 7,
+          "endline": 324,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.writeFileSync(diffOutputPath, pngBuffer)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/src/diff-snapshot.js",
+          "startline": 338,
+          "startcol": 7,
+          "endline": 338,
+          "endcol": 66,
+          "range": false,
+          "code": "fs.writeFileSync(baselineSnapshotPath, receivedImageBuffer)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/node_modules/mkdirp/index.js",
+          "startline": 74,
+          "startcol": 9,
+          "endline": 74,
+          "endcol": 31,
+          "range": false,
+          "code": "xfs.mkdirSync(p, mode)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/node_modules/rimraf/rimraf.js",
+          "startline": 314,
+          "startcol": 9,
+          "endline": 314,
+          "endcol": 30,
+          "range": false,
+          "code": "options.unlinkSync(p)"
+        },
+        {
+          "file": "package/node_modules/jest-image-snapshot/node_modules/rimraf/rimraf.js",
+          "startline": 335,
+          "startcol": 5,
+          "endline": 335,
+          "endcol": 25,
+          "range": false,
+          "code": "options.rmdirSync(p)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/plugin.ts",
+          "startline": 50,
+          "startcol": 37,
+          "endline": 161,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ef49519795daf5183f4fac6f3136e194f20f39f4",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/plugin.ts",
+            "startline": 50,
+            "startcol": 37,
+            "endline": 160,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

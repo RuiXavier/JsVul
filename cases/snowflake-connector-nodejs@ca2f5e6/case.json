@@ -1,0 +1,110 @@
+{
+  "name": "snowflake-connector-nodejs",
+  "version": null,
+  "repo": "snowflakedb/snowflake-connector-nodejs",
+  "sha": "ca2f5e6e49caeafb1f882ab873c3dbab5dde67dc",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-h53w-7qw7-vh5c",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-34232"
+      ],
+      "ghsa": [
+        "GHSA-h53w-7qw7-vh5c"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-77"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/open/index.js",
+          "startline": 175,
+          "startcol": 21,
+          "endline": 175,
+          "endcol": 83,
+          "range": false,
+          "code": "childProcess.spawn(command, cliArguments, childProcessOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/connection/result/column.js",
+          "startline": 545,
+          "startcol": 1,
+          "endline": 576,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    },
+    {
+      "id": "snowflakedb/snowflake-connector-nodejs::ca2f5e6e49caeafb1f882ab873c3dbab5dde67dc::lib/connection/result/column.js::466::0",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/connection/result/column.js",
+          "startline": 554,
+          "startcol": 13,
+          "endline": 554,
+          "endcol": 45,
+          "range": false,
+          "code": "eval(\"(\" + rawColumnValue + \")\")"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/connection/result/column.js",
+          "startline": 545,
+          "startcol": 1,
+          "endline": 576,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0c9622ae12cd7d627df404b73a783b4a5f60728a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/connection/result/column.js",
+            "startline": 546,
+            "startcol": 1,
+            "endline": 577,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

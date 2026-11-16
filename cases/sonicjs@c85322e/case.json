@@ -1,0 +1,68 @@
+{
+  "name": "sonicjs",
+  "version": null,
+  "repo": "lane711/sonicjs",
+  "sha": "c85322e0dc082b2f2fcaab426a3b7c9edc96f2b1",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2023-33690",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-33690"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/send/index.js",
+          "startline": 790,
+          "startcol": 16,
+          "endline": 790,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.createReadStream(path, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server/services/backup.service.js",
+          "startline": 20,
+          "startcol": 12,
+          "endline": 36,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bc565264ca83a57bc6ee0f1578daf3f8733e02fb",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/server/services/backup.service.js",
+            "startline": 21,
+            "startcol": 12,
+            "endline": 45,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

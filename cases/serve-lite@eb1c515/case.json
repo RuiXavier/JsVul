@@ -1,0 +1,72 @@
+{
+  "name": "serve-lite",
+  "version": null,
+  "repo": "beenotung/serve-lite",
+  "sha": "eb1c51546ef1839330fd1447d939ca2dc08ed4f9",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5qq4-m6c3-xxmf",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-21192"
+      ],
+      "ghsa": [
+        "GHSA-5qq4-m6c3-xxmf"
+      ],
+      "snyk": [
+        "SNYK-JS-SERVELITE-3149916"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/server.js",
+          "startline": 122,
+          "startcol": 25,
+          "endline": 122,
+          "endcol": 44,
+          "range": false,
+          "code": "fs.readdirSync(dir)"
+        },
+        {
+          "file": "package/server.js",
+          "startline": 145,
+          "startcol": 11,
+          "endline": 145,
+          "endcol": 36,
+          "range": false,
+          "code": "fs.createReadStream(file)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server.js",
+          "startline": 105,
+          "startcol": 1,
+          "endline": 169,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

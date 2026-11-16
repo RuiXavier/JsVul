@@ -1,0 +1,62 @@
+{
+  "name": "static-eval",
+  "version": null,
+  "repo": "browserify/static-eval",
+  "sha": "5bba7905b0e797460b8f6c2e38ff6869146faab3",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8v27-2fg9-7h62",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [
+        "GHSA-8v27-2fg9-7h62",
+        "GHSA-x9hc-rw35-f44h"
+      ],
+      "snyk": [
+        "SNYK-JS-STATICEVAL-173693"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 151,
+          "startcol": 20,
+          "endline": 151,
+          "endcol": 72,
+          "range": false,
+          "code": "Function(keys.join(', '), 'return ' + unparse(node))"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 3,
+          "startcol": 18,
+          "endline": 176,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

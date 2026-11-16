@@ -1,0 +1,64 @@
+{
+  "name": "roo-code",
+  "version": null,
+  "repo": "roocodeinc/roo-code",
+  "sha": "714fafd3286a195befa51a93083dda99718d2c4b",
+  "subdir": "webview-ui",
+  "siblings": {
+    "@roo-code/types": "packages/types"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-p278-52x9-cffx",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-54377"
+      ],
+      "ghsa": [
+        "GHSA-p278-52x9-cffx"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-77"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/utils/command-validation.ts",
+          "startline": 71,
+          "startcol": 8,
+          "endline": 228,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "9d434c2db9b20eb5c78b698cb2b0037cd2074534",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/command-validation.ts",
+            "startline": 72,
+            "startcol": 8,
+            "endline": 90,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "name": "steel-browser",
+  "version": null,
+  "repo": "steel-dev/steel-browser",
+  "sha": "9e0f3975d36cf8e32fdc6e701d8ee1b0e13bac92",
+  "subdir": "api",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-6152",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-6152"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/modules/files/files.controller.ts",
+          "startline": 26,
+          "startcol": 43,
+          "endline": 26,
+          "endcol": 73,
+          "range": false,
+          "code": "createWriteStream(destination)"
+        },
+        {
+          "file": "package/src/modules/files/files.controller.ts",
+          "startline": 68,
+          "startcol": 19,
+          "endline": 68,
+          "endcol": 35,
+          "range": false,
+          "code": "unlink(filePath)"
+        },
+        {
+          "file": "package/src/services/file.service.ts",
+          "startline": 189,
+          "startcol": 13,
+          "endline": 189,
+          "endcol": 54,
+          "range": false,
+          "code": "rename(options.filePath, destinationPath)"
+        },
+        {
+          "file": "package/src/services/file.service.ts",
+          "startline": 191,
+          "startcol": 13,
+          "endline": 191,
+          "endcol": 37,
+          "range": false,
+          "code": "unlink(options.filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/modules/files/files.controller.ts",
+          "startline": 31,
+          "startcol": 33,
+          "endline": 157,
+          "endcol": 1,
+          "range": true
+        },
+        {
+          "file": "package/src/modules/files/files.routes.ts",
+          "startline": 14,
+          "startcol": 1,
+          "endline": 131,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7ba93a10000fb77ee01731478ef40551a27bd5b9",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/modules/files/files.controller.ts",
+            "startline": 15,
+            "startcol": 3,
+            "endline": 80,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/modules/files/files.routes.ts",
+            "startline": 8,
+            "startcol": 1,
+            "endline": 144,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

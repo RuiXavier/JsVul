@@ -1,0 +1,61 @@
+{
+  "name": "sim",
+  "version": null,
+  "repo": "simstudioai/sim",
+  "sha": "766279bb8bbbf33ea7c5619a50e155009116cc2a",
+  "subdir": "apps/sim",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/app/api/files/delete/route.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-9801",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-9801"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/app/api/files/delete/route.ts",
+          "startline": 103,
+          "startcol": 11,
+          "endline": 103,
+          "endcol": 27,
+          "range": false,
+          "code": "unlink(fullPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/app/api/files/upload/route.ts",
+          "startline": 16,
+          "startcol": 8,
+          "endline": 121,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "45372aece5e05e04b417442417416a52e90ba174",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

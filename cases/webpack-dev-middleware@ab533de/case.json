@@ -1,0 +1,88 @@
+{
+  "name": "webpack-dev-middleware",
+  "version": null,
+  "repo": "webpack/webpack-dev-middleware",
+  "sha": "ab533de933c6684218172b86992f35c3ca6c58a4",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-wr3j-pwj9-hqq6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-29180"
+      ],
+      "ghsa": [
+        "GHSA-wr3j-pwj9-hqq6"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/utils/getFilenameFromUrl.js",
+          "startline": 108,
+          "startcol": 11,
+          "endline": 108,
+          "endcol": 56,
+          "range": false,
+          "code": "(context.outputFileSystem.statSync)(filename)"
+        },
+        {
+          "file": "package/src/utils/getFilenameFromUrl.js",
+          "startline": 133,
+          "startcol": 13,
+          "endline": 133,
+          "endcol": 58,
+          "range": false,
+          "code": "(context.outputFileSystem.statSync)(filename)"
+        },
+        {
+          "file": "package/src/utils/compatibleAPI.js",
+          "startline": 264,
+          "startcol": 9,
+          "endline": 267,
+          "endcol": 11,
+          "range": false,
+          "code": "(options.outputFileSystem.createReadStream)(filename, {\n          start,\n          end,\n        })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/utils/getFilenameFromUrl.js",
+          "startline": 59,
+          "startcol": 1,
+          "endline": 150,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e10008c762e4d5821ed6990348dabf0d4d93a10e",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/getFilenameFromUrl.js",
+            "startline": 76,
+            "startcol": 1,
+            "endline": 180,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

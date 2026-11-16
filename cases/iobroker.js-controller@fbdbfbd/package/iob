@@ -1,0 +1,2 @@
+#!/usr/bin/env node
+require('iobroker.js-controller/lib/setup').execute();

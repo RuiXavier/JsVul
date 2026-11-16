@@ -1,0 +1,1635 @@
+diff --git a/package.json b/package.json
+index 3178f01..9796696 100644
+--- a/package.json
++++ b/package.json
+@@ -26,7 +26,11 @@
+   },
+   "author": "Nasr Mohamed",
+   "devDependencies": {
++    "@types/archiver": "^6.0.3",
++    "@types/iconv-lite": "^0.0.1",
+     "@types/json-stringify-safe": "^5.0.3",
++    "@types/lodash-es": "^4.17.12",
++    "@types/mime-types": "^2.1.4",
+     "@types/node": "^22.14.1",
+     "@types/ws": "^8.5.14",
+     "fastify": "^5.2.1",
+@@ -46,7 +50,7 @@
+     "@fastify/vite": "^7.0.1",
+     "@mozilla/readability": "^0.5.0",
+     "@scalar/fastify-api-reference": "^1.25.116",
+-    "@types/mime-types": "^2.1.4",
++    "archiver": "^7.0.1",
+     "axios": "^1.8.4",
+     "chokidar": "^4.0.3",
+     "dotenv": "^16.4.7",
+@@ -61,6 +65,7 @@
+     "jsdom": "^26.0.0",
+     "json-stringify-safe": "^5.0.1",
+     "level": "^9.0.0",
++    "lodash-es": "^4.17.21",
+     "mime-types": "^2.1.35",
+     "pino": "^9.6.0",
+     "pino-pretty": "^13.0.0",
+@@ -78,4 +83,4 @@
+   "peerDependencies": {
+     "fastify": "^5.0.0"
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/env.ts b/src/env.ts
+index e1b253d..9dd8056 100644
+--- a/src/env.ts
++++ b/src/env.ts
+@@ -1,5 +1,6 @@
+ import { z } from "zod";
+ import { config } from "dotenv";
++import path from "path";
+ 
+ config();
+ 
+diff --git a/src/modules/files/files.controller.ts b/src/modules/files/files.controller.ts
+index bd40468..8c89227 100644
+--- a/src/modules/files/files.controller.ts
++++ b/src/modules/files/files.controller.ts
+@@ -1,320 +1,254 @@
+ import { MultipartFile } from "@fastify/multipart";
+-import { createHash } from "crypto";
++import archiver from "archiver";
+ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+-import { createWriteStream } from "fs";
+-import { unlink } from "fs/promises";
++import * as fs from "fs";
+ import http from "http";
+ import https from "https";
+-import { tmpdir } from "os";
+-import { join } from "path";
+-import { Readable, Transform } from "stream";
+-import { pipeline } from "stream/promises";
++import mime from "mime-types";
++import { Readable } from "stream";
++import { FileService } from "../../services/file.service.js";
+ import { getErrors } from "../../utils/errors.js";
+ 
+-async function saveWithChecksum(
+-  inputStream: NodeJS.ReadableStream,
+-  destination: string,
+-): Promise<{ checksum: string }> {
+-  const hash = createHash("sha256");
+-  const hashStream = new Transform({
+-    transform(chunk, _encoding, callback) {
+-      hash.update(chunk);
+-      callback(null, chunk);
+-    },
+-  });
+-
+-  await pipeline(inputStream, hashStream, createWriteStream(destination));
+-  const checksum = hash.digest("hex");
+-  return { checksum };
+-}
+-
+-export const handleFileUpload = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{ Params: { sessionId: string } }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    if (!request.isMultipart()) {
+-      return reply.code(400).send({
+-        success: false,
+-        message: "Request must be multipart/form-data",
+-      });
+-    }
+-
+-    let id: string | null = null;
+-
+-    let name: string | null = null;
+-    let contentType: string | null = null;
+-    let metadata: Record<string, any> | null = null;
+-    let checksum: string | null = null;
+-    let providedName: string | null = null;
+-
+-    let filePath: string | null = null;
+-    let fileUrl: string | null = null;
+-
+-    for await (const part of request.parts()) {
+-      if (part.type === "file") {
+-        const file = part as MultipartFile;
+-        name = file.filename;
+-        contentType = file.mimetype;
+-
+-        filePath = join(tmpdir(), `upload_${Date.now()}_${file.filename}`);
++export class FilesController {
++  constructor(private fileService: FileService) {}
++
++  async handleFileUpload(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>,
++    reply: FastifyReply,
++  ) {
++    try {
++      if (!request.isMultipart()) {
++        return reply.code(400).send({
++          success: false,
++          message: "Request must be multipart/form-data",
++        });
++      }
+ 
+-        try {
+-          const result = await saveWithChecksum(file.file, filePath);
+-          checksum = result.checksum;
+-        } catch (error) {
+-          try {
+-            await unlink(filePath);
+-          } catch (e) {}
+-          return reply.code(500).send({ message: "Failed to save uploaded file temporarily" });
++      const filePath = request.params["*"];
++      let fileUrl: string | null = null;
++      let fileProvided: boolean = false;
++      let saveFileResult: Awaited<ReturnType<typeof this.fileService.saveFile>> | null = null;
++
++      for await (const part of request.parts()) {
++        if (part.type === "file") {
++          const file = part as MultipartFile;
++          saveFileResult = await this.fileService.saveFile({
++            filePath,
++            stream: file.file,
++          });
++          fileProvided = true;
++          continue;
+         }
+ 
+-        continue;
+-      }
+-
+-      if (part.fieldname === "fileId" && part.value) {
+-        id = part.value as string;
+-        continue;
++        if (part.fieldname === "fileUrl" && part.value) {
++          fileUrl = part.value as string;
++          continue;
++        }
+       }
+ 
+-      if (part.fieldname === "fileUrl" && part.value) {
+-        fileUrl = part.value as string;
+-        continue;
++      if (!fileProvided && !fileUrl) {
++        return reply.code(400).send({
++          success: false,
++          message: "Either file or fileUrl must be provided",
++        });
+       }
+ 
+-      if (part.fieldname === "name" && part.value) {
+-        providedName = part.value as string;
+-        continue;
++      if (!fileProvided) {
++        saveFileResult = await this.fileService.saveFile({
++          filePath,
++          stream: (await this.createStreamFromUrl(fileUrl!)).stream,
++        });
+       }
+ 
+-      if (part.fieldname === "metadata" && part.value) {
+-        try {
+-          metadata = JSON.parse(part.value as string);
+-        } catch (e) {
+-          return reply.code(400).send({
+-            success: false,
+-            message: "Invalid JSON format for metadata",
+-          });
+-        }
++      if (!saveFileResult) {
++        return reply.code(500).send({
++          success: false,
++          message: "Failed to save file",
++        });
+       }
+-    }
+ 
+-    if (!filePath && !fileUrl) {
+-      return reply.code(400).send({
+-        success: false,
+-        message: "Either file or fileUrl must be provided",
++      return reply.send({
++        path: saveFileResult.path,
++        size: saveFileResult.size,
++        lastModified: saveFileResult.lastModified,
+       });
++    } catch (e: unknown) {
++      const error = getErrors(e);
++      return reply.code(500).send({ success: false, message: error });
+     }
++  }
+ 
+-    if (!filePath) {
+-      const streamFromUrl = await createStreamFromUrl(fileUrl!);
+-      name = streamFromUrl.name;
+-      contentType = streamFromUrl.contentType || contentType;
++  private async createStreamFromUrl(url: string): Promise<{ stream: Readable; contentType?: string; name: string }> {
++    return new Promise((resolve, reject) => {
++      const protocol = url.startsWith("https") ? https : http;
+ 
+-      filePath = join(tmpdir(), `upload_${Date.now()}_${name}`);
++      protocol
++        .get(url, (response) => {
++          if (response.statusCode !== 200) {
++            return reject(new Error(`Failed to fetch file: ${response.statusCode}`));
++          }
+ 
+-      try {
+-        const result = await saveWithChecksum(streamFromUrl.stream, filePath);
+-        checksum = result.checksum;
+-      } catch (error) {
+-        try {
+-          await unlink(filePath);
+-        } catch (e) {}
+-        return reply.code(500).send({ message: "Failed to save uploaded file temporarily" });
+-      }
+-    }
++          const contentType = response.headers["content-type"];
++          const disposition = response.headers["content-disposition"] || "";
++          let name: string | null = null;
+ 
+-    if (!!providedName) {
+-      name = providedName;
+-    }
++          const nameMatch = disposition.match(/filename="(.+)"/i);
+ 
+-    const file = await server.fileService.saveFile({
+-      sessionId: request.params.sessionId,
+-      filePath,
+-      name: name!,
+-      checksum: checksum!,
+-      contentType: contentType!,
+-      ...(id && { id }),
+-      ...(metadata && { metadata }),
+-    });
++          if (nameMatch && nameMatch[1]) {
++            name = nameMatch[1];
++          } else {
++            name = url.split("/").pop() || "downloaded-file";
++          }
+ 
+-    return reply.send({
+-      id: file.id,
+-      name: file.name,
+-      size: file.size,
+-      contentType: file.contentType,
+-      createdAt: file.createdAt.toISOString(),
+-      updatedAt: file.updatedAt.toISOString(),
+-      checksum: file.checksum,
+-      metadata: file.metadata,
+-      path: file.path,
++          resolve({
++            stream: response,
++            contentType,
++            name,
++          });
++        })
++        .on("error", reject);
+     });
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
+   }
+-};
+-
+-async function createStreamFromUrl(url: string): Promise<{ stream: Readable; contentType?: string; name: string }> {
+-  return new Promise((resolve, reject) => {
+-    const protocol = url.startsWith("https") ? https : http;
+-
+-    protocol
+-      .get(url, (response) => {
+-        if (response.statusCode !== 200) {
+-          return reject(new Error(`Failed to fetch file: ${response.statusCode}`));
+-        }
+-
+-        const contentType = response.headers["content-type"];
+-        const disposition = response.headers["content-disposition"] || "";
+-        let name: string | null = null;
+ 
+-        const nameMatch = disposition.match(/filename="(.+)"/i);
++  async handleFileDownload(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>,
++    reply: FastifyReply,
++  ) {
++    try {
++      const { stream, size, lastModified } = await this.fileService.downloadFile({
++        filePath: request.params["*"],
++      });
+ 
+-        if (nameMatch && nameMatch[1]) {
+-          name = nameMatch[1];
+-        } else {
+-          name = url.split("/").pop() || "downloaded-file";
+-        }
++      const name = request.params["*"].split("/").pop() || "downloaded-file";
+ 
+-        resolve({
+-          stream: response,
+-          contentType,
+-          name,
+-        });
+-      })
+-      .on("error", reject);
+-  });
+-}
++      reply
++        .header("Content-Type", mime.lookup(request.params["*"]) || "application/octet-stream")
++        .header("Content-Length", size)
++        .header("Content-Disposition", `attachment; filename="${encodeURIComponent(name)}"`)
++        .header("Last-Modified", lastModified.toISOString());
+ 
+-export const handleGetFile = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    const file = await server.fileService.getFile({ sessionId: request.params.sessionId, id: request.params.fileId });
+-    return reply.send({
+-      id: file.id,
+-      name: file.name,
+-      size: file.size,
+-      contentType: file.contentType,
+-      createdAt: file.createdAt.toISOString(),
+-      updatedAt: file.updatedAt.toISOString(),
+-      checksum: file.checksum,
+-      metadata: file.metadata,
+-      path: file.path,
+-    });
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
++      return reply.send(stream);
++    } catch (e: unknown) {
++      const error = getErrors(e);
++      return reply.code(500).send({ success: false, message: error });
++    }
+   }
+-};
+-
+-export const handleFileDownload = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    const { stream, size, name, contentType } = await server.fileService.downloadFile({
+-      sessionId: request.params.sessionId,
+-      id: request.params.fileId,
++
++  async handleFileHead(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>,
++    reply: FastifyReply,
++  ) {
++    const { size, lastModified } = await this.fileService.getFile({
++      filePath: request.params["*"],
+     });
+ 
++    const name = request.params["*"].split("/").pop() || "downloaded-file";
++
+     reply
+-      .header("Content-Type", contentType)
+       .header("Content-Length", size)
++      .header("Last-Modified", lastModified.toISOString())
++      .header("Content-Type", mime.lookup(request.params["*"]) || "application/octet-stream")
+       .header("Content-Disposition", `attachment; filename="${encodeURIComponent(name)}"`);
+ 
+-    return reply.send(stream);
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
++    return reply.code(200).send();
+   }
+-};
+-
+-export const handleFileList = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{
+-    Params: { sessionId: string };
+-  }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    const files = await server.fileService.listFiles({ sessionId: request.params.sessionId });
+-
+-    return reply.send({
+-      data: files.map((file) => ({
+-        id: file.id,
+-        name: file.name,
+-        size: file.size,
+-        contentType: file.contentType,
+-        createdAt: file.createdAt.toISOString(),
+-        updatedAt: file.updatedAt.toISOString(),
+-        checksum: file.checksum,
+-        metadata: file.metadata,
+-        path: file.path,
+-      })),
+-    });
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
++
++  async handleFileList(
++    server: FastifyInstance,
++    request: FastifyRequest<{
++      Params: { sessionId: string };
++    }>,
++    reply: FastifyReply,
++  ) {
++    try {
++      const files = await this.fileService.listFiles();
++
++      return reply.send({
++        data: files.map((file) => ({
++          path: file.path,
++          size: file.size,
++          lastModified: file.lastModified,
++        })),
++      });
++    } catch (e: unknown) {
++      const error = getErrors(e);
++      return reply.code(500).send({ success: false, message: error });
++    }
+   }
+-};
+-
+-export const handleFileDelete = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    const file = await server.fileService.deleteFile({
+-      sessionId: request.params.sessionId,
+-      id: request.params.fileId,
+-    });
+ 
+-    return reply.send({
+-      id: file.id,
+-      name: file.name,
+-      size: file.size,
+-      contentType: file.contentType,
+-      createdAt: file.createdAt.toISOString(),
+-      updatedAt: file.updatedAt.toISOString(),
+-      checksum: file.checksum,
+-      metadata: file.metadata,
+-      path: file.path,
+-      success: true,
+-    });
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
++  async handleFileDelete(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>,
++    reply: FastifyReply,
++  ) {
++    try {
++      await this.fileService.deleteFile({
++        filePath: request.params["*"],
++      });
++      return reply.code(204).send();
++    } catch (e: unknown) {
++      const error = getErrors(e);
++      return reply.code(500).send({ success: false, message: error });
++    }
+   }
+-};
+-
+-export const handleSessionFilesDelete = async (
+-  server: FastifyInstance,
+-  request: FastifyRequest<{ Params: { sessionId: string } }>,
+-  reply: FastifyReply,
+-) => {
+-  try {
+-    return reply.send({
+-      data: (await server.fileService.cleanupFiles({ sessionId: request.params.sessionId })).map((file) => ({
+-        id: file.id,
+-        name: file.name,
+-        size: file.size,
+-        contentType: file.contentType,
+-        createdAt: file.createdAt.toISOString(),
+-        updatedAt: file.updatedAt.toISOString(),
+-        checksum: file.checksum,
+-        metadata: file.metadata,
+-        path: file.path,
+-        success: true,
+-      })),
+-    });
+-  } catch (e: unknown) {
+-    const error = getErrors(e);
+-    return reply.code(500).send({ success: false, message: error });
++
++  async handleFileDeleteAll(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string } }>,
++    reply: FastifyReply,
++  ) {
++    try {
++      await this.fileService.cleanupFiles();
++      return reply.code(204).send();
++    } catch (e: unknown) {
++      const error = getErrors(e);
++      return reply.code(500).send({ success: false, message: error });
++    }
++  }
++
++  async handleDownloadArchive(
++    server: FastifyInstance,
++    request: FastifyRequest<{ Params: { sessionId: string } }>,
++    reply: FastifyReply,
++  ) {
++    const prebuiltArchivePath = await this.fileService.getPrebuiltArchivePath();
++
++    try {
++      const stats = await fs.promises.stat(prebuiltArchivePath);
++      if (stats.isFile()) {
++        server.log.info(`Serving prebuilt archive: ${prebuiltArchivePath}`);
++        const stream = fs.createReadStream(prebuiltArchivePath);
++
++        reply.header("Content-Type", "application/zip");
++        reply.header("Content-Disposition", `attachment; filename="files.zip"`);
++        reply.header("Content-Length", stats.size);
++        reply.header("Last-Modified", stats.mtime.toUTCString());
++        return reply.send(stream);
++      } else {
++        server.log.warn(`Prebuilt archive path exists but is not a file: ${prebuiltArchivePath}`);
++      }
++
++      server.log.info("Sending empty archive.");
++      reply.header("Content-Type", "application/zip");
++      reply.header("Content-Disposition", `attachment; filename="files-archive-empty.zip"`);
++      const emptyArchive = archiver("zip", { zlib: { level: 9 } }); // Use level 9 for consistency
++
++      emptyArchive.pipe(reply.raw);
++
++      await emptyArchive.finalize();
++      return;
++    } catch (err: any) {
++      server.log.error("Error during handleFileArchive:", err);
++      if (!reply.sent) {
++        try {
++          reply.code(500).send({ message: "Failed to process archive request" });
++        } catch (sendError) {
++          server.log.error("Error sending 500 response after archive handling error:", sendError);
++        }
++      }
++    }
+   }
+-};
++}
+diff --git a/src/modules/files/files.routes.ts b/src/modules/files/files.routes.ts
+index 2219f35..d4761ca 100644
+--- a/src/modules/files/files.routes.ts
++++ b/src/modules/files/files.routes.ts
+@@ -1,17 +1,13 @@
+-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+-import { $ref } from "../../plugins/schemas.js";
+-import {
+-  handleFileDelete,
+-  handleFileDownload,
+-  handleFileList,
+-  handleFileUpload,
+-  handleGetFile,
+-  handleSessionFilesDelete,
+-} from "./files.controller.js";
+ import fastifyMultipart from "@fastify/multipart";
++import { FastifyInstance, FastifyRequest } from "fastify";
++import { $ref } from "../../plugins/schemas.js";
+ import { MB } from "../../utils/size.js";
++import { FilesController } from "./files.controller.js";
++import { FileService } from "../../services/file.service.js";
+ 
+ async function routes(server: FastifyInstance) {
++  const filesController = new FilesController(FileService.getInstance());
++
+   await server.register(fastifyMultipart, {
+     limits: {
+       fileSize: server.steelBrowserConfig.fileStorage?.maxSizePerSession ?? 100 * MB,
+@@ -20,7 +16,7 @@ async function routes(server: FastifyInstance) {
+   });
+ 
+   server.post(
+-    "/sessions/:sessionId/files",
++    "/sessions/:sessionId/files/*",
+     {
+       schema: {
+         operationId: "upload_file",
+@@ -36,31 +32,28 @@ async function routes(server: FastifyInstance) {
+     },
+     async (
+       request: FastifyRequest<{
+-        Params: { sessionId: string };
++        Params: { sessionId: string; "*": string };
+       }>,
+       reply,
+-    ) => handleFileUpload(server, request, reply),
++    ) => filesController.handleFileUpload(server, request, reply),
+   );
+ 
+-  server.get(
+-    "/sessions/:sessionId/files/:fileId",
++  server.head(
++    "/sessions/:sessionId/files/*",
+     {
+       schema: {
+-        operationId: "get_file_details",
+-        summary: "Get file details",
+-        description: "Get details of a file in a session",
++        operationId: "head_file",
++        summary: "Head a file",
++        description: "Head a file from a session",
+         tags: ["Files"],
+-        response: {
+-          200: $ref("FileDetails"),
+-        },
+       },
+     },
+-    async (request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>, reply: FastifyReply) =>
+-      handleGetFile(server, request, reply),
++    async (request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>, reply) =>
++      filesController.handleFileHead(server, request, reply),
+   );
+ 
+   server.get(
+-    "/sessions/:sessionId/files/:fileId/download",
++    "/sessions/:sessionId/files/*",
+     {
+       schema: {
+         operationId: "download_file",
+@@ -69,8 +62,8 @@ async function routes(server: FastifyInstance) {
+         tags: ["Files"],
+       },
+     },
+-    async (request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>, reply) =>
+-      handleFileDownload(server, request, reply),
++    async (request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>, reply) =>
++      filesController.handleFileDownload(server, request, reply),
+   );
+ 
+   server.get(
+@@ -91,11 +84,11 @@ async function routes(server: FastifyInstance) {
+         Params: { sessionId: string };
+       }>,
+       reply,
+-    ) => handleFileList(server, request, reply),
++    ) => filesController.handleFileList(server, request, reply),
+   );
+ 
+   server.delete(
+-    "/sessions/:sessionId/files/:fileId",
++    "/sessions/:sessionId/files/*",
+     {
+       schema: {
+         operationId: "delete_file",
+@@ -103,12 +96,15 @@ async function routes(server: FastifyInstance) {
+         description: "Delete a file from a session",
+         tags: ["Files"],
+         response: {
+-          200: $ref("DeleteFile"),
++          204: {
++            type: "null",
++            description: "No content",
++          },
+         },
+       },
+     },
+-    async (request: FastifyRequest<{ Params: { sessionId: string; fileId: string } }>, reply) =>
+-      handleFileDelete(server, request, reply),
++    async (request: FastifyRequest<{ Params: { sessionId: string; "*": string } }>, reply) =>
++      filesController.handleFileDelete(server, request, reply),
+   );
+ 
+   server.delete(
+@@ -120,13 +116,30 @@ async function routes(server: FastifyInstance) {
+         description: "Delete all files from a session",
+         tags: ["Files"],
+         response: {
+-          200: $ref("DeleteFiles"),
++          204: {
++            type: "null",
++            description: "No content",
++          },
+         },
+       },
+     },
+ 
+     async (request: FastifyRequest<{ Params: { sessionId: string } }>, reply) =>
+-      handleSessionFilesDelete(server, request, reply),
++      filesController.handleFileDeleteAll(server, request, reply),
++  );
++
++  server.get(
++    "/sessions/:sessionId/files.zip",
++    {
++      schema: {
++        operationId: "download_archive",
++        summary: "Download archive",
++        description: "Download all files from the session as a zip archive.",
++        tags: ["Files"],
++      },
++    },
++    async (request: FastifyRequest<{ Params: { sessionId: string } }>, reply) =>
++      filesController.handleDownloadArchive(server, request, reply),
+   );
+ }
+ 
+diff --git a/src/modules/files/files.schema.ts b/src/modules/files/files.schema.ts
+index 7c2f9ea..e99600c 100644
+--- a/src/modules/files/files.schema.ts
++++ b/src/modules/files/files.schema.ts
+@@ -1,50 +1,27 @@
+ import { z } from "zod";
+ 
+-// For schema generation
+ const FileUploadRequest = z.object({
+   file: z.any().optional().describe("The file to upload (binary)"),
+-  fileId: z.string().uuid().optional().describe("Optional custom UUID for the file"),
+   fileUrl: z.string().url().optional().describe("Public URL to download file from"),
+-  name: z.string().optional().describe("Filename to use in session"),
+-  metadata: z.record(z.any()).optional().describe("Custom metadata to associate with the file"),
+ });
+ 
+ const FileDetails = z.object({
+-  id: z.string().uuid().describe("Unique identifier for the file"),
+-  name: z.string().describe("Name of the file"),
+-  size: z.number().describe("Size of the file in bytes"),
+-  contentType: z.string().describe("MIME type of the file"),
+-  createdAt: z.string().datetime().describe("Timestamp when the file was created"),
+-  updatedAt: z.string().datetime().describe("Timestamp when the file was last updated"),
+-  checksum: z.string().describe("Checksum or hash of the file content for integrity verification"),
+-  metadata: z.record(z.any()).optional().describe("Custom metadata associated with the file"),
+   path: z.string().describe("Path to the file in the storage system"),
++  size: z.number().describe("Size of the file in bytes"),
++  lastModified: z.string().datetime().describe("Timestamp when the file was last updated"),
+ });
+ 
+ const MultipleFiles = z.object({
+   data: z.array(FileDetails).describe("Array of files for the current page"),
+ });
+ 
+-const DeleteFile = FileDetails.merge(
+-  z.object({
+-    success: z.boolean().describe("Indicates if the file deletion was successful"),
+-  }),
+-);
+-const DeleteFiles = z.object({
+-  data: z.array(DeleteFile).describe("Array of deleted files"),
+-});
+-
+ export type FileDetails = z.infer<typeof FileDetails>;
+ export type MultipleFiles = z.infer<typeof MultipleFiles>;
+ export type FileUploadRequest = z.infer<typeof FileUploadRequest>;
+-export type DeleteFile = z.infer<typeof DeleteFile>;
+-export type DeleteFiles = z.infer<typeof DeleteFiles>;
+ 
+ export const filesSchemas = {
+   FileUploadRequest,
+   FileDetails,
+-  DeleteFile,
+-  DeleteFiles,
+   MultipleFiles,
+ };
+ 
+diff --git a/src/plugins/browser.ts b/src/plugins/browser.ts
+index 4525519..5d755ae 100644
+--- a/src/plugins/browser.ts
++++ b/src/plugins/browser.ts
+@@ -18,9 +18,12 @@ const browserInstancePlugin: FastifyPluginAsync = async (fastify, _options) => {
+   fastify.decorate("registerCDPLaunchHook", (hook: (config: BrowserLauncherOptions) => Promise<void> | void) => {
+     cdpService.registerLaunchHook(hook);
+   });
+-  fastify.decorate("registerCDPShutdownHook", (hook: (config: BrowserLauncherOptions | null) => Promise<void> | void) => {
+-    cdpService.registerShutdownHook(hook);
+-  });
++  fastify.decorate(
++    "registerCDPShutdownHook",
++    (hook: (config: BrowserLauncherOptions | null) => Promise<void> | void) => {
++      cdpService.registerShutdownHook(hook);
++    },
++  );
+ 
+   fastify.addHook("onListen", async function () {
+     this.log.info("Launching default browser...");
+diff --git a/src/plugins/file-storage.ts b/src/plugins/file-storage.ts
+index 91b6c26..3bf8b5a 100644
+--- a/src/plugins/file-storage.ts
++++ b/src/plugins/file-storage.ts
+@@ -4,8 +4,7 @@ import { FileService } from "../services/file.service.js";
+ 
+ const fileStoragePlugin: FastifyPluginAsync = async (fastify, _options) => {
+   fastify.log.info("Registering file service");
+-  const fileService = new FileService({}, fastify.log);
+-  fastify.decorate("fileService", fileService);
++  fastify.decorate("fileService", FileService.getInstance());
+ };
+ 
+ export default fp(fileStoragePlugin, "5.x");
+diff --git a/src/services/cdp/cdp.service.ts b/src/services/cdp/cdp.service.ts
+index 98cbac8..4362730 100644
+--- a/src/services/cdp/cdp.service.ts
++++ b/src/services/cdp/cdp.service.ts
+@@ -24,6 +24,7 @@ import { extractStorageForPage, groupSessionStorageByOrigin, handleFrameNavigate
+ import { getExtensionPaths } from "../../utils/extensions.js";
+ import { ChromeContextService } from "../context/chrome-context.service.js";
+ import { SessionData } from "../context/types.js";
++import { FileService } from "../file.service.js";
+ import { PluginManager } from "./plugins/core/plugin-manager.js";
+ 
+ export class CDPService extends EventEmitter {
+@@ -437,6 +438,15 @@ export class CDPService extends EventEmitter {
+         await this.browserInstance.close();
+         await this.browserInstance.process()?.kill();
+         await this.shutdownHook();
++
++        this.logger.info("[CDPService] Cleaning up files during shutdown");
++        try {
++          await FileService.getInstance().cleanupFiles();
++          this.logger.info("[CDPService] Files cleaned successfully");
++        } catch (error) {
++          this.logger.error(`[CDPService] Error cleaning files during shutdown: ${error}`);
++        }
++
+         this.fingerprintData = null;
+         this.currentSessionConfig = null;
+         this.browserInstance = null;
+@@ -449,6 +459,13 @@ export class CDPService extends EventEmitter {
+         await this.browserInstance?.close();
+         await this.browserInstance?.process()?.kill();
+         await this.shutdownHook();
++
++        try {
++          await FileService.getInstance().cleanupFiles();
++        } catch (cleanupError) {
++          this.logger.error(`[CDPService] Error cleaning files during error recovery: ${cleanupError}`);
++        }
++
+         this.browserInstance = null;
+         this.shuttingDown = false;
+       }
+@@ -496,6 +513,14 @@ export class CDPService extends EventEmitter {
+         this.launchConfig = config || this.defaultLaunchConfig;
+         this.logger.info("[CDPService] Launching new browser instance.");
+ 
++        this.logger.info("[CDPService] Cleaning up files before browser launch");
++        try {
++          await FileService.getInstance().cleanupFiles();
++          this.logger.info("[CDPService] Files cleaned successfully before launch");
++        } catch (error) {
++          this.logger.error(`[CDPService] Error cleaning files before launch: ${error}`);
++        }
++
+         const { options, userAgent, userDataDir } = this.launchConfig;
+ 
+         const fingerprintGen = new FingerprintGenerator({
+diff --git a/src/services/file.service.ts b/src/services/file.service.ts
+index ce289e0..64f7b7c 100644
+--- a/src/services/file.service.ts
++++ b/src/services/file.service.ts
+@@ -1,154 +1,95 @@
++import archiver from "archiver";
+ import chokidar, { FSWatcher } from "chokidar";
+-import { createHash } from "crypto";
+-import { FastifyBaseLogger } from "fastify";
+ import fs from "fs";
+-import { rename, unlink } from "fs/promises";
+-import mime from "mime-types";
+-import path from "path";
++import type { DebouncedFunc } from "lodash-es";
++import { debounce } from "lodash-es";
++import { tmpdir } from "os";
++import path, { resolve } from "path";
+ import { Readable } from "stream";
+-import { v4 as uuidv4 } from "uuid";
+ import { env } from "../env.js";
+ 
+ interface File {
+-  name: string;
+   size: number;
+-  contentType: string;
+-  createdAt: Date;
+-  updatedAt: Date;
+-  checksum: string;
+-  path: string;
+-  metadata?: Record<string, any>;
++  lastModified: Date;
+ }
+ 
+ export class FileService {
+-  private logger: FastifyBaseLogger;
+-  private baseDownloadPath: string;
+-  private fileMap: Map<string, Map<string, File>> = new Map();
++  private baseFilesPath: string;
+   private fileWatcher: FSWatcher | null = null;
+-  private processingFiles: Set<string> = new Set();
++  private static instance: FileService | null = null;
++  private prebuiltArchiveDir: string;
++  private prebuiltArchivePath: string;
++  private isArchiving: boolean = false;
++  private archiveDebounceTime = 500;
++  private debouncedCreateArchive: DebouncedFunc<() => Promise<string | null>>;
+ 
+-  constructor(_config: {}, logger: FastifyBaseLogger) {
+-    this.logger = logger;
+-    this.baseDownloadPath = env.NODE_ENV === "development" ? path.join(process.cwd(), "/files") : "/files";
+-    fs.mkdirSync(this.baseDownloadPath, { recursive: true });
+-    this.fileMap = new Map();
+-    this.initFileWatcher();
+-  }
++  private constructor() {
++    this.baseFilesPath = env.NODE_ENV !== "production" ? path.join(tmpdir(), "files") : "/files";
++    this.prebuiltArchiveDir = "/tmp/.steel";
++    this.prebuiltArchivePath = path.join(this.prebuiltArchiveDir, "files.zip");
+ 
+-  private initFileWatcher() {
+-    this.fileWatcher = chokidar.watch(this.baseDownloadPath, {
+-      ignored: /(^|[\/\\])\../, // ignore dotfiles
+-      persistent: true,
+-      ignoreInitial: false,
+-      awaitWriteFinish: {
+-        stabilityThreshold: 100,
+-        pollInterval: 50,
+-      },
+-    });
+-
+-    this.fileWatcher.on("add", async (filePath) => {
+-      if (this.processingFiles.has(filePath)) {
+-        return;
+-      }
+-
+-      try {
+-        // Check if the file is in a session directory
+-        const relativePath = path.relative(this.baseDownloadPath, filePath);
+-        const parts = relativePath.split(path.sep);
+-
+-        if (parts.length < 2) {
+-          return; // Not in a session directory
+-        }
++    fs.mkdirSync(this.baseFilesPath, { recursive: true });
+ 
+-        const sessionId = parts[0];
+-        const fileName = parts[parts.length - 1];
++    const boundCreateArchive = this._createArchive.bind(this);
++    this.debouncedCreateArchive = debounce(boundCreateArchive, this.archiveDebounceTime);
+ 
+-        // Skip if already in the file map
+-        if (this.isFileAlreadyTracked(sessionId, filePath)) {
+-          return;
+-        }
+-
+-        this.logger.info(`Detected new file: ${filePath} in session ${sessionId}`);
+-
+-        // Calculate checksum
+-        const checksum = await this.calculateChecksum(filePath);
+-
+-        // Add to file map
+-        if (!this.fileMap.has(sessionId)) {
+-          this.fileMap.set(sessionId, new Map());
+-        }
+-
+-        const stats = await fs.promises.stat(filePath);
+-        const currentDate = new Date();
+-        const id = uuidv4();
+-
+-        const file: File = {
+-          name: fileName,
+-          size: stats.size,
+-          contentType: mime.lookup(fileName) || "application/octet-stream",
+-          createdAt: currentDate,
+-          updatedAt: currentDate,
+-          checksum,
+-          path: filePath,
+-        };
+-
+-        this.fileMap.get(sessionId)!.set(id, file);
+-        this.logger.info(`Added file ${fileName} to session ${sessionId} with ID ${id}`);
+-      } catch (error) {
+-        this.logger.error(`Error processing file ${filePath}: ${error}`);
+-      }
+-    });
+-
+-    this.logger.info(`File watcher initialized for ${this.baseDownloadPath}`);
+-  }
+-
+-  private async calculateChecksum(filePath: string): Promise<string> {
+-    return new Promise((resolve, reject) => {
+-      const hash = createHash("sha256");
+-      const stream = fs.createReadStream(filePath);
+-
+-      stream.on("error", reject);
+-      stream.on("data", (chunk) => hash.update(chunk));
+-      stream.on("end", () => resolve(hash.digest("hex")));
+-    });
++    this.initFileWatcher();
+   }
+ 
+-  private isFileAlreadyTracked(sessionId: string, filePath: string): boolean {
+-    const sessionFiles = this.fileMap.get(sessionId);
+-    if (!sessionFiles) return false;
+-
+-    for (const file of sessionFiles.values()) {
+-      if (file.path === filePath) {
+-        return true;
+-      }
++  public static getInstance() {
++    if (!FileService.instance) {
++      FileService.instance = new FileService();
+     }
+-
+-    return false;
++    return FileService.instance;
+   }
+ 
+-  private async ensureDirectoryExists(dirPath: string): Promise<void> {
+-    await fs.promises.mkdir(dirPath, { recursive: true });
++  private async handleFileAdd(filePath: string) {
++    console.log(`[FileService] File added detected: ${filePath}`);
++    this.debouncedCreateArchive();
+   }
+ 
+-  private sanitizeId(id: string): string {
+-    return path.basename(id);
++  private handleFileDelete(filePath: string) {
++    console.log(`[FileService] File deleted detected: ${filePath}`);
++    this.debouncedCreateArchive();
+   }
+ 
+-  private getSessionPath(sessionId: string): string {
+-    return path.join(this.baseDownloadPath, this.sanitizeId(sessionId));
++  private handleDirChange(filePath: string) {
++    console.log(`[FileService] Directory change detected: ${filePath}`);
++    this.debouncedCreateArchive();
+   }
+ 
+-  private buildFileName(originalName: string, id: string): string {
+-    const parsed = path.parse(originalName);
+-    const safeBase = this.sanitizeId(parsed.name);
+-    const safeExt = parsed.ext;
+-    return `${safeBase}-${id}${safeExt}`;
++  private initFileWatcher() {
++    this.fileWatcher = chokidar.watch(this.baseFilesPath, {
++      ignored: /(^|[\/\\])\../,
++      persistent: true,
++      ignoreInitial: false,
++      awaitWriteFinish: {
++        stabilityThreshold: 500,
++        pollInterval: 100,
++      },
++      depth: undefined,
++    });
++
++    console.log(`[FileService] File watcher initialized for ${this.baseFilesPath}`);
++
++    this.fileWatcher
++      .on("add", (filePath) => this.handleFileAdd(filePath))
++      .on("unlink", (filePath) => this.handleFileDelete(filePath))
++      .on("addDir", (filePath) => this.handleDirChange(filePath))
++      .on("unlinkDir", (filePath) => this.handleDirChange(filePath))
++      .on("error", (error) => console.error(`Watcher error: ${error}`))
++      .on("ready", () => {
++        console.log("[FileService] Initial scan complete. Ready for changes.");
++        this.debouncedCreateArchive();
++      });
+   }
+ 
+-  public async getFilePath({ sessionId, name }: { sessionId: string; name: string }): Promise<string> {
+-    const sessionPath = this.getSessionPath(sessionId);
+-    await this.ensureDirectoryExists(sessionPath);
+-    return path.join(sessionPath, this.sanitizeId(name));
++  private getSafeFilePath(relativePath: string) {
++    const resolvedPath = resolve(this.baseFilesPath, relativePath);
++    if (!resolvedPath.startsWith(this.baseFilesPath + path.sep) && resolvedPath !== this.baseFilesPath) {
++      throw new Error("Invalid path");
++    }
++    return resolvedPath;
+   }
+ 
+   private async exists(filePath: string): Promise<boolean> {
+@@ -162,169 +103,324 @@ export class FileService {
+     }
+   }
+ 
+-  public async saveFile(options: {
+-    sessionId: string;
++  public async saveFile({
++    filePath,
++    stream,
++  }: {
+     filePath: string;
+-    checksum: string;
+-    id?: string;
+-    name?: string;
+-    contentType?: string;
+-    metadata?: Record<string, any>;
+-  }): Promise<{ id: string } & File> {
+-    const id = options.id || uuidv4();
+-    let fileName: string;
+-
+-    if (options.name) {
+-      fileName = this.buildFileName(options.name, id);
+-    } else {
+-      fileName = id;
+-    }
++    stream: Readable;
++  }): Promise<File & { path: string }> {
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
+ 
+-    const destinationPath = await this.getFilePath({ sessionId: options.sessionId, name: fileName });
++    const safeFilePath = this.getSafeFilePath(filePath);
++    const parentDir = path.dirname(safeFilePath);
++    await fs.promises.mkdir(parentDir, { recursive: true });
+ 
+-    // Mark file as being processed to avoid duplicate processing by watcher
+-    this.processingFiles.add(destinationPath);
++    try {
++      await fs.promises.writeFile(safeFilePath, stream);
++      const stats = await fs.promises.stat(safeFilePath);
++      const file: File = {
++        size: stats.size,
++        lastModified: stats.mtime,
++      };
++      console.log(`File saved: ${safeFilePath}, Size: ${file.size}`);
++      this.debouncedCreateArchive();
++      return { ...file, path: safeFilePath };
++    } catch (error) {
++      console.error(`[FileService] Error saving file ${safeFilePath}:`, error);
++
++      try {
++        if (await this.exists(safeFilePath)) {
++          await fs.promises.unlink(safeFilePath);
++        }
++      } catch (cleanupErr) {
++        console.error(`[FileService] Failed to cleanup file ${safeFilePath} after save error:`, cleanupErr);
++      }
++      throw error;
++    }
++  }
++
++  public async downloadFile({ filePath }: { filePath: string }): Promise<{ stream: Readable } & File> {
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
++    const safeFilePath = this.getSafeFilePath(filePath);
+ 
+     try {
+-      await rename(options.filePath, destinationPath);
++      const stats = await fs.promises.stat(safeFilePath);
++      if (!stats.isFile()) {
++        throw new Error(`Requested path is not a file: ${safeFilePath}`);
++      }
++      const file: File = {
++        size: stats.size,
++        lastModified: stats.mtime,
++      };
++      const stream = fs.createReadStream(safeFilePath);
++      return {
++        stream,
++        ...file,
++      };
+     } catch (error: any) {
+-      await unlink(options.filePath);
+-      console.error(`Error moving file: ${error.message}`);
+-    } finally {
+-      // Remove from processing list after a short delay
+-      setTimeout(() => {
+-        this.processingFiles.delete(destinationPath);
+-      }, 1000);
++      if (error.code === "ENOENT") {
++        throw new Error(`File not found: ${safeFilePath}`);
++      }
++      console.error(`[FileService] Error accessing file ${safeFilePath} for download:`, error);
++      throw new Error(`File not found or inaccessible: ${safeFilePath}`);
+     }
++  }
+ 
+-    if (!this.fileMap.has(options.sessionId)) {
+-      this.fileMap.set(options.sessionId, new Map());
++  public async getFile({ filePath }: { filePath: string }): Promise<File> {
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
++    const safeFilePath = this.getSafeFilePath(filePath);
++
++    try {
++      const stats = await fs.promises.stat(safeFilePath);
++      if (!stats.isFile()) {
++        throw new Error(`Requested path is not a file: ${safeFilePath}`);
++      }
++      const file: File = {
++        size: stats.size,
++        lastModified: stats.mtime,
++      };
++      return file;
++    } catch (error: any) {
++      if (error.code === "ENOENT") {
++        throw new Error(`File not found: ${safeFilePath}`);
++      }
++      console.error(`[FileService] Error accessing file ${safeFilePath} for getFile:`, error);
++      throw new Error(`File not found or inaccessible: ${safeFilePath}`);
+     }
++  }
+ 
+-    const currentDate = new Date();
+-
+-    const file: File = {
+-      name: options.name || fileName,
+-      size: (await fs.promises.stat(destinationPath)).size,
+-      contentType: options.contentType || (options.name && mime.lookup(options.name)) || "application/octet-stream",
+-      createdAt: currentDate,
+-      updatedAt: currentDate,
+-      checksum: options.checksum,
+-      metadata: options.metadata,
+-      path: destinationPath,
+-    };
++  public async listFiles(): Promise<Array<{ path: string } & File>> {
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
+ 
+-    this.fileMap.get(options.sessionId)!.set(id, file);
++    const allFiles: Array<{ path: string } & File> = [];
+ 
+-    return {
+-      id,
+-      ...file,
++    const collectFilesRecursively = async (currentDir: string) => {
++      try {
++        const entries = await fs.promises.readdir(currentDir, { withFileTypes: true });
++        for (const entry of entries) {
++          const entryPath = path.join(currentDir, entry.name);
++          if (entry.isFile()) {
++            try {
++              const stats = await fs.promises.stat(entryPath);
++              allFiles.push({
++                path: entryPath,
++                size: stats.size,
++                lastModified: stats.mtime,
++              });
++            } catch (statError) {
++              console.error(`[FileService] Error getting stats for file ${entryPath} during listFiles:`, statError);
++            }
++          } else if (entry.isDirectory()) {
++            await collectFilesRecursively(entryPath);
++          }
++        }
++      } catch (readDirError) {
++        console.error(`[FileService] Error reading directory ${currentDir} during listFiles:`, readDirError);
++      }
+     };
+-  }
+ 
+-  public async getFile({ sessionId, id }: { sessionId: string; id: string }): Promise<{ id: string } & File> {
+-    const sessionFiles = this.fileMap.get(sessionId);
+-    if (!sessionFiles) {
+-      throw new Error(`Session not found: ${sessionId}`);
++    try {
++      await collectFilesRecursively(this.baseFilesPath);
++      allFiles.sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
++      return allFiles;
++    } catch (error) {
++      console.error(`[FileService] Error listing files recursively from ${this.baseFilesPath}:`, error);
++      return [];
+     }
++  }
++
++  public async deleteFile({ filePath }: { filePath: string }): Promise<void> {
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
++    const safeFilePath = this.getSafeFilePath(filePath);
+ 
+-    const file = sessionFiles.get(id);
+-    if (!file) {
+-      throw new Error(`File metadata not found: ${id}`);
++    if (!(await this.exists(safeFilePath))) {
++      console.log(`[FileService] File ${safeFilePath} not found on disk during delete operation. Skipping.`);
++      return;
+     }
+ 
+-    if (!(await this.exists(file.path))) {
+-      throw new Error(`File not found: ${file.path}`);
++    try {
++      const stats = await fs.promises.stat(safeFilePath);
++      if (!stats.isFile()) {
++        console.warn(`[FileService] Path ${safeFilePath} is not a file. Skipping delete.`);
++        return;
++      }
++      await fs.promises.unlink(safeFilePath);
++      console.log(`[FileService] File deleted: ${safeFilePath}`);
++      this.debouncedCreateArchive();
++    } catch (unlinkError) {
++      console.error(`Error unlinking file ${safeFilePath}:`, unlinkError);
++      throw unlinkError;
+     }
+ 
+-    return {
+-      id,
+-      ...file,
+-    };
++    return;
+   }
+ 
+-  public async downloadFile({
+-    sessionId,
+-    id,
+-  }: {
+-    sessionId: string;
+-    id: string;
+-  }): Promise<{ id: string; stream: Readable } & File> {
+-    const sessionFiles = this.fileMap.get(sessionId);
+-    if (!sessionFiles) {
+-      throw new Error(`Session not found: ${sessionId}`);
+-    }
++  public async cleanupFiles(): Promise<void> {
++    console.log(`[FileService cleanupFiles] Starting cleanup for directory: ${this.baseFilesPath}`);
++
++    this.debouncedCreateArchive.cancel();
++
++    try {
++      const archivePath = path.join(this.prebuiltArchiveDir, "files.zip");
++      if (fs.existsSync(archivePath)) {
++        await fs.promises.unlink(archivePath);
++        console.log(`[FileService cleanupFiles] Deleted archive file: ${archivePath}`);
++      }
+ 
+-    const file = sessionFiles.get(id);
+-    if (!file) {
+-      throw new Error(`File metadata not found: ${id}`);
++      const archiveDir = await fs.promises.readdir(this.prebuiltArchiveDir).catch(() => []);
++      for (const file of archiveDir) {
++        if (file.startsWith("files-") && file.endsWith(".zip.tmp")) {
++          const tempFilePath = path.join(this.prebuiltArchiveDir, file);
++          await fs.promises.unlink(tempFilePath).catch((err) => {
++            console.error(`[FileService cleanupFiles] Error deleting temp archive ${tempFilePath}:`, err);
++          });
++        }
++      }
++    } catch (err: any) {
++      console.error(`[FileService cleanupFiles] Error cleaning up archive files:`, err);
+     }
+ 
+-    if (!(await this.exists(file.path))) {
+-      throw new Error(`File not found: ${file.path}`);
++    try {
++      await fs.promises.rm(this.baseFilesPath, { recursive: true, force: true });
++      console.log(`[FileService cleanupFiles] Deleted entire directory: ${this.baseFilesPath}`);
++    } catch (err: any) {
++      if (err.code !== "ENOENT") {
++        console.error(`[FileService cleanupFiles] Error deleting directory ${this.baseFilesPath}:`, err);
++      }
+     }
+ 
+-    return {
+-      id,
+-      stream: fs.createReadStream(file.path),
+-      ...file,
+-    };
++    await fs.promises.mkdir(this.baseFilesPath, { recursive: true });
++    console.log(`[FileService cleanupFiles] Files cleaned. Creating empty archive.`);
++    this.debouncedCreateArchive();
+   }
+ 
+-  public async listFiles({ sessionId }: { sessionId: string }): Promise<Array<{ id: string } & File>> {
+-    const sessionItems = this.fileMap.get(sessionId) || new Map();
+-
+-    return Array.from(sessionItems.entries())
+-      .map(([id, file]) => ({
+-        id,
+-        ...file,
+-      }))
+-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
++  public getBaseFilesPath(): string {
++    return this.baseFilesPath;
+   }
+ 
+-  public async deleteFile({ sessionId, id }: { sessionId: string; id: string }): Promise<{ id: string } & File> {
+-    const sessionFiles = this.fileMap.get(sessionId);
+-    if (!sessionFiles) {
+-      throw new Error(`Session not found: ${sessionId}`);
+-    }
+-
+-    const file = sessionFiles.get(id);
+-    if (!file) {
+-      throw new Error(`File metadata not found: ${id}`);
+-    }
++  public async getPrebuiltArchivePath(): Promise<string> {
++    return this.prebuiltArchivePath;
++  }
+ 
+-    if (!(await this.exists(file.path))) {
+-      throw new Error(`File not found: ${file.path}`);
+-    }
++  private _createArchive(): Promise<string | null> {
++    return new Promise(async (resolvePromise, rejectPromise) => {
++      if (this.isArchiving) {
++        console.warn(
++          `[_createArchive] Warning: Archiving process initiated while another is already in progress. This might lead to conflicts if not handled by caller.`,
++        );
++      }
+ 
+-    await fs.promises.unlink(file.path);
++      this.isArchiving = true;
++      console.log(`[_createArchive] Starting archive creation`);
+ 
+-    this.fileMap.get(sessionId)!.delete(id);
++      const tempArchivePath = path.join(this.prebuiltArchiveDir, `files-${Date.now()}.zip.tmp`);
++      const finalArchivePath = path.join(this.prebuiltArchiveDir, "files.zip");
+ 
+-    return { id, ...file };
+-  }
++      try {
++        await fs.promises.mkdir(this.prebuiltArchiveDir, { recursive: true });
++      } catch (mkdirError) {
++        console.error(`[_createArchive] Error creating archive directory ${this.prebuiltArchiveDir}:`, mkdirError);
++        this.isArchiving = false;
++        return rejectPromise(mkdirError);
++      }
+ 
+-  public async cleanupFiles({ sessionId }: { sessionId: string }): Promise<({ id: string } & File)[]> {
+-    const sessionPath = this.getSessionPath(sessionId);
++      const output = fs.createWriteStream(tempArchivePath);
++      const archive = archiver("zip", { zlib: { level: 9 } });
++      let errorOccurredStream = false;
+ 
+-    if (!(await this.exists(sessionPath))) {
+-      return [];
+-    }
++      const operationCleanup = async (success: boolean, archivePath: string | null = null, error?: any) => {
++        this.isArchiving = false;
+ 
+-    const files = this.fileMap.get(sessionId);
++        if (!success && tempArchivePath && (await this.exists(tempArchivePath))) {
++          try {
++            await fs.promises.unlink(tempArchivePath);
++            console.log("[_createArchive] Cleaned up temporary archive file due to error.");
++          } catch (unlinkErr) {
++            console.error("[_createArchive] Failed to clean up temp archive file after error:", unlinkErr);
++          }
++        }
++        if (success && archivePath) {
++          resolvePromise(archivePath);
++        } else {
++          rejectPromise(error || new Error("Archiving failed due to an unknown reason."));
++        }
++      };
+ 
+-    if (!files) {
+-      return [];
+-    }
++      output.on("close", async () => {
++        if (errorOccurredStream) {
++          console.log("[_createArchive] Output stream closed after an error was emitted and handled.");
++          return;
++        }
++        try {
++          if (await this.exists(finalArchivePath)) {
++            await fs.promises.unlink(finalArchivePath);
++          }
++          await fs.promises.rename(tempArchivePath, finalArchivePath);
++          console.log(
++            `[_createArchive] Archive successfully created: ${finalArchivePath}, size: ${archive.pointer()} bytes`,
++          );
++          operationCleanup(true, finalArchivePath);
++        } catch (renameError) {
++          console.error("[_createArchive] Error renaming temporary archive file:", renameError);
++          operationCleanup(false, null, renameError);
++        }
++      });
+ 
+-    const filesArray = Array.from(files.entries()).map(([id, file]) => ({
+-      id,
+-      ...file,
+-    }));
++      output.on("error", (err) => {
++        console.error("[_createArchive] Archive output stream error:", err);
++        errorOccurredStream = true;
++        if (!output.writableFinished) {
++          output.destroy();
++        }
++        operationCleanup(false, null, err);
++      });
++
++      archive.on("warning", (err) => {
++        if (err.code === "ENOENT") {
++          console.warn(`[_createArchive] Archiving warning (ENOENT): ${err.message}`);
++        } else {
++          console.error("[_createArchive] Archiving warning:", err);
++        }
++      });
+ 
+-    await fs.promises.rm(sessionPath, { recursive: true, force: true });
+-    this.fileMap.delete(sessionId);
++      archive.on("error", (err) => {
++        console.error("[_createArchive] Archiving process error (archive.on('error')):", err);
++        errorOccurredStream = true;
++        if (!output.writableFinished) {
++          output.destroy(err instanceof Error ? err : new Error(String(err)));
++        }
++        operationCleanup(false, null, err);
++      });
+ 
+-    return filesArray;
++      try {
++        if (!(await this.exists(this.baseFilesPath))) {
++          console.warn(`[_createArchive] Base directory ${this.baseFilesPath} does not exist. Creating empty archive.`);
++        } else {
++          const stats = await fs.promises.stat(this.baseFilesPath);
++          if (!stats.isDirectory()) {
++            console.error(
++              `[_createArchive] Base path ${this.baseFilesPath} is not a directory. Creating empty archive.`,
++            );
++          } else {
++            const files = await fs.promises.readdir(this.baseFilesPath);
++            if (files.length === 0) {
++              console.log("[_createArchive] Base directory is empty. Creating empty archive.");
++            } else {
++              archive.directory(this.baseFilesPath, false);
++            }
++          }
++        }
++        archive.pipe(output);
++        await archive.finalize();
++      } catch (err: any) {
++        console.error("[_createArchive] Error during archive preparation or finalization:", err);
++        errorOccurredStream = true;
++        if (!output.writableFinished) {
++          output.destroy(err instanceof Error ? err : new Error(String(err)));
++        }
++        operationCleanup(false, null, err);
++      }
++    });
+   }
+ }
+diff --git a/src/services/session.service.ts b/src/services/session.service.ts
+index 46d9bda..0a615ea 100644
+--- a/src/services/session.service.ts
++++ b/src/services/session.service.ts
+@@ -220,8 +220,6 @@ export class SessionService {
+       await this.cdpService.endSession();
+     }
+ 
+-    await this.fileService.cleanupFiles({ sessionId: this.activeSession.id });
+-
+     const releasedSession = this.activeSession;
+ 
+     await this.resetSessionInfo({
+diff --git a/src/steel-browser-plugin.ts b/src/steel-browser-plugin.ts
+index 6eb86a7..1028e26 100644
+--- a/src/steel-browser-plugin.ts
++++ b/src/steel-browser-plugin.ts
+@@ -32,32 +32,31 @@ export interface SteelBrowserConfig {
+   };
+ }
+ 
+-const steelBrowserPlugin: FastifyPluginAsync<SteelBrowserConfig> =
+-  async (fastify, opts) => {
+-    fastify.decorate("steelBrowserConfig", opts);
+-    // Plugins
+-    await fastify.register(fastifyView, {
+-      engine: {
+-        ejs,
+-      },
+-      root: path.join(dirname(fileURLToPath(import.meta.url)), "templates"),
+-    });
+-    await fastify.register(requestLogger);
+-    await fastify.register(openAPIPlugin);
+-    await fastify.register(fileStoragePlugin);
+-    await fastify.register(browserInstancePlugin);
+-    await fastify.register(seleniumPlugin);
+-    await fastify.register(browserWebSocket);
+-    await fastify.register(customBodyParser);
+-    await fastify.register(browserSessionPlugin);
++const steelBrowserPlugin: FastifyPluginAsync<SteelBrowserConfig> = async (fastify, opts) => {
++  fastify.decorate("steelBrowserConfig", opts);
++  // Plugins
++  await fastify.register(fastifyView, {
++    engine: {
++      ejs,
++    },
++    root: path.join(dirname(fileURLToPath(import.meta.url)), "templates"),
++  });
++  await fastify.register(requestLogger);
++  await fastify.register(openAPIPlugin);
++  await fastify.register(fileStoragePlugin);
++  await fastify.register(browserInstancePlugin);
++  await fastify.register(seleniumPlugin);
++  await fastify.register(browserWebSocket);
++  await fastify.register(customBodyParser);
++  await fastify.register(browserSessionPlugin);
+ 
+-    // Routes
+-    await fastify.register(actionsRoutes, { prefix: "/v1" });
+-    await fastify.register(sessionsRoutes, { prefix: "/v1" });
+-    await fastify.register(cdpRoutes, { prefix: "/v1" });
+-    await fastify.register(seleniumRoutes);
+-    await fastify.register(filesRoutes, { prefix: "/v1" });
+-  };
++  // Routes
++  await fastify.register(actionsRoutes, { prefix: "/v1" });
++  await fastify.register(sessionsRoutes, { prefix: "/v1" });
++  await fastify.register(cdpRoutes, { prefix: "/v1" });
++  await fastify.register(seleniumRoutes);
++  await fastify.register(filesRoutes, { prefix: "/v1" });
++};
+ 
+ export default fp<SteelBrowserConfig>(steelBrowserPlugin, {
+   name: "steel-browser",

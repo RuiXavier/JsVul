@@ -1,0 +1,73 @@
+{
+  "name": "wiki",
+  "version": null,
+  "repo": "requarks/wiki",
+  "sha": "9ccd1f82e9f8a6cb9e8f03e585ac6281aa60af53",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/server/index.js",
+    "package/server/controllers/common.js",
+    "package/server/models/assets.js",
+    "package/server/modules/storage/disk/storage.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-whpv-5xg2-w527",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-15236"
+      ],
+      "ghsa": [
+        "GHSA-whpv-5xg2-w527"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/fs-extra/node_modules/universalify/index.js",
+          "startline": 8,
+          "startcol": 9,
+          "endline": 11,
+          "endcol": 10,
+          "range": false,
+          "code": "fn.apply(\n          this,\n          args.concat([(err, res) => err ? reject(err) : resolve(res)])\n        )"
+        },
+        {
+          "file": "package/node_modules/send/index.js",
+          "startline": 796,
+          "startcol": 16,
+          "endline": 796,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.createReadStream(path, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server/helpers/page.js",
+          "startline": 21,
+          "startcol": 3,
+          "endline": 58,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

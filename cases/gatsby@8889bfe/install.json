@@ -1,0 +1,6 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0", "omit": ["babel-plugin-remove-graphql-queries", "babel-preset-gatsby", "gatsby-cli", "gatsby-core-utils", "gatsby-graphiql-explorer", "gatsby-legacy-polyfills", "gatsby-link", "gatsby-page-utils", "gatsby-parcel-config", "gatsby-plugin-page-creator", "gatsby-plugin-typescript", "gatsby-plugin-utils", "gatsby-react-router-scroll", "gatsby-script", "gatsby-sharp", "gatsby-telemetry", "gatsby-worker"], "siblings": ["@gatsbyjs/parcel-namer-relative-to-cwd", "babel-plugin-remove-graphql-queries", "babel-preset-gatsby", "create-gatsby", "gatsby-cli", "gatsby-core-utils", "gatsby-graphiql-explorer", "gatsby-legacy-polyfills", "gatsby-link", "gatsby-page-utils", "gatsby-parcel-config", "gatsby-plugin-page-creator", "gatsby-plugin-typescript", "gatsby-plugin-utils", "gatsby-react-router-scroll", "gatsby-script", "gatsby-sharp", "gatsby-telemetry", "gatsby-worker"]}
+  ],
+  "skip": ["package/src/bootstrap/load-plugins/__tests__/fixtures/subplugins"]
+}

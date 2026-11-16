@@ -1,0 +1,64 @@
+{
+  "name": "mt7688-wiscan",
+  "version": null,
+  "repo": "simenkid/mt7688-wiscan",
+  "sha": "6e39284114614c1f23bb12eb79af0116db4bbf1b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5h8c-8ccp-8gmh",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25916"
+      ],
+      "ghsa": [
+        "GHSA-5h8c-8ccp-8gmh"
+      ],
+      "snyk": [
+        "SNYK-JS-MT7688WISCAN-3177394"
+      ],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 22,
+          "startcol": 13,
+          "endline": 43,
+          "endcol": 7,
+          "range": false,
+          "code": "exec('iwinfo ' + intf + ' scan', function (error, stdout, stderr) {\n        if (error) {\n            stderr = stderr.trim();\n            return callback(new Error(stderr));\n        }\n\n        var info = stdout,\n            parsed = [];\n\n        info = info.replace(/\\n/g, ' ');\n        info = info.replace(/\"/g, '');\n        info = info.split(' ');\n        info.forEach(function (char, i) {\n            if (char === 'ESSID' && info[i+1] === '')\n                info[i+1] = 'unknown';\n            else if (char !== '')\n                parsed.push(char);\n        });\n\n        parsed = parse(parsed);\n        callback(null, parsed);\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 8,
+          "startcol": 15,
+          "endline": 44,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "name": "langchainjs",
+  "version": null,
+  "repo": "langchain-ai/langchainjs",
+  "sha": "08092cdd6c2e8a443acf55e650ca0e8a185b02a9",
+  "subdir": "langchain",
+  "siblings": {
+    "@langchain/core": "langchain-core",
+    "@langchain/openai": "libs/langchain-openai",
+    "@langchain/textsplitters": "libs/langchain-textsplitters"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/storage/file_system.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-7774",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-7774"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-29"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/storage/file_system.ts",
+          "startline": 47,
+          "startcol": 33,
+          "endline": 47,
+          "endcol": 67,
+          "range": false,
+          "code": "fs.readFile(this.getFullPath(key))"
+        },
+        {
+          "file": "package/src/storage/file_system.ts",
+          "startline": 73,
+          "startcol": 13,
+          "endline": 73,
+          "endcol": 57,
+          "range": false,
+          "code": "fs.writeFile(this.getFullPath(key), content)"
+        },
+        {
+          "file": "package/src/storage/file_system.ts",
+          "startline": 130,
+          "startcol": 41,
+          "endline": 130,
+          "endcol": 73,
+          "range": false,
+          "code": "fs.unlink(this.getFullPath(key))"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/storage/file_system.ts",
+          "startline": 45,
+          "startcol": 3,
+          "endline": 65,
+          "endcol": 3,
+          "range": true
+        },
+        {
+          "file": "package/src/storage/file_system.ts",
+          "startline": 87,
+          "startcol": 3,
+          "endline": 97,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "a0fad77d6b569e5872bd4a9d33be0c0785e538a9",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/storage/file_system.ts",
+            "startline": 50,
+            "startcol": 3,
+            "endline": 76,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/storage/file_system.ts",
+            "startline": 98,
+            "startcol": 3,
+            "endline": 123,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

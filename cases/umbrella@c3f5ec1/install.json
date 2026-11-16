@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0", "omit": ["@thi.ng/api", "@thi.ng/associative", "@thi.ng/checks", "@thi.ng/dot", "@thi.ng/errors", "@thi.ng/prefixes", "@thi.ng/strings", "@thi.ng/transducers-binary"], "siblings": ["@thi.ng/api", "@thi.ng/arrays", "@thi.ng/associative", "@thi.ng/binary", "@thi.ng/checks", "@thi.ng/compare", "@thi.ng/compose", "@thi.ng/dcons", "@thi.ng/dot", "@thi.ng/equiv", "@thi.ng/errors", "@thi.ng/hex", "@thi.ng/math", "@thi.ng/memoize", "@thi.ng/prefixes", "@thi.ng/random", "@thi.ng/strings", "@thi.ng/transducers", "@thi.ng/transducers-binary"]}
+  ]
+}

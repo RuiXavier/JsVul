@@ -1,0 +1,61 @@
+{
+  "name": "devcert",
+  "version": null,
+  "repo": "davewasmer/devcert",
+  "sha": "2b1b8d40eda251616bf74fd69f00ae8222ca1171",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2020-8186",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-8186"
+      ],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-DEVCERT-571955"
+      ],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/utils.ts",
+          "startline": 22,
+          "startcol": 10,
+          "endline": 22,
+          "endcol": 32,
+          "range": false,
+          "code": "execSync(cmd, options)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e0e8ae31c7a5f2371f091f27ced65ed43e7752c2",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils.ts",
+            "startline": 22,
+            "startcol": 10,
+            "endline": 22,
+            "endcol": 41,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

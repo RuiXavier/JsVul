@@ -1,0 +1,64 @@
+{
+  "name": "dom-iterator",
+  "version": null,
+  "repo": "matthewmueller/dom-iterator",
+  "sha": "91121a41d04a09d28bcd4d0e8cd535b8582d2c08",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-jrvm-mcxc-mf6m",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-21541"
+      ],
+      "ghsa": [
+        "GHSA-jrvm-mcxc-mf6m"
+      ],
+      "snyk": [
+        "SNYK-JAVA-ORGWEBJARSNPM-8383166",
+        "SNYK-JS-DOMITERATOR-6157199"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 270,
+          "startcol": 14,
+          "endline": 270,
+          "endcol": 68,
+          "range": false,
+          "code": "new Function('node', 'return ' + props(expr, 'node.'))"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 265,
+          "startcol": 30,
+          "endline": 276,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

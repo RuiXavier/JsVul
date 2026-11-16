@@ -1,0 +1,63 @@
+{
+  "name": "mversion",
+  "version": null,
+  "repo": "mikaelbr/mversion",
+  "sha": "a9ddbc2bc86eb48f6976b85d195b6a94e81ffb22",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-6m8p-4fxj-pgc2",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7688"
+      ],
+      "ghsa": [
+        "GHSA-6m8p-4fxj-pgc2"
+      ],
+      "snyk": [
+        "SNYK-JS-MVERSION-573174"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/git.js",
+          "startline": 63,
+          "startcol": 7,
+          "endline": 67,
+          "endcol": 8,
+          "range": false,
+          "code": "cp.exec(\n        [gitApp, \"tag\", \"-a\", tagName, \"-m\", message].join(\" \"),\n        gitExtra,\n        done\n      )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/git.js",
+          "startline": 50,
+          "startcol": 25,
+          "endline": 71,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

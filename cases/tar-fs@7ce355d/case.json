@@ -1,0 +1,69 @@
+{
+  "name": "tar-fs",
+  "version": null,
+  "repo": "mafintosh/tar-fs",
+  "sha": "7ce355d649e47d0c79ec092bb926d325884916b0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-12905",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-12905"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 219,
+          "startcol": 9,
+          "endline": 219,
+          "endcol": 49,
+          "range": false,
+          "code": "xfs.symlink(header.linkname, name, stat)"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 228,
+          "startcol": 9,
+          "endline": 235,
+          "endcol": 11,
+          "range": false,
+          "code": "xfs.link(srcpath, name, function (err) {\n          if (err && err.code === 'EPERM' && opts.hardlinkAsFilesFallback) {\n            stream = xfs.createReadStream(srcpath)\n            return onfile()\n          }\n\n          stat(err)\n        })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 119,
+          "startcol": 19,
+          "endline": 307,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

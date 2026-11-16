@@ -1,0 +1,28 @@
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.grow, #jsonpath {
+    flex-grow: 1;
+}
+
+.row label {
+    display: flex;
+}
+
+.container {
+  float: left;
+  width: 48%;
+}
+
+.container textarea {
+  margin: 2%;
+  width: 98%;
+  height: 565px;
+}
+
+#demoNode {
+  font-size: small;
+}

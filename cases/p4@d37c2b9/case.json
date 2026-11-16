@@ -1,0 +1,63 @@
+{
+  "name": "p4",
+  "version": null,
+  "repo": "natelong/p4",
+  "sha": "d37c2b9ae4c34e42b1debadb2768c267f53565a5",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-jfm8-hwhg-r6gg",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25171"
+      ],
+      "ghsa": [
+        "GHSA-jfm8-hwhg-r6gg"
+      ],
+      "snyk": [
+        "SNYK-JS-P4-3167330"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/p4.js",
+          "startline": 12,
+          "startcol": 5,
+          "endline": 17,
+          "endcol": 7,
+          "range": false,
+          "code": "exec(\"p4 \" + command + \" \" + (args || \"\"), function(err, stdOut, stdErr) {\n        if(err) return done(err);\n        if(stdErr) return done(new Error(stdErr));\n\n        done(null, stdOut);\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/p4.js",
+          "startline": 6,
+          "startcol": 1,
+          "endline": 18,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ae42e251beabf67c00539ec0e1d7aa149ca445fb",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

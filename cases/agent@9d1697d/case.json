@@ -1,0 +1,79 @@
+{
+  "name": "agent",
+  "version": null,
+  "repo": "xataio/agent",
+  "sha": "9d1697dc60bcc96fe1eae2ae1adafffa712843a1",
+  "subdir": "apps/dbagent",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/app/api/evals/route.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-6283",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-6283"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/app/api/evals/route.ts",
+          "startline": 23,
+          "startcol": 25,
+          "endline": 23,
+          "endcol": 47,
+          "range": false,
+          "code": "fs.readdir(folderPath)"
+        },
+        {
+          "file": "package/src/app/api/evals/route.ts",
+          "startline": 28,
+          "startcol": 32,
+          "endline": 28,
+          "endcol": 62,
+          "range": false,
+          "code": "fs.readFile(filePath, 'utf-8')"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/app/api/evals/route.ts",
+          "startline": 8,
+          "startcol": 8,
+          "endline": 59,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "03f27055e0cf5d4fa7e874d34ce8c74c7b9086cc",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/app/api/evals/route.ts",
+            "startline": 8,
+            "startcol": 8,
+            "endline": 69,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

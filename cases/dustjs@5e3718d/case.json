@@ -1,0 +1,49 @@
+{
+  "name": "dustjs",
+  "version": null,
+  "repo": "linkedin/dustjs",
+  "sha": "5e3718d689bf2b7fbc42f9658c1780280edf38aa",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:dustjs-linkedin:20160819",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:dustjs-linkedin:20160819"
+      ],
+      "cwe": [
+        "CWE-95"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/dust.js",
+          "startline": 2,
+          "startcol": 2,
+          "endline": 898,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

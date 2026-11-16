@@ -1,0 +1,60 @@
+{
+  "name": "anything-llm",
+  "version": null,
+  "repo": "mintplex-labs/anything-llm",
+  "sha": "e2439c6d4c3cfdacd96cd1b7b92d1f89c3cc8459",
+  "subdir": "collector",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-5211",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-5211"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-29"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/utils/files/index.js",
+          "startline": 123,
+          "startcol": 1,
+          "endline": 130,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e208074ef4c240fe03e4147ab097ec3b52b97619",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/utils/files/index.js",
+            "startline": 123,
+            "startcol": 1,
+            "endline": 130,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

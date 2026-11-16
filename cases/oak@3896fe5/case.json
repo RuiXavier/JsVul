@@ -1,0 +1,61 @@
+{
+  "name": "oak",
+  "version": null,
+  "repo": "oakserver/oak",
+  "sha": "3896fe568b25ac0b4c5afbf822ff8344c3d1712a",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/mod.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-qm92-93fv-vh7m",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-49770"
+      ],
+      "ghsa": [
+        "GHSA-qm92-93fv-vh7m"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-35"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/send.ts",
+          "startline": 162,
+          "startcol": 8,
+          "endline": 348,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "4b2f27efd5cba5a45b2c3982e610da3af0869209",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/send.ts",
+            "startline": 162,
+            "startcol": 8,
+            "endline": 348,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

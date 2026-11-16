@@ -1,0 +1,63 @@
+{
+  "name": "pooledwebsocket",
+  "version": null,
+  "repo": "eeems/pooledwebsocket",
+  "sha": "d51217a285c1dc5851743d0756cc43c35d12737c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2017-16107",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2017-16107"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/server.js",
+          "startline": 9,
+          "startcol": 12,
+          "endline": 12,
+          "endcol": 5,
+          "range": false,
+          "code": "fs.createReadStream(__dirname+req.url,{\n\t\t\tflags: 'r',\n\t\t\tautoClose: true\n\t\t})"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server.js",
+          "startline": 7,
+          "startcol": 41,
+          "endline": 19,
+          "endcol": 2,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

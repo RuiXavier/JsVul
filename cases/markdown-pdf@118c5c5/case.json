@@ -1,0 +1,58 @@
+{
+  "name": "markdown-pdf",
+  "version": null,
+  "repo": "alanshaw/markdown-pdf",
+  "sha": "118c5c558b06d6bc950e92a01881417d996aecc6",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2018-3770",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-3770"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 14,
+          "startcol": 1,
+          "endline": 142,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "5a3d30d1b1ea26702be671e6cbce2dc093e8604f",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 14,
+            "startcol": 1,
+            "endline": 142,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "backstage",
+  "version": null,
+  "repo": "backstage/backstage",
+  "sha": "f2cb8c8b61149837f00a0fd95caa27650a5701d8",
+  "subdir": "packages/techdocs-common",
+  "siblings": {
+    "@backstage/backend-common": "packages/backend-common",
+    "@backstage/catalog-model": "packages/catalog-model",
+    "@backstage/cli-common": "packages/cli-common",
+    "@backstage/config": "packages/config",
+    "@backstage/config-loader": "packages/config-loader",
+    "@backstage/errors": "packages/errors",
+    "@backstage/integration": "packages/integration"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-pgf8-28gg-vpr6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-32662"
+      ],
+      "ghsa": [
+        "GHSA-pgf8-28gg-vpr6"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/stages/generate/techdocs.ts",
+          "startline": 71,
+          "startcol": 3,
+          "endline": 160,
+          "endcol": 3,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "8cefadca04cbf01d0394b0cb1983247e5f1d6208",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/stages/generate/techdocs.ts",
+            "startline": 72,
+            "startcol": 3,
+            "endline": 164,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

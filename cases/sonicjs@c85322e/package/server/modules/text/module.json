@@ -1,0 +1,9 @@
+{
+  "title": "Text",
+  "enabled": true,
+  "systemId": "text",
+  "icon": "bi-body-text",
+  "canBeAddedToColumn": true,
+  "singleInstance": false,
+  "version": "0.0.0.1"
+}

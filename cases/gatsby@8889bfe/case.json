@@ -1,0 +1,92 @@
+{
+  "name": "gatsby",
+  "version": null,
+  "repo": "gatsbyjs/gatsby",
+  "sha": "8889bfe5271985d19c956dff7f567be86ef2f3df",
+  "subdir": "packages/gatsby",
+  "siblings": {
+    "@gatsbyjs/parcel-namer-relative-to-cwd": "packages/gatsby-parcel-namer-relative-to-cwd",
+    "babel-plugin-remove-graphql-queries": "packages/babel-plugin-remove-graphql-queries",
+    "babel-preset-gatsby": "packages/babel-preset-gatsby",
+    "create-gatsby": "packages/create-gatsby",
+    "gatsby-cli": "packages/gatsby-cli",
+    "gatsby-core-utils": "packages/gatsby-core-utils",
+    "gatsby-graphiql-explorer": "packages/gatsby-graphiql-explorer",
+    "gatsby-legacy-polyfills": "packages/gatsby-legacy-polyfills",
+    "gatsby-link": "packages/gatsby-link",
+    "gatsby-page-utils": "packages/gatsby-page-utils",
+    "gatsby-parcel-config": "packages/gatsby-parcel-config",
+    "gatsby-plugin-page-creator": "packages/gatsby-plugin-page-creator",
+    "gatsby-plugin-typescript": "packages/gatsby-plugin-typescript",
+    "gatsby-plugin-utils": "packages/gatsby-plugin-utils",
+    "gatsby-react-router-scroll": "packages/gatsby-react-router-scroll",
+    "gatsby-script": "packages/gatsby-script",
+    "gatsby-sharp": "packages/gatsby-sharp",
+    "gatsby-telemetry": "packages/gatsby-telemetry",
+    "gatsby-worker": "packages/gatsby-worker"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/commands/develop-process.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-c6f8-8r25-c4gc",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-34238"
+      ],
+      "ghsa": [
+        "GHSA-c6f8-8r25-c4gc"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/utils/start-server.ts",
+          "startline": 505,
+          "startcol": 33,
+          "endline": 505,
+          "endcol": 63,
+          "range": false,
+          "code": "fs.readFile(filePath, `utf-8`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/utils/start-server.ts",
+          "startline": 75,
+          "startcol": 8,
+          "endline": 831,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "fc22f4ba3ad7ca5fb3592f38f4f0ca8ae60b4bf7",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/start-server.ts",
+            "startline": 76,
+            "startcol": 8,
+            "endline": 849,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

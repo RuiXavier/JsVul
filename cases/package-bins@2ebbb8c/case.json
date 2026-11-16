@@ -1,0 +1,61 @@
+{
+  "name": "package-bins",
+  "version": null,
+  "repo": "pnpm/package-bins",
+  "sha": "2ebbb8cb9b47152d92604ea0c565103f26c5ef75",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2019-10773",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10773"
+      ],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-YARN-537806",
+        "SNYK-JS-YARN-537806,"
+      ],
+      "cwe": [
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 44,
+          "startcol": 1,
+          "endline": 58,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "adefce5b1ba635d3c8d48692f753a3f49ea0bb3b",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 44,
+            "startcol": 1,
+            "endline": 59,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

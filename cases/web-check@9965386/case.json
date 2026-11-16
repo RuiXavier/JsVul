@@ -1,0 +1,71 @@
+{
+  "name": "web-check",
+  "version": null,
+  "repo": "lissy93/web-check",
+  "sha": "99653868c7fa91eaca9684a69ecd86c3375b237e",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/server.js",
+    "package/api/screenshot.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5qg5-g7c2-pfx8",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-32778"
+      ],
+      "ghsa": [
+        "GHSA-5qg5-g7c2-pfx8"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/api/screenshot.js",
+          "startline": 27,
+          "startcol": 5,
+          "endline": 51,
+          "endcol": 7,
+          "range": false,
+          "code": "exec(command, async (error, stdout, stderr) => {\n      if (error) {\n        console.error(`[DIRECT-SCREENSHOT] Error executing Chromium: ${error.message}`);\n        return reject(error);\n      }\n      \n      try {\n        // Read screenshot\n        const screenshotData = await fs.readFile(screenshotPath);\n        console.log(`[DIRECT-SCREENSHOT] Read ${screenshotData.length} bytes from screenshot file`);\n        \n        // Convert base64\n        const base64Data = screenshotData.toString('base64');\n        \n        // Clean \n        await fs.unlink(screenshotPath).catch(err => \n          console.warn(`[DIRECT-SCREENSHOT] Failed to delete temp file: ${err.message}`)\n        );\n        \n        resolve(base64Data);\n      } catch (readError) {\n        console.error(`[DIRECT-SCREENSHOT] Error reading screenshot: ${readError.message}`);\n        reject(readError);\n      }\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/api/screenshot.js",
+          "startline": 11,
+          "startcol": 34,
+          "endline": 53,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0e4958aa10b2650d32439a799f6fc83a7cd46cef",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/api/screenshot.js",
+            "startline": 11,
+            "startcol": 34,
+            "endline": 58,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "name": "tar-fs",
+  "version": null,
+  "repo": "mafintosh/tar-fs",
+  "sha": "e4a7a401e80267247b8e9e39d8e5ba82c4fe2f7b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8cj5-5rvv-wf4v",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-48387"
+      ],
+      "ghsa": [
+        "GHSA-8cj5-5rvv-wf4v",
+        "GHSA-xrg4-qp5w-2c3w"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 249,
+          "startcol": 18,
+          "endline": 249,
+          "endcol": 45,
+          "range": false,
+          "code": "xfs.createWriteStream(name)"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 233,
+          "startcol": 9,
+          "endline": 240,
+          "endcol": 11,
+          "range": false,
+          "code": "xfs.link(dst, name, function (err) {\n          if (err && err.code === 'EPERM' && opts.hardlinkAsFilesFallback) {\n            stream = xfs.createReadStream(dst)\n            return onfile()\n          }\n\n          stat(err)\n        })"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 310,
+          "startcol": 7,
+          "endline": 313,
+          "endcol": 9,
+          "range": false,
+          "code": "xfs.mkdir(name, { mode: opts.mode, recursive: true }, function (err, made) {\n        if (err) return cb(err)\n        chperm(name, opts, cb)\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 119,
+          "startcol": 19,
+          "endline": 316,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "647447b572bc135c41035e82ca7b894f02b17f0f",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 119,
+            "startcol": 19,
+            "endline": 320,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "name": "codecov-node",
+  "version": null,
+  "repo": "codecov/codecov-node",
+  "sha": "bac0787351100cb430a72cfe58e46f0cdb069da5",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5q88-cjfq-g2mh",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7597"
+      ],
+      "ghsa": [
+        "GHSA-5q88-cjfq-g2mh"
+      ],
+      "snyk": [
+        "SNYK-JS-CODECOV-548879"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/codecov.js",
+          "startline": 419,
+          "startcol": 7,
+          "endline": 419,
+          "endcol": 21,
+          "range": false,
+          "code": "execSync(gcov)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/codecov.js",
+          "startline": 239,
+          "startcol": 14,
+          "endline": 557,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

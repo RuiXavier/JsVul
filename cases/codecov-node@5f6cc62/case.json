@@ -1,0 +1,82 @@
+{
+  "name": "codecov-node",
+  "version": null,
+  "repo": "codecov/codecov-node",
+  "sha": "5f6cc62d4f83bf3a75c973868259798814cd231e",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5q88-cjfq-g2mh",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-15123"
+      ],
+      "ghsa": [
+        "GHSA-5q88-cjfq-g2mh",
+        "GHSA-xp63-6vf5-xf3v"
+      ],
+      "snyk": [
+        "SNYK-JS-CODECOV-585979"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/codecov.js",
+          "startline": 417,
+          "startcol": 7,
+          "endline": 417,
+          "endcol": 21,
+          "range": false,
+          "code": "execSync(gcov)"
+        },
+        {
+          "file": "package/lib/codecov.js",
+          "startline": 478,
+          "startcol": 16,
+          "endline": 478,
+          "endcol": 73,
+          "range": false,
+          "code": "execSync('find ' + root + ' ' + patterns + more_patterns)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/codecov.js",
+          "startline": 237,
+          "startcol": 14,
+          "endline": 555,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "c0711c656686e902af2cd92d6aecc8074de4d83d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/codecov.js",
+            "startline": 241,
+            "startcol": 14,
+            "endline": 574,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

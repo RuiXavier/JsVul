@@ -1,0 +1,46 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      hazardous:
+        specifier: ^0.3.0
+        version: 0.3.0
+      json5:
+        specifier: ^2.1.1
+        version: 2.1.1
+
+packages:
+
+  callsite@1.0.0:
+    resolution: {integrity: sha512-0vdNRFXn5q+dtOqjfFtmtlI9N2eVZ7LMyEV2iKC5mEEFvSg/69Ml6b/WU2qF8W1nLRa0wiSrDT3Y5jOHZCwKPQ==}
+
+  hazardous@0.3.0:
+    resolution: {integrity: sha512-VLSlBMoLTnfScKBJTycufZ2OHLO06eS3Q0mxNdHJ+egd1QLqeLitxDeGeUuoIgOqSPer+uqZCxiv43a1EVmwdg==}
+
+  json5@2.1.1:
+    resolution: {integrity: sha512-l+3HXD0GEI3huGq1njuqtzYK8OYJyXMkOLtQ53pjWh89tvWS2h6l+1zMkYWqlb57+SiQodKZyvMEFb2X+KrFhQ==}
+    engines: {node: '>=6'}
+    hasBin: true
+
+  minimist@1.2.6:
+    resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
+
+snapshots:
+
+  callsite@1.0.0: {}
+
+  hazardous@0.3.0:
+    dependencies:
+      callsite: 1.0.0
+
+  json5@2.1.1:
+    dependencies:
+      minimist: 1.2.6
+
+  minimist@1.2.6: {}

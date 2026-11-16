@@ -1,0 +1,64 @@
+{
+  "name": "vite",
+  "version": null,
+  "repo": "vitejs/vite",
+  "sha": "a0a835f80ef7e39c5799a8486b4790d7ae07515e",
+  "subdir": "packages/vite",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-jqfw-vq24-v9c3",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-58752"
+      ],
+      "ghsa": [
+        "GHSA-jqfw-vq24-v9c3"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-200",
+        "CWE-23",
+        "CWE-284"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/node/server/middlewares/indexHtml.ts",
+          "startline": 443,
+          "startcol": 28,
+          "endline": 443,
+          "endcol": 59,
+          "range": false,
+          "code": "fsp.readFile(filePath, 'utf-8')"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "482000f57f56fe6ff2e905305100cfe03043ddea",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/node/server/middlewares/indexHtml.ts",
+            "startline": 464,
+            "startcol": 22,
+            "endline": 464,
+            "endcol": 58,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

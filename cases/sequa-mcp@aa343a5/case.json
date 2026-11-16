@@ -1,0 +1,69 @@
+{
+  "name": "sequa-mcp",
+  "version": null,
+  "repo": "sequa-ai/sequa-mcp",
+  "sha": "aa343a5013d274c88eca48be703531ea8d621195",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "mcp",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-10619",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-10619"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/open/index.js",
+          "startline": 244,
+          "startcol": 21,
+          "endline": 244,
+          "endcol": 83,
+          "range": false,
+          "code": "childProcess.spawn(command, cliArguments, childProcessOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/helpers/node-oauth-client-provider.ts",
+          "startline": 32,
+          "startcol": 3,
+          "endline": 34,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e569815854166db5f71c2e722408f8957fb9e804",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/helpers/node-oauth-client-provider.ts",
+            "startline": 32,
+            "startcol": 3,
+            "endline": 40,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

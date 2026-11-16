@@ -1,0 +1,50 @@
+{
+  "name": "json-logic-js",
+  "version": null,
+  "repo": "jwadhams/json-logic-js",
+  "sha": "17e9fedcd6864aa94d5ae48eca259a9677d4dfe2",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-4329",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-4329"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-77"
+      ],
+      "class": "code-injection",
+      "originalClass": "command-injection",
+      "sinks": [
+        {
+          "file": "package/logic.js",
+          "startline": 14,
+          "startcol": 9,
+          "endline": 456,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

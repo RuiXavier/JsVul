@@ -1,0 +1,59 @@
+{
+  "name": "nginx-proxy-manager",
+  "version": null,
+  "repo": "nginxproxymanager/nginx-proxy-manager",
+  "sha": "3095cff7d99e99e42183cc3f65d1f2938fbf08f5",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2019-15517",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-15517"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/backend/routes/main.js",
+          "startline": 32,
+          "startcol": 9,
+          "endline": 40,
+          "endcol": 11,
+          "range": false,
+          "code": "fs.readFile('dist' + req.params.page, 'utf8', function (err, data) {\n            if (err) {\n                res.render('index', {\n                    version: PACKAGE.version\n                });\n            } else {\n                res.contentType('text/html').end(data);\n            }\n        })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/backend/routes/main.js",
+          "startline": 25,
+          "startcol": 20,
+          "endline": 42,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

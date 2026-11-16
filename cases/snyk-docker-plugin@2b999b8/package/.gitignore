@@ -1,0 +1,17 @@
+/node_modules/
+.idea/
+bin/
+npm-debug.log
+dist/
+package-lock.json
+yarn.lock
+.DS_Store
+test/fixtures/ls-output/xxx.txt
+test/fixtures/go-binaries/latest_*
+.nyc_output/
+.vscode/
+tsconfig.local.json
+
+# Diagnostic reports (https://nodejs.org/api/report.html) 
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+*.iml

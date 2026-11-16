@@ -1,0 +1,63 @@
+{
+  "name": "formula-parser",
+  "version": null,
+  "repo": "handsontable/formula-parser",
+  "sha": "944136096f44ff4ffd4ba0bcef30970ca4702fce",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-rc77-xxq6-4mff",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-6836"
+      ],
+      "ghsa": [
+        "GHSA-rc77-xxq6-4mff"
+      ],
+      "snyk": [
+        "SNYK-JS-HOTFORMULAPARSER-541328"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/grammar-parser/grammar-parser.js",
+          "startline": 226,
+          "startcol": 17,
+          "endline": 226,
+          "endcol": 41,
+          "range": false,
+          "code": "eval(\"[\" + yytext + \"]\")"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/grammar-parser/grammar-parser.js",
+          "startline": 74,
+          "startcol": 22,
+          "endline": 936,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,69 +1,45 @@
-# JsVul: A function-level dataset of vulnerable and fixed source code in JavaScript and TypeScript
+# JsVul cases for taint analysis
 
-JsVul is a curated, function-level vulnerability dataset designed for the JavaScript and TypeScript ecosystems.
-Aggregated from seven major sources (CrossVul, CVEFixes, JS Vulnerability Dataset, OSSF CVE benchmark,
-SecBench.JS, OSV, and NVD), it supports the training of machine learning models for automated vulnerability
-detection.
+JsVul is a function-level vulnerability dataset for JavaScript and TypeScript (Tamás Viszkok and Péter Hegedűs,
+version 1.0.0, [doi 10.5281/zenodo.18195839](https://doi.org/10.5281/zenodo.18195839)): the functions that
+vulnerability fixes changed, gathered from seven sources (CrossVul, CVEfixes, the JS Vulnerability Dataset, the OSSF
+CVE benchmark, SecBench.js, OSV and NVD), to train machine-learning vulnerability detectors.
 
-Unlike generic multi-language datasets, JsVul utilizes a language-specific pipeline to ensure high data quality.
-The curation process includes:
+This repository holds 202 of JsVul's vulnerable commits as cases for a taint analysis, the JsVul benchmark of
+jelly-taint (`benchmarks/` of github.com/cs-au-dk/jelly-taint): each with the code of its package, how to install
+it, the files an analysis starts from, and its vulnerabilities, each with the native calls that are its sinks. The
+cases are those of Wenyuan Xu's jelly-taint-benchmarks, which reviewed every vulnerability by hand, in its format.
+**DIFF_WITH_ORIGINAL.md** says how they come from JsVul, step by step, and where they differ from
+jelly-taint-benchmarks.
 
-* Noise Filtering: Removal of minified code, test files, and non-semantic cosmetic edits.
-* Syntax Normalization: Application of ESLint and Prettier to standardizes code structure.
-* Rigorous Deduplication: Multi-stage filtering at the file, commit, and function levels.
+## Files
 
-This repository holds the dataset of JsVul version 1.0.0, `js_vul.zip` on Zenodo
-([doi 10.5281/zenodo.18195839](https://doi.org/10.5281/zenodo.18195839)). In this repository you will find:
+* `cases/<name>@<commit>/`, one folder per vulnerable commit (**SCHEMA.md** describes every field):
+  * `case.json`: the repository and commit, `entry` (the files or folders an analysis starts from), and the
+    vulnerabilities, each with its advisory id, `class` (command injection, code injection, path traversal, or
+    stored command injection), `cwe`, `sinks` (locations in the case's files), and `fix`: the fixing commit and
+    the sinks' counterparts in the fixed version.
+  * `package/`: the code of the package at the vulnerable commit (for a case of a monorepo, the folder of the
+    package that holds the sinks, with the packages of the same repository it depends on in
+    `package/node_modules/<name>`).
+  * `install.json`: how to install `package/`: its folders, lock file, pnpm flags and pnpm version.
+  * `fixed.diff`: the fixing commit's change to `package/`, when the fix is in it.
+* `install.sh`: installs the cases' dependencies, and with `--fixed` makes each case's `fixed/` folder from
+  `package/` and `fixed.diff`. `./install.sh -h` explains it.
+* `check_case.py`: checks the `case.json` files against SCHEMA.md.
 
-* The labeled functions, in chronologically sorted JSON Lines files: **train.jsonl**, **val.jsonl** and
-  **test.jsonl**.
-* The changes from the original dataset (the functions kept for taint analysis with jelly-taint, and the corrected
-  labels and classes) in **DIFF_WITH_ORIGINAL.md**, with what each of its numbers counts.
-* The vulnerable functions that no taint analysis of their case can find, each with its reason, in
-  **excluded.json** (DIFF_WITH_ORIGINAL.md, section 5).
+`.gitignore` leaves out what installing and analyzing make in the cases: `node_modules/` (but the packages of the
+same repository, which are tracked: add them with `git add -f`), `.install/`, `fixed/` and the install logs.
 
-## Why there is no code here
+## Install
 
-JsVul holds functions, not programs: a line is the text of one function, with the repository, commit and file it
-comes from (`project`, `sha`, `file`). There is no package, no test and no exploit in it, so there are none in this
-repository either. jelly-taint fetches and installs the code itself, the first time it analyzes a case, into folders
-of this repository that `.gitignore` leaves out:
+```bash
+./install.sh -j 4                          # every case; or name some: ./install.sh sirv@d061616 vite@5adbc53
+./install.sh --fixed --no-deps sirv@d061616   # its fixed version, in cases/sirv@d061616/fixed/
+```
 
-* `repos/<owner>__<repo>@<sha>/`: the repository at the vulnerable commit, fetched alone from GitHub
-  (`git fetch --depth 1 origin <sha>`), with the production dependencies of the vulnerable file's package installed
-  by pnpm. `fixed/` holds the fixing commits in the same way.
-* `js-function-extractor/`: JsVul's own function extractor (github.com/jsvul/js-function-extractor). jelly-taint runs
-  it on the original file to find the function's lines there, as JsVul's `loc` are lines of a copy that JsVul
-  reformatted with ESLint and Prettier.
-* `edited.txt`: the files jelly-taint changed in a repository so that pnpm could install it, or so that its
-  `package.json` names source files instead of build output (jelly-taint's `benchmarks/jsvul.md`, "Entry files"),
-  one change per line.
-
-The code isn't committed here: it is on GitHub at those commits, under its projects' own licenses, and it is large
-(on our server, the vulnerable commits take about 25 GB with their dependencies installed).
-
-There is no exploit to run either, so jelly-taint judges a case statically. Jelly analyzes the vulnerable file's
-package, with the arguments of the package's exported functions as taint sources besides its usual ones, and a
-vulnerable function is found when jelly reports a sink of the case's class (command injection, code injection, path
-traversal, prototype pollution or ReDoS) inside it. jelly-taint's `benchmarks/jsvul.md` explains each step and why.
-
-## The records
-
-Each line is one function:
-
-1. `id` (string): `[github_repo]::[commit_hash]::[file_path]::[start_line]::[start_column]`.
-2. `paired_id` (string, optional): the `id` of the corresponding vulnerable or fixed counterpart, if applicable.
-3. `project`, `sha`, `file` (string): the repository name, the commit hash and the relative file path. A vulnerable
-   function's commit is the one before the fix, and its fixed counterpart's is the fixing commit.
-4. `loc` (object): the function's `start_line`, `start_column`, `end_line` and `end_column`, in the files as
-   formatted with ESLint and Prettier.
-5. `body` (string): the source code of the function.
-6. `label` (int): 1 for vulnerable, 0 for non-vulnerable.
-7. `name` (string, optional): the function name.
-8. `cwe` (string array, optional): Common Weakness Enumeration (CWE) identifiers.
-9. `cve`, `ghsa`, `snyk`, `other` (string array, optional): vulnerability identifiers from NVD, GitHub Security
-   Advisories (GHSA), Snyk, or other sources.
-10. `publish_time` (object, optional): the publication date (`year`, `month`, `day`).
+pnpm installs each case's production dependencies from its lock file, without running install scripts. It needs
+bash, tar, git and pnpm, or npx (Node.js).
 
 ## Credit and license
 
@@ -75,5 +51,8 @@ JsVul is by Tamás Viszkok and Péter Hegedűs:
   JavaScript and TypeScript*, version 1.0.0, Zenodo (2026), https://doi.org/10.5281/zenodo.18195839.
 * The code that made it: https://github.com/jsvul/jsvul.
 
+The cases' format, sinks and review are Wenyuan Xu's jelly-taint-benchmarks (github.com/wyxu95/jelly-taint-benchmarks).
+
 JsVul is licensed under the [Creative Commons Attribution 4.0 International license](https://creativecommons.org/licenses/by/4.0/)
-(CC BY 4.0), and so is this repository.
+(CC BY 4.0), and so are this repository's data and documents. The code in each case's `package/` is its project's,
+at that commit, under that project's own license.

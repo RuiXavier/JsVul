@@ -1,0 +1,51 @@
+{
+  "name": "mjml",
+  "version": null,
+  "repo": "mjmlio/mjml",
+  "sha": "21034a7187f2bda4b0d66e7a1c63314c88dce71a",
+  "subdir": "packages/mjml-parser-xml",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2020-12827",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-12827"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/index.js",
+          "startline": 78,
+          "startcol": 17,
+          "endline": 78,
+          "endcol": 53,
+          "range": false,
+          "code": "fs.readFileSync(partialPath, 'utf8')"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "30e29ed2cdaec8684d60a6d12ea07b611c765a12",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

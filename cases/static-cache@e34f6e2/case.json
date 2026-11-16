@@ -1,0 +1,86 @@
+{
+  "name": "static-cache",
+  "version": null,
+  "repo": "koajs/static-cache",
+  "sha": "e34f6e2391b5986c591f43f743818c3aace8acec",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:koa-static-cache:20170613",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:koa-static-cache:20170613"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/thenify/index.js",
+          "startline": 72,
+          "startcol": 7,
+          "endline": 72,
+          "endcol": 27,
+          "range": false,
+          "code": "fn.apply(self, args)"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 190,
+          "startcol": 16,
+          "endline": 190,
+          "endcol": 41,
+          "range": false,
+          "code": "fs.readFileSync(filename)"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 144,
+          "startcol": 18,
+          "endline": 144,
+          "endcol": 48,
+          "range": false,
+          "code": "fs.createReadStream(file.path)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 10,
+          "startcol": 18,
+          "endline": 163,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b69e4f66e775ecd6c0cc0f311669d21a289c9ccf",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 10,
+            "startcol": 18,
+            "endline": 169,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

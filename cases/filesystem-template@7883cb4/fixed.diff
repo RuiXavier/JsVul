@@ -1,0 +1,266 @@
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+deleted file mode 100644
+index f307706..0000000
+--- a/pnpm-lock.yaml
++++ /dev/null
+@@ -1,229 +0,0 @@
+-lockfileVersion: '9.0'
+-
+-settings:
+-  autoInstallPeers: true
+-  excludeLinksFromLockfile: false
+-
+-importers:
+-
+-  .:
+-    dependencies:
+-      fdir:
+-        specifier: ^5.0.0
+-        version: 5.3.0
+-    devDependencies:
+-      '@types/node':
+-        specifier: ^14.14.14
+-        version: 14.18.63
+-      prettier:
+-        specifier: ^2.2.1
+-        version: 2.8.8
+-      source-map-support:
+-        specifier: ^0.5.19
+-        version: 0.5.21
+-      tsc-watch:
+-        specifier: ^5.0.2
+-        version: 5.0.3(typescript@4.9.5)
+-      typescript:
+-        specifier: ^4.1.3
+-        version: 4.9.5
+-
+-packages:
+-
+-  '@types/node@14.18.63':
+-    resolution: {integrity: sha512-fAtCfv4jJg+ExtXhvCkCqUKZ+4ok/JQk01qDKhL5BDDoS3AxKXhV5/MAVUZyQnSEd2GT92fkgZl0pz0Q0AzcIQ==}
+-
+-  ansi-regex@5.0.1:
+-    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
+-    engines: {node: '>=8'}
+-
+-  buffer-from@1.1.2:
+-    resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
+-
+-  cross-spawn@7.0.6:
+-    resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
+-    engines: {node: '>= 8'}
+-
+-  duplexer@0.1.2:
+-    resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
+-
+-  event-stream@3.3.4:
+-    resolution: {integrity: sha512-QHpkERcGsR0T7Qm3HNJSyXKEEj8AHNxkY3PK8TS2KJvQ7NiSHe3DDpwVKKtoYprL/AreyzFBeIkBIWChAqn60g==}
+-
+-  fdir@5.3.0:
+-    resolution: {integrity: sha512-BtE53+jaa7nNHT+gPdfU6cFAXOJUWDs2b5GFox8dtl6zLXmfNf/N6im69b9nqNNwDyl27mpIWX8qR7AafWzSdQ==}
+-    peerDependencies:
+-      picomatch: 2.x
+-    peerDependenciesMeta:
+-      picomatch:
+-        optional: true
+-
+-  from@0.1.7:
+-    resolution: {integrity: sha512-twe20eF1OxVxp/ML/kq2p1uc6KvFK/+vs8WjEbeKmV2He22MKm7YF2ANIt+EOqhJ5L3K/SuuPhk0hWQDjOM23g==}
+-
+-  isexe@2.0.0:
+-    resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+-
+-  map-stream@0.1.0:
+-    resolution: {integrity: sha512-CkYQrPYZfWnu/DAmVCpTSX/xHpKZ80eKh2lAkyA6AJTef6bW+6JpbQZN5rofum7da+SyN1bi5ctTm+lTfcCW3g==}
+-
+-  node-cleanup@2.1.2:
+-    resolution: {integrity: sha512-qN8v/s2PAJwGUtr1/hYTpNKlD6Y9rc4p8KSmJXyGdYGZsDGKXrGThikLFP9OCHFeLeEpQzPwiAtdIvBLqm//Hw==}
+-
+-  path-key@3.1.1:
+-    resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
+-    engines: {node: '>=8'}
+-
+-  pause-stream@0.0.11:
+-    resolution: {integrity: sha512-e3FBlXLmN/D1S+zHzanP4E/4Z60oFAa3O051qt1pxa7DEJWKAyil6upYVXCWadEnuoqa4Pkc9oUx9zsxYeRv8A==}
+-
+-  prettier@2.8.8:
+-    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
+-    engines: {node: '>=10.13.0'}
+-    hasBin: true
+-
+-  ps-tree@1.2.0:
+-    resolution: {integrity: sha512-0VnamPPYHl4uaU/nSFeZZpR21QAWRz+sRv4iW9+v/GS/J5U5iZB5BNN6J0RMoOvdx2gWM2+ZFMIm58q24e4UYA==}
+-    engines: {node: '>= 0.10'}
+-    hasBin: true
+-
+-  shebang-command@2.0.0:
+-    resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
+-    engines: {node: '>=8'}
+-
+-  shebang-regex@3.0.0:
+-    resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+-    engines: {node: '>=8'}
+-
+-  source-map-support@0.5.21:
+-    resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
+-
+-  source-map@0.6.1:
+-    resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
+-    engines: {node: '>=0.10.0'}
+-
+-  split@0.3.3:
+-    resolution: {integrity: sha512-wD2AeVmxXRBoX44wAycgjVpMhvbwdI2aZjCkvfNcH1YqHQvJVa1duWc73OyVGJUc05fhFaTZeQ/PYsrmyH0JVA==}
+-
+-  stream-combiner@0.0.4:
+-    resolution: {integrity: sha512-rT00SPnTVyRsaSz5zgSPma/aHSOic5U1prhYdRy5HS2kTZviFpmDgzilbtsJsxiroqACmayynDN/9VzIbX5DOw==}
+-
+-  string-argv@0.1.2:
+-    resolution: {integrity: sha512-mBqPGEOMNJKXRo7z0keX0wlAhbBAjilUdPW13nN0PecVryZxdHIeM7TqbsSUA7VYuS00HGC6mojP7DlQzfa9ZA==}
+-    engines: {node: '>=0.6.19'}
+-
+-  strip-ansi@6.0.1:
+-    resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
+-    engines: {node: '>=8'}
+-
+-  through@2.3.8:
+-    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
+-
+-  tsc-watch@5.0.3:
+-    resolution: {integrity: sha512-Hz2UawwELMSLOf0xHvAFc7anLeMw62cMVXr1flYmhRuOhOyOljwmb1l/O60ZwRyy1k7N1iC1mrn1QYM2zITfuw==}
+-    engines: {node: '>=8.17.0'}
+-    hasBin: true
+-    peerDependencies:
+-      typescript: '*'
+-
+-  typescript@4.9.5:
+-    resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
+-    engines: {node: '>=4.2.0'}
+-    hasBin: true
+-
+-  which@2.0.2:
+-    resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
+-    engines: {node: '>= 8'}
+-    hasBin: true
+-
+-snapshots:
+-
+-  '@types/node@14.18.63': {}
+-
+-  ansi-regex@5.0.1: {}
+-
+-  buffer-from@1.1.2: {}
+-
+-  cross-spawn@7.0.6:
+-    dependencies:
+-      path-key: 3.1.1
+-      shebang-command: 2.0.0
+-      which: 2.0.2
+-
+-  duplexer@0.1.2: {}
+-
+-  event-stream@3.3.4:
+-    dependencies:
+-      duplexer: 0.1.2
+-      from: 0.1.7
+-      map-stream: 0.1.0
+-      pause-stream: 0.0.11
+-      split: 0.3.3
+-      stream-combiner: 0.0.4
+-      through: 2.3.8
+-
+-  fdir@5.3.0: {}
+-
+-  from@0.1.7: {}
+-
+-  isexe@2.0.0: {}
+-
+-  map-stream@0.1.0: {}
+-
+-  node-cleanup@2.1.2: {}
+-
+-  path-key@3.1.1: {}
+-
+-  pause-stream@0.0.11:
+-    dependencies:
+-      through: 2.3.8
+-
+-  prettier@2.8.8: {}
+-
+-  ps-tree@1.2.0:
+-    dependencies:
+-      event-stream: 3.3.4
+-
+-  shebang-command@2.0.0:
+-    dependencies:
+-      shebang-regex: 3.0.0
+-
+-  shebang-regex@3.0.0: {}
+-
+-  source-map-support@0.5.21:
+-    dependencies:
+-      buffer-from: 1.1.2
+-      source-map: 0.6.1
+-
+-  source-map@0.6.1: {}
+-
+-  split@0.3.3:
+-    dependencies:
+-      through: 2.3.8
+-
+-  stream-combiner@0.0.4:
+-    dependencies:
+-      duplexer: 0.1.2
+-
+-  string-argv@0.1.2: {}
+-
+-  strip-ansi@6.0.1:
+-    dependencies:
+-      ansi-regex: 5.0.1
+-
+-  through@2.3.8: {}
+-
+-  tsc-watch@5.0.3(typescript@4.9.5):
+-    dependencies:
+-      cross-spawn: 7.0.6
+-      node-cleanup: 2.1.2
+-      ps-tree: 1.2.0
+-      string-argv: 0.1.2
+-      strip-ansi: 6.0.1
+-      typescript: 4.9.5
+-
+-  typescript@4.9.5: {}
+-
+-  which@2.0.2:
+-    dependencies:
+-      isexe: 2.0.0
+diff --git a/src/lib/file-utils.ts b/src/lib/file-utils.ts
+index 77e383d..272d2f4 100644
+--- a/src/lib/file-utils.ts
++++ b/src/lib/file-utils.ts
+@@ -162,7 +162,7 @@ export const fetchSource = async (pathlike: string, options?: SourceOptions): Pr
+ 
+   const cache = getCacheDir(url);
+   if (!sourceCache[cache?.path]) {
+-    sourceCache[cache?.path] = isRecipeFile(url.pathname) ? fetchRecipe(url, cache, options) : fetchRepo(url, cache, options);
++    sourceCache[cache?.path] = isRecipeFile(url.pathname) ? fetchRecipe(url, cache, options) : fetchRepo(cache, options);
+   } else {
+     logger.log(`cache hit on ${cache?.path}`);
+   }
+@@ -237,7 +237,7 @@ export const fetchRecipe = async (url: URL, cacheInfo: CacheInfo, options?: Sour
+  *
+  * @return {Promise<string>}  The repo.
+  */
+-export const fetchRepo = async (url: URL, cacheInfo: CacheInfo, options?: SourceOptions): Promise<string> => {
++export const fetchRepo = async (cacheInfo: CacheInfo, options?: SourceOptions): Promise<string> => {
+   let branch = cacheInfo.branch;
+   const { path: repo, origin, repoName } = cacheInfo;
+ 
+@@ -247,7 +247,7 @@ export const fetchRepo = async (url: URL, cacheInfo: CacheInfo, options?: Source
+     return repo;
+   }
+ 
+-  logger.debug({ url, branch, repo, origin });
++  logger.debug({ branch, repo, origin });
+   logger.info(`will clone ${branch ? `${logger.blu(branch)} of ` : ''}${logger.ylw(origin)} into ${logger.grn(repoName)}`);
+ 
+   const cwd = repo;

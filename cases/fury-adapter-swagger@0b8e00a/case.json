@@ -1,0 +1,70 @@
+{
+  "name": "fury-adapter-swagger",
+  "version": null,
+  "repo": "apiaryio/fury-adapter-swagger",
+  "sha": "0b8e00a8dc4977488289adaf939703a66db869d8",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/adapter.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2r7f-4h2c-5x73",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [
+        "GHSA-2r7f-4h2c-5x73"
+      ],
+      "snyk": [
+        "npm:fury-adapter-swagger:20161024"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/json-schema-ref-parser/lib/read.js",
+          "startline": 117,
+          "startcol": 7,
+          "endline": 124,
+          "endcol": 9,
+          "range": false,
+          "code": "fs.readFile(file, function(err, data) {\n        if (err) {\n          reject(ono(err, 'Error opening file \"%s\"', $ref.path));\n        }\n        else {\n          resolve(data);\n        }\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/parser.js",
+          "startline": 57,
+          "startcol": 3,
+          "endline": 198,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "777e2d68f03546a88f3203bbd4725df8b1f662a7",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/parser.js",
+            "startline": 57,
+            "startcol": 3,
+            "endline": 203,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

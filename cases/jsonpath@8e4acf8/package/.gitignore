@@ -1,0 +1,11 @@
+*.iml
+.DS_Store
+.idea
+ignore
+temp
+node_modules
+pids
+reports
+target
+*.log
+coverage

@@ -1,0 +1,62 @@
+{
+  "name": "devcert",
+  "version": null,
+  "repo": "guybedford/devcert",
+  "sha": "651bb8ebb97a029be13656c0476d48db85887451",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4gp3-p7ph-x2jr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10778"
+      ],
+      "ghsa": [
+        "GHSA-4gp3-p7ph-x2jr"
+      ],
+      "snyk": [
+        "SNYK-JS-DEVCERTSANSCACHE-540926"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/openssl.ts",
+          "startline": 39,
+          "startcol": 3,
+          "endline": 44,
+          "endcol": 5,
+          "range": false,
+          "code": "childProcess.execSync(`openssl ${ cmd }`, {\n    stdio: 'ignore',\n    env: Object.assign({\n      RANDFILE: rndFile\n    }, process.env)\n  })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "571f4e6d077f7f21c6aed655ae380d85a7a5d3b8",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/openssl.ts",
+            "startline": 39,
+            "startcol": 3,
+            "endline": 44,
+            "endcol": 4,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

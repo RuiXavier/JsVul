@@ -1,0 +1,53 @@
+{
+  "name": "phantom-html-to-pdf",
+  "version": null,
+  "repo": "pofider/phantom-html-to-pdf",
+  "sha": "c1c4d4df05f3d019e74ed209bae345d2c38d8962",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-6h7f-qwqm-35pp",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7763"
+      ],
+      "ghsa": [
+        "GHSA-6h7f-qwqm-35pp"
+      ],
+      "snyk": [
+        "SNYK-JS-PHANTOMHTMLTOPDF-1023598"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/scripts/conversionScriptPart.js",
+          "startline": 18,
+          "startcol": 28,
+          "endline": 38,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "roo-code",
+  "version": null,
+  "repo": "roocodeinc/roo-code",
+  "sha": "10b2fb32ed047bbd7b8d10ef185c1ed345efcc92",
+  "subdir": "src",
+  "siblings": {
+    "@roo-code/cloud": "packages/cloud",
+    "@roo-code/ipc": "packages/ipc",
+    "@roo-code/telemetry": "packages/telemetry",
+    "@roo-code/types": "packages/types"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "extension",
+  "entry": [
+    "package/extension.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5x8h-m52g-5v54",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-53097",
+        "CVE-2025-53098"
+      ],
+      "ghsa": [
+        "GHSA-5x8h-m52g-5v54",
+        "GHSA-wr2q-46pg-f228"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-74",
+        "CWE-77"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "command-injection",
+      "sinks": [
+        {
+          "file": "package/core/task/Task.ts",
+          "startline": 404,
+          "startcol": 2,
+          "endline": 511,
+          "endcol": 2,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7d0b22f9e659dc6c26aab0bacbea27874986e772",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/core/task/Task.ts",
+            "startline": 407,
+            "startcol": 2,
+            "endline": 517,
+            "endcol": 2,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

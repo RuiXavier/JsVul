@@ -1,0 +1,48 @@
+diff --git a/package.json b/package.json
+index 546f953..a4c051f 100644
+--- a/package.json
++++ b/package.json
+@@ -20,6 +20,8 @@
+   },
+   "devDependencies": {
+     "@kwsites/promise-result": "^1.1.0",
++    "@simple-git/babel-config": "^1.0.0",
++    "@simple-git/test-utils": "^3.0.0",
+     "@types/debug": "^4.1.5",
+     "@types/jest": "^29.2.2",
+     "@types/node": "^16",
+diff --git a/src/lib/plugins/block-unsafe-operations-plugin.ts b/src/lib/plugins/block-unsafe-operations-plugin.ts
+index 109c1c6..c476259 100644
+--- a/src/lib/plugins/block-unsafe-operations-plugin.ts
++++ b/src/lib/plugins/block-unsafe-operations-plugin.ts
+@@ -39,6 +39,14 @@ function preventUploadPack(arg: string, method: string) {
+          `Use of clone with option -u is not permitted without enabling allowUnsafePack`
+       );
+    }
++
++   if (method === 'push' && /^\s*--exec\b/.test(arg)) {
++      throw new GitPluginError(
++         undefined,
++         'unsafe',
++         `Use of push with option --exec is not permitted without enabling allowUnsafePack`
++      );
++   }
+ }
+ 
+ export function blockUnsafeOperationsPlugin({
+diff --git a/test/unit/plugin.unsafe.spec.ts b/test/unit/plugin.unsafe.spec.ts
+index f23fc4e..18b265c 100644
+--- a/test/unit/plugin.unsafe.spec.ts
++++ b/test/unit/plugin.unsafe.spec.ts
+@@ -8,9 +8,10 @@ import {
+ 
+ describe('blockUnsafeOperationsPlugin', () => {
+    it.each([
++      ['clone', '-u touch /tmp/pwn'],
+       ['cmd', '--upload-pack=touch /tmp/pwn0'],
+       ['cmd', '--receive-pack=touch /tmp/pwn1'],
+-      ['clone', '-u touch /tmp/pwn'],
++      ['push', '--exec=touch /tmp/pwn2'],
+    ])('allows %s %s only when using override', async (cmd, option) => {
+       assertGitError(
+          await promiseError(newSimpleGit({ unsafe: {} }).raw(cmd, option)),

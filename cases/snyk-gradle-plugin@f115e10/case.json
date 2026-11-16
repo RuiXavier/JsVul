@@ -1,0 +1,79 @@
+{
+  "name": "snyk-gradle-plugin",
+  "version": null,
+  "repo": "snyk/snyk-gradle-plugin",
+  "sha": "f115e10c069f3bf404f164e9f88ba20a2a09a185",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/lib/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4x6g-3cmx-w76r",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-22984"
+      ],
+      "ghsa": [
+        "GHSA-4x6g-3cmx-w76r"
+      ],
+      "snyk": [
+        "SNYK-JS-SNYK-3038622",
+        "SNYK-JS-SNYKDOCKERPLUGIN-3039679",
+        "SNYK-JS-SNYKGRADLEPLUGIN-3038624",
+        "SNYK-JS-SNYKMVNPLUGIN-3038623",
+        "SNYK-JS-SNYKPYTHONPLUGIN-3039677",
+        "SNYK-JS-SNYKSBTPLUGIN-3038626",
+        "SNYK-JS-SNYKSNYKCOCOAPODSPLUGIN-3038625",
+        "SNYK-JS-SNYKSNYKHEXPLUGIN-3039680"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/sub-process.ts",
+          "startline": 22,
+          "startcol": 18,
+          "endline": 22,
+          "endcol": 65,
+          "range": false,
+          "code": "childProcess.spawn(command, args, spawnOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/sub-process.ts",
+          "startline": 7,
+          "startcol": 8,
+          "endline": 57,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bb1c1c72a75e97723a76b14d2d73f70744ed5009",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/sub-process.ts",
+            "startline": 8,
+            "startcol": 8,
+            "endline": 59,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

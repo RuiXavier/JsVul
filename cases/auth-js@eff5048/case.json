@@ -1,0 +1,95 @@
+{
+  "name": "auth-js",
+  "version": null,
+  "repo": "supabase/auth-js",
+  "sha": "eff5048a41a6af908f752e25a40f29b43dc824b3",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8r88-6cj9-9fh5",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-48370"
+      ],
+      "ghsa": [
+        "GHSA-8r88-6cj9-9fh5"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-287"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/GoTrueAdminApi.ts",
+          "startline": 221,
+          "startcol": 3,
+          "endline": 234,
+          "endcol": 3,
+          "range": true,
+          "code": null
+        },
+        {
+          "file": "package/src/GoTrueAdminApi.ts",
+          "startline": 243,
+          "startcol": 3,
+          "endline": 257,
+          "endcol": 3,
+          "range": true,
+          "code": null
+        },
+        {
+          "file": "package/src/GoTrueAdminApi.ts",
+          "startline": 268,
+          "startcol": 3,
+          "endline": 284,
+          "endcol": 3,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "1bcb76e479e51cd9bca2d7732d0bf3199e07a693",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/GoTrueAdminApi.ts",
+            "startline": 229,
+            "startcol": 3,
+            "endline": 244,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/GoTrueAdminApi.ts",
+            "startline": 253,
+            "startcol": 3,
+            "endline": 269,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/GoTrueAdminApi.ts",
+            "startline": 280,
+            "startcol": 3,
+            "endline": 298,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

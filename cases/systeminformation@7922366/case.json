@@ -1,0 +1,96 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "7922366d707de7f20995fc8e30ac3153636bf35f",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-jff2-qjw8-5476",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-21388"
+      ],
+      "ghsa": [
+        "GHSA-jff2-qjw8-5476"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-20",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/internet.js",
+          "startline": 33,
+          "startcol": 1,
+          "endline": 123,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 130,
+          "startcol": 1,
+          "endline": 241,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        },
+        {
+          "file": "package/lib/processes.js",
+          "startline": 92,
+          "startcol": 1,
+          "endline": 379,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        },
+        {
+          "file": "package/lib/processes.js",
+          "startline": 890,
+          "startcol": 1,
+          "endline": 1220,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0be6fcd575c05687d1076d5cd6d75af2ebae5a46",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/processes.js",
+            "startline": 92,
+            "startcol": 1,
+            "endline": 378,
+            "endcol": 1,
+            "range": true
+          },
+          {
+            "file": "fixed/lib/processes.js",
+            "startline": 889,
+            "startcol": 1,
+            "endline": 1218,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

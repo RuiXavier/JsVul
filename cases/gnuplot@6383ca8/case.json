@@ -1,0 +1,118 @@
+{
+  "name": "gnuplot",
+  "version": null,
+  "repo": "rkesters/gnuplot",
+  "sha": "6383ca819bd5c8afc590348eeacdfbe08a7ace66",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-29369",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-29369"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 296,
+          "startcol": 3,
+          "endline": 296,
+          "endcol": 28,
+          "range": false,
+          "code": "exec(`touch ${filePath}`)"
+        },
+        {
+          "file": "package/src/index.ts",
+          "startline": 300,
+          "startcol": 15,
+          "endline": 304,
+          "endcol": 6,
+          "range": false,
+          "code": "exec(\n      `gnuplot | ps2pdf - ${filePath}`,\n      options.exec ? options.exec : {},\n      options.finish || post_gnuplot_processing\n    )"
+        },
+        {
+          "file": "package/src/index.ts",
+          "startline": 307,
+          "startcol": 15,
+          "endline": 311,
+          "endcol": 6,
+          "range": false,
+          "code": "exec(\n      `gnuplot > ${filePath}`,\n      options.exec ? options.exec : {},\n      options.finish || post_gnuplot_processing\n    )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 296,
+          "startcol": 3,
+          "endline": 296,
+          "endcol": 27,
+          "range": false
+        },
+        {
+          "file": "package/src/index.ts",
+          "startline": 300,
+          "startcol": 15,
+          "endline": 304,
+          "endcol": 5,
+          "range": false
+        },
+        {
+          "file": "package/src/index.ts",
+          "startline": 307,
+          "startcol": 15,
+          "endline": 311,
+          "endcol": 5,
+          "range": false
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "23671d4d3d28570fb19a936a6328bfac742410de",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 296,
+            "startcol": 3,
+            "endline": 296,
+            "endcol": 27,
+            "range": false
+          },
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 300,
+            "startcol": 15,
+            "endline": 304,
+            "endcol": 5,
+            "range": false
+          },
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 307,
+            "startcol": 15,
+            "endline": 311,
+            "endcol": 5,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

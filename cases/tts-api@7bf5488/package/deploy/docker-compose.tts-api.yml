@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  tts-api:
+    image: ${IMAGE_NAME:-pedroetb/tts-api}:${IMAGE_TAG:-latest}
+    container_name: ${CONTAINER_NAME:-tts-api}
+    environment:
+      LC_ALL:
+    networks:
+      tts-api-net:
+    devices:
+      - ${AUDIO_DEVICE:-/dev/snd}
+    healthcheck:
+      test: wget --spider -q http://localhost:${PORT}
+      interval: ${HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-3}
+      start_period: ${HEALTHCHECK_START_PERIOD:-1m}
+    labels:
+      - ${CADDY_DOCKER_LABEL_PREFIX}.address=:${CADDY_PORT}
+      - ${CADDY_DOCKER_LABEL_PREFIX}.targetport=${PORT}
+      - ${CADDY_DOCKER_LABEL_PREFIX}.tls=off
+    restart: always
+
+networks:
+  tts-api-net:
+    name: ${TTS_API_NET_NAME:-tts-api-net}
+    external: true

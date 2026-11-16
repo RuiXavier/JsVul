@@ -1,0 +1,61 @@
+{
+  "name": "dompurify",
+  "version": null,
+  "repo": "cure53/dompurify",
+  "sha": "166151cc46cfed892d0d70bd5dcf822bf9a4e129",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/scripts/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-48050",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-48050"
+      ],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-DOMPURIFY-10176060"
+      ],
+      "cwe": [
+        "CWE-24"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/scripts/server.js",
+          "startline": 36,
+          "startcol": 7,
+          "endline": 36,
+          "endcol": 36,
+          "range": false,
+          "code": "fs.createReadStream(filename)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/scripts/server.js",
+          "startline": 19,
+          "startcol": 17,
+          "endline": 38,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

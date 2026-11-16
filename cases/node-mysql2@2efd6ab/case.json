@@ -1,0 +1,53 @@
+{
+  "name": "node-mysql2",
+  "version": null,
+  "repo": "sidorares/node-mysql2",
+  "sha": "2efd6ab397a1af0ae2b198c6761473ccfbcd8da5",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4rch-2fh8-94vw",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-21511"
+      ],
+      "ghsa": [
+        "GHSA-4rch-2fh8-94vw"
+      ],
+      "snyk": [
+        "SNYK-JS-MYSQL2-6670046"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/generate-function/index.js",
+          "startline": 172,
+          "startcol": 12,
+          "endline": 172,
+          "endcol": 50,
+          "range": false,
+          "code": "Function.apply(null, keys.concat(src))"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7d4b098c7e29d5a6cb9eac2633bfcc2f0f1db713",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "metacalc",
+  "version": null,
+  "repo": "metarhia/metacalc",
+  "sha": "2dd5efe8476115a76848857a40e0f2017d9cebc6",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5gc4-cx9x-9c43",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-21122"
+      ],
+      "ghsa": [
+        "GHSA-5gc4-cx9x-9c43"
+      ],
+      "snyk": [
+        "SNYK-JS-METACALC-2826197"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/sheet.js",
+          "startline": 23,
+          "startcol": 20,
+          "endline": 23,
+          "endcol": 59,
+          "range": false,
+          "code": "metavm.createScript(prop, src, options)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "625c23d63eabfa16fc815f5832b147b08d2144bd",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/sheet.js",
+            "startline": 35,
+            "startcol": 20,
+            "endline": 35,
+            "endcol": 58,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

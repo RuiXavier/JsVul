@@ -1,0 +1,107 @@
+diff --git a/.env.eval.example b/.env.eval.example
+index 4e10f1b..db7b796 100644
+--- a/.env.eval.example
++++ b/.env.eval.example
+@@ -19,3 +19,4 @@ GOOGLE_GENERATIVE_AI_API_KEY=
+ # Eval variables
+ JUDGE_MODEL="openai:gpt-4o"
+ CHAT_MODEL="anthropic:claude-3-5-haiku"
++EVAL_FOLDER="/my/folder"
+diff --git a/.env.example b/.env.example
+index 4dcd9e6..350540e 100644
+--- a/.env.example
++++ b/.env.example
+@@ -17,4 +17,4 @@ ANTHROPIC_API_KEY=
+ GOOGLE_GENERATIVE_AI_API_KEY=
+ 
+ EVAL=true
+-
++EVAL_FOLDER="/my/folder"
+diff --git a/src/app/api/evals/route.ts b/src/app/api/evals/route.ts
+index 545fbb9..17caf79 100644
+--- a/src/app/api/evals/route.ts
++++ b/src/app/api/evals/route.ts
+@@ -10,21 +10,31 @@ export async function GET(request: NextRequest) {
+     if (env.EVAL !== 'true') {
+       throw new Error('EVAL environment variable must be set to 1');
+     }
++    if (!env.EVAL_FOLDER) {
++      throw new Error('EVAL_FOLDER environment variable must be set');
++    }
+     const searchParams = request.nextUrl.searchParams;
+ 
+-    const folderParam = z.string().min(1).safeParse(searchParams.get('folder'));
++    const folderParam = z
++      .string()
++      .min(1)
++      .refine((val) => !val.includes('/') && !val.includes('\\'), {
++        message: 'Folder cannot contain path separators'
++      })
++      .safeParse(searchParams.get('folder'));
+ 
+     if (!folderParam.success) {
+-      return Response.json({ error: 'Invalid folder parameter' }, { status: 400 });
++      return Response.json({ error: `Invalid folder parameter: ${folderParam.error.message}` }, { status: 400 });
+     }
+ 
+     const folderPath = folderParam.data;
++    const absFolderPath = path.join(env.EVAL_FOLDER, folderPath);
+ 
+-    const files = await fs.readdir(folderPath);
++    const files = await fs.readdir(absFolderPath);
+ 
+     const filesWithContents = await Promise.all(
+       files.map(async (file) => {
+-        const filePath = path.join(folderPath, file);
++        const filePath = path.join(absFolderPath, file);
+         const contents = await fs.readFile(filePath, 'utf-8');
+         return {
+           fileName: path.basename(file),
+diff --git a/src/evals/lib/test-id.ts b/src/evals/lib/test-id.ts
+index 5e74a23..ef19442 100644
+--- a/src/evals/lib/test-id.ts
++++ b/src/evals/lib/test-id.ts
+@@ -4,6 +4,11 @@ import { ExpectStatic } from 'vitest';
+ 
+ /* eslint no-process-env: 0 */
+ 
++if (!process.env.EVAL_FOLDER) {
++  throw new Error('Expected process.env.EVAL_FOLDER to be defined');
++}
++const EVAL_FOLDER = process.env.EVAL_FOLDER;
++
+ export const getEvalId = (expect: ExpectStatic) => {
+   const testName = expect.getState().currentTestName;
+   return testNameToEvalId(testName);
+@@ -17,7 +22,7 @@ export const getTestRunId = () => {
+ };
+ 
+ export const ensureTraceFolderExists = (evalId: string) => {
+-  const traceFolder = path.join('/tmp/dbagenteval', getTestRunId(), evalId);
++  const traceFolder = path.join(EVAL_FOLDER, getTestRunId(), evalId);
+   fs.mkdirSync(traceFolder, { recursive: true });
+   return traceFolder;
+ };
+@@ -28,7 +33,7 @@ export const ensureTraceFolderExistsExpect = (expect: ExpectStatic) => {
+ };
+ 
+ export const ensureTestRunTraceFolderExists = () => {
+-  const traceFolder = path.join('/tmp/dbagenteval', getTestRunId());
++  const traceFolder = path.join(EVAL_FOLDER, getTestRunId());
+   fs.mkdirSync(traceFolder, { recursive: true });
+   return traceFolder;
+ };
+diff --git a/src/lib/env/server.ts b/src/lib/env/server.ts
+index 3daf17b..b9972df 100644
+--- a/src/lib/env/server.ts
++++ b/src/lib/env/server.ts
+@@ -34,7 +34,8 @@ const schema = z.object({
+   MAX_PARALLEL_RUNS: z.number().default(20), // How many schedules can be run in parallel
+   TIMEOUT_FOR_RUNNING_SCHEDULE_SECS: z.number().default(15 * 60), // How long to wait before assuming it's dead and restart
+ 
+-  EVAL: z.string(z.enum(['true', 'false'])).default('false')
++  EVAL: z.string(z.enum(['true', 'false'])).default('false'),
++  EVAL_FOLDER: z.string().optional()
+ });
+ 
+ const serverEnv = schema.parse(process.env);

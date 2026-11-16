@@ -1,0 +1,722 @@
+diff --git a/app/api/files/upload/route.test.ts b/app/api/files/upload/route.test.ts
+index 3069ad5..560eff1 100644
+--- a/app/api/files/upload/route.test.ts
++++ b/app/api/files/upload/route.test.ts
+@@ -186,3 +186,190 @@ describe('File Upload API Route', () => {
+     expect(response.headers.get('Access-Control-Allow-Headers')).toBe('Content-Type')
+   })
+ })
++
++describe('File Upload Security Tests', () => {
++  beforeEach(() => {
++    vi.resetModules()
++    vi.clearAllMocks()
++
++    vi.doMock('@/lib/auth', () => ({
++      getSession: vi.fn().mockResolvedValue({
++        user: { id: 'test-user-id' },
++      }),
++    }))
++
++    vi.doMock('@/lib/uploads', () => ({
++      isUsingCloudStorage: vi.fn().mockReturnValue(false),
++      uploadFile: vi.fn().mockResolvedValue({
++        key: 'test-key',
++        path: '/test/path',
++      }),
++    }))
++
++    vi.doMock('@/lib/uploads/setup.server', () => ({}))
++  })
++
++  afterEach(() => {
++    vi.clearAllMocks()
++  })
++
++  describe('File Extension Validation', () => {
++    it('should accept allowed file types', async () => {
++      const allowedTypes = [
++        'pdf',
++        'doc',
++        'docx',
++        'txt',
++        'md',
++        'png',
++        'jpg',
++        'jpeg',
++        'gif',
++        'csv',
++        'xlsx',
++        'xls',
++      ]
++
++      for (const ext of allowedTypes) {
++        const formData = new FormData()
++        const file = new File(['test content'], `test.${ext}`, { type: 'application/octet-stream' })
++        formData.append('file', file)
++
++        const req = new Request('http://localhost/api/files/upload', {
++          method: 'POST',
++          body: formData,
++        })
++
++        const { POST } = await import('@/app/api/files/upload/route')
++        const response = await POST(req as any)
++
++        expect(response.status).toBe(200)
++      }
++    })
++
++    it('should reject HTML files to prevent XSS', async () => {
++      const formData = new FormData()
++      const maliciousContent = '<script>alert("XSS")</script>'
++      const file = new File([maliciousContent], 'malicious.html', { type: 'text/html' })
++      formData.append('file', file)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(400)
++      const data = await response.json()
++      expect(data.message).toContain("File type 'html' is not allowed")
++    })
++
++    it('should reject SVG files to prevent XSS', async () => {
++      const formData = new FormData()
++      const maliciousSvg = '<svg onload="alert(\'XSS\')" xmlns="http://www.w3.org/2000/svg"></svg>'
++      const file = new File([maliciousSvg], 'malicious.svg', { type: 'image/svg+xml' })
++      formData.append('file', file)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(400)
++      const data = await response.json()
++      expect(data.message).toContain("File type 'svg' is not allowed")
++    })
++
++    it('should reject JavaScript files', async () => {
++      const formData = new FormData()
++      const maliciousJs = 'alert("XSS")'
++      const file = new File([maliciousJs], 'malicious.js', { type: 'application/javascript' })
++      formData.append('file', file)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(400)
++      const data = await response.json()
++      expect(data.message).toContain("File type 'js' is not allowed")
++    })
++
++    it('should reject files without extensions', async () => {
++      const formData = new FormData()
++      const file = new File(['test content'], 'noextension', { type: 'application/octet-stream' })
++      formData.append('file', file)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(400)
++      const data = await response.json()
++      expect(data.message).toContain("File type 'noextension' is not allowed")
++    })
++
++    it('should handle multiple files with mixed valid/invalid types', async () => {
++      const formData = new FormData()
++
++      // Valid file
++      const validFile = new File(['valid content'], 'valid.pdf', { type: 'application/pdf' })
++      formData.append('file', validFile)
++
++      // Invalid file (should cause rejection of entire request)
++      const invalidFile = new File(['<script>alert("XSS")</script>'], 'malicious.html', {
++        type: 'text/html',
++      })
++      formData.append('file', invalidFile)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(400)
++      const data = await response.json()
++      expect(data.message).toContain("File type 'html' is not allowed")
++    })
++  })
++
++  describe('Authentication Requirements', () => {
++    it('should reject uploads without authentication', async () => {
++      vi.doMock('@/lib/auth', () => ({
++        getSession: vi.fn().mockResolvedValue(null),
++      }))
++
++      const formData = new FormData()
++      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' })
++      formData.append('file', file)
++
++      const req = new Request('http://localhost/api/files/upload', {
++        method: 'POST',
++        body: formData,
++      })
++
++      const { POST } = await import('@/app/api/files/upload/route')
++      const response = await POST(req as any)
++
++      expect(response.status).toBe(401)
++      const data = await response.json()
++      expect(data.error).toBe('Unauthorized')
++    })
++  })
++})
+diff --git a/app/api/files/upload/route.ts b/app/api/files/upload/route.ts
+index 4e64b7e..d0824c7 100644
+--- a/app/api/files/upload/route.ts
++++ b/app/api/files/upload/route.ts
+@@ -9,6 +9,34 @@ import {
+   InvalidRequestError,
+ } from '@/app/api/files/utils'
+ 
++// Allowlist of permitted file extensions for security
++const ALLOWED_EXTENSIONS = new Set([
++  // Documents
++  'pdf',
++  'doc',
++  'docx',
++  'txt',
++  'md',
++  // Images (safe formats)
++  'png',
++  'jpg',
++  'jpeg',
++  'gif',
++  // Data files
++  'csv',
++  'xlsx',
++  'xls',
++])
++
++/**
++ * Validates file extension against allowlist
++ */
++function validateFileExtension(filename: string): boolean {
++  const extension = filename.split('.').pop()?.toLowerCase()
++  if (!extension) return false
++  return ALLOWED_EXTENSIONS.has(extension)
++}
++
+ export const dynamic = 'force-dynamic'
+ 
+ const logger = createLogger('FilesUploadAPI')
+@@ -49,6 +77,14 @@ export async function POST(request: NextRequest) {
+     // Process each file
+     for (const file of files) {
+       const originalName = file.name
++
++      if (!validateFileExtension(originalName)) {
++        const extension = originalName.split('.').pop()?.toLowerCase() || 'unknown'
++        throw new InvalidRequestError(
++          `File type '${extension}' is not allowed. Allowed types: ${Array.from(ALLOWED_EXTENSIONS).join(', ')}`
++        )
++      }
++
+       const bytes = await file.arrayBuffer()
+       const buffer = Buffer.from(bytes)
+ 
+diff --git a/app/api/files/utils.test.ts b/app/api/files/utils.test.ts
+new file mode 100644
+index 0000000..d0ad456
+--- /dev/null
++++ b/app/api/files/utils.test.ts
+@@ -0,0 +1,327 @@
++import { describe, expect, it } from 'vitest'
++import { createFileResponse, extractFilename } from './utils'
++
++describe('extractFilename', () => {
++  describe('legitimate file paths', () => {
++    it('should extract filename from standard serve path', () => {
++      expect(extractFilename('/api/files/serve/test-file.txt')).toBe('test-file.txt')
++    })
++
++    it('should extract filename from serve path with special characters', () => {
++      expect(extractFilename('/api/files/serve/document-with-dashes_and_underscores.pdf')).toBe(
++        'document-with-dashes_and_underscores.pdf'
++      )
++    })
++
++    it('should handle simple filename without serve path', () => {
++      expect(extractFilename('simple-file.txt')).toBe('simple-file.txt')
++    })
++
++    it('should extract last segment from nested path', () => {
++      expect(extractFilename('nested/path/file.txt')).toBe('file.txt')
++    })
++  })
++
++  describe('cloud storage paths', () => {
++    it('should preserve S3 path structure', () => {
++      expect(extractFilename('/api/files/serve/s3/1234567890-test-file.txt')).toBe(
++        's3/1234567890-test-file.txt'
++      )
++    })
++
++    it('should preserve S3 path with nested folders', () => {
++      expect(extractFilename('/api/files/serve/s3/folder/subfolder/document.pdf')).toBe(
++        's3/folder/subfolder/document.pdf'
++      )
++    })
++
++    it('should preserve Azure Blob path structure', () => {
++      expect(extractFilename('/api/files/serve/blob/1234567890-test-document.pdf')).toBe(
++        'blob/1234567890-test-document.pdf'
++      )
++    })
++
++    it('should preserve Blob path with nested folders', () => {
++      expect(extractFilename('/api/files/serve/blob/uploads/user-files/report.xlsx')).toBe(
++        'blob/uploads/user-files/report.xlsx'
++      )
++    })
++  })
++
++  describe('security - path traversal prevention', () => {
++    it('should sanitize basic path traversal attempt', () => {
++      expect(extractFilename('/api/files/serve/../config.txt')).toBe('config.txt')
++    })
++
++    it('should sanitize deep path traversal attempt', () => {
++      expect(extractFilename('/api/files/serve/../../../../../etc/passwd')).toBe('etcpasswd')
++    })
++
++    it('should sanitize multiple path traversal patterns', () => {
++      expect(extractFilename('/api/files/serve/../../secret.txt')).toBe('secret.txt')
++    })
++
++    it('should sanitize path traversal with forward slashes', () => {
++      expect(extractFilename('/api/files/serve/../../../system/file')).toBe('systemfile')
++    })
++
++    it('should sanitize mixed path traversal patterns', () => {
++      expect(extractFilename('/api/files/serve/../folder/../file.txt')).toBe('folderfile.txt')
++    })
++
++    it('should remove directory separators from local filenames', () => {
++      expect(extractFilename('/api/files/serve/folder/with/separators.txt')).toBe(
++        'folderwithseparators.txt'
++      )
++    })
++
++    it('should handle backslash path separators (Windows style)', () => {
++      expect(extractFilename('/api/files/serve/folder\\file.txt')).toBe('folderfile.txt')
++    })
++  })
++
++  describe('cloud storage path traversal prevention', () => {
++    it('should sanitize S3 path traversal attempts while preserving structure', () => {
++      expect(extractFilename('/api/files/serve/s3/../config')).toBe('s3/config')
++    })
++
++    it('should sanitize S3 path with nested traversal attempts', () => {
++      expect(extractFilename('/api/files/serve/s3/folder/../sensitive/../file.txt')).toBe(
++        's3/folder/sensitive/file.txt'
++      )
++    })
++
++    it('should sanitize Blob path traversal attempts while preserving structure', () => {
++      expect(extractFilename('/api/files/serve/blob/../system.txt')).toBe('blob/system.txt')
++    })
++
++    it('should remove leading dots from cloud path segments', () => {
++      expect(extractFilename('/api/files/serve/s3/.hidden/../file.txt')).toBe('s3/hidden/file.txt')
++    })
++  })
++
++  describe('edge cases and error handling', () => {
++    it('should handle filename with dots (but not traversal)', () => {
++      expect(extractFilename('/api/files/serve/file.with.dots.txt')).toBe('file.with.dots.txt')
++    })
++
++    it('should handle filename with multiple extensions', () => {
++      expect(extractFilename('/api/files/serve/archive.tar.gz')).toBe('archive.tar.gz')
++    })
++
++    it('should throw error for empty filename after sanitization', () => {
++      expect(() => extractFilename('/api/files/serve/')).toThrow(
++        'Invalid or empty filename after sanitization'
++      )
++    })
++
++    it('should throw error for filename that becomes empty after path traversal removal', () => {
++      expect(() => extractFilename('/api/files/serve/../..')).toThrow(
++        'Invalid or empty filename after sanitization'
++      )
++    })
++
++    it('should handle single character filenames', () => {
++      expect(extractFilename('/api/files/serve/a')).toBe('a')
++    })
++
++    it('should handle numeric filenames', () => {
++      expect(extractFilename('/api/files/serve/123')).toBe('123')
++    })
++  })
++
++  describe('backward compatibility', () => {
++    it('should match old behavior for legitimate local files', () => {
++      // These test cases verify that our security fix maintains exact backward compatibility
++      // for all legitimate use cases found in the existing codebase
++      expect(extractFilename('/api/files/serve/test-file.txt')).toBe('test-file.txt')
++      expect(extractFilename('/api/files/serve/nonexistent.txt')).toBe('nonexistent.txt')
++    })
++
++    it('should match old behavior for legitimate cloud files', () => {
++      // These test cases are from the actual delete route tests
++      expect(extractFilename('/api/files/serve/s3/1234567890-test-file.txt')).toBe(
++        's3/1234567890-test-file.txt'
++      )
++      expect(extractFilename('/api/files/serve/blob/1234567890-test-document.pdf')).toBe(
++        'blob/1234567890-test-document.pdf'
++      )
++    })
++
++    it('should match old behavior for simple paths', () => {
++      // These match the mock implementations in serve route tests
++      expect(extractFilename('simple-file.txt')).toBe('simple-file.txt')
++      expect(extractFilename('nested/path/file.txt')).toBe('file.txt')
++    })
++  })
++
++  describe('File Serving Security Tests', () => {
++    describe('createFileResponse security headers', () => {
++      it('should serve safe images inline with proper headers', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('fake-image-data'),
++          contentType: 'image/png',
++          filename: 'safe-image.png',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('image/png')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'inline; filename="safe-image.png"'
++        )
++        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
++        expect(response.headers.get('Content-Security-Policy')).toBe(
++          "default-src 'none'; style-src 'unsafe-inline'; sandbox;"
++        )
++      })
++
++      it('should serve PDFs inline safely', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('fake-pdf-data'),
++          contentType: 'application/pdf',
++          filename: 'document.pdf',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/pdf')
++        expect(response.headers.get('Content-Disposition')).toBe('inline; filename="document.pdf"')
++        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
++      })
++
++      it('should force attachment for HTML files to prevent XSS', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('<script>alert("XSS")</script>'),
++          contentType: 'text/html',
++          filename: 'malicious.html',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/octet-stream')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="malicious.html"'
++        )
++        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
++      })
++
++      it('should force attachment for SVG files to prevent XSS', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from(
++            '<svg onload="alert(\'XSS\')" xmlns="http://www.w3.org/2000/svg"></svg>'
++          ),
++          contentType: 'image/svg+xml',
++          filename: 'malicious.svg',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/octet-stream')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="malicious.svg"'
++        )
++      })
++
++      it('should override dangerous content types to safe alternatives', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('<svg>safe content</svg>'),
++          contentType: 'image/svg+xml',
++          filename: 'image.png', // Extension doesn't match content-type
++        })
++
++        expect(response.status).toBe(200)
++        // Should override SVG content type to plain text for safety
++        expect(response.headers.get('Content-Type')).toBe('text/plain')
++        expect(response.headers.get('Content-Disposition')).toBe('inline; filename="image.png"')
++      })
++
++      it('should force attachment for JavaScript files', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('alert("XSS")'),
++          contentType: 'application/javascript',
++          filename: 'malicious.js',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/octet-stream')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="malicious.js"'
++        )
++      })
++
++      it('should force attachment for CSS files', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('body { background: url(javascript:alert("XSS")) }'),
++          contentType: 'text/css',
++          filename: 'malicious.css',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/octet-stream')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="malicious.css"'
++        )
++      })
++
++      it('should force attachment for XML files', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('<?xml version="1.0"?><root><script>alert("XSS")</script></root>'),
++          contentType: 'application/xml',
++          filename: 'malicious.xml',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/octet-stream')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="malicious.xml"'
++        )
++      })
++
++      it('should serve text files safely', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('Safe text content'),
++          contentType: 'text/plain',
++          filename: 'document.txt',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('text/plain')
++        expect(response.headers.get('Content-Disposition')).toBe('inline; filename="document.txt"')
++      })
++
++      it('should force attachment for unknown/unsafe content types', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('unknown content'),
++          contentType: 'application/unknown',
++          filename: 'unknown.bin',
++        })
++
++        expect(response.status).toBe(200)
++        expect(response.headers.get('Content-Type')).toBe('application/unknown')
++        expect(response.headers.get('Content-Disposition')).toBe(
++          'attachment; filename="unknown.bin"'
++        )
++      })
++    })
++
++    describe('Content Security Policy', () => {
++      it('should include CSP header in all responses', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('test'),
++          contentType: 'text/plain',
++          filename: 'test.txt',
++        })
++
++        const csp = response.headers.get('Content-Security-Policy')
++        expect(csp).toBe("default-src 'none'; style-src 'unsafe-inline'; sandbox;")
++      })
++
++      it('should include X-Content-Type-Options header', () => {
++        const response = createFileResponse({
++          buffer: Buffer.from('test'),
++          contentType: 'text/plain',
++          filename: 'test.txt',
++        })
++
++        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
++      })
++    })
++  })
++})
+diff --git a/app/api/files/utils.ts b/app/api/files/utils.ts
+index 67d1487..4e427bb 100644
+--- a/app/api/files/utils.ts
++++ b/app/api/files/utils.ts
+@@ -70,7 +70,6 @@ export const contentTypeMap: Record<string, string> = {
+   jpg: 'image/jpeg',
+   jpeg: 'image/jpeg',
+   gif: 'image/gif',
+-  svg: 'image/svg+xml',
+   // Archive formats
+   zip: 'application/zip',
+   // Folder format
+@@ -153,10 +152,43 @@ export function extractBlobKey(path: string): string {
+  * Extract filename from a serve path
+  */
+ export function extractFilename(path: string): string {
++  let filename: string
++
+   if (path.startsWith('/api/files/serve/')) {
+-    return path.substring('/api/files/serve/'.length)
++    filename = path.substring('/api/files/serve/'.length)
++  } else {
++    filename = path.split('/').pop() || path
+   }
+-  return path.split('/').pop() || path
++
++  filename = filename
++    .replace(/\.\./g, '')
++    .replace(/\/\.\./g, '')
++    .replace(/\.\.\//g, '')
++
++  // Handle cloud storage paths (s3/key, blob/key) - preserve forward slashes for these
++  if (filename.startsWith('s3/') || filename.startsWith('blob/')) {
++    // For cloud paths, only sanitize the key portion after the prefix
++    const parts = filename.split('/')
++    const prefix = parts[0] // 's3' or 'blob'
++    const keyParts = parts.slice(1)
++
++    // Sanitize each part of the key to prevent traversal
++    const sanitizedKeyParts = keyParts
++      .map((part) => part.replace(/\.\./g, '').replace(/^\./g, '').trim())
++      .filter((part) => part.length > 0)
++
++    filename = `${prefix}/${sanitizedKeyParts.join('/')}`
++  } else {
++    // For regular filenames, remove any remaining path separators
++    filename = filename.replace(/[/\\]/g, '')
++  }
++
++  // Additional validation: ensure filename is not empty after sanitization
++  if (!filename || filename.trim().length === 0) {
++    throw new Error('Invalid or empty filename after sanitization')
++  }
++
++  return filename
+ }
+ 
+ /**
+@@ -174,16 +206,65 @@ export function findLocalFile(filename: string): string | null {
+   return null
+ }
+ 
++const SAFE_INLINE_TYPES = new Set([
++  'image/png',
++  'image/jpeg',
++  'image/jpg',
++  'image/gif',
++  'application/pdf',
++  'text/plain',
++  'text/csv',
++  'application/json',
++])
++
++// File extensions that should always be served as attachment for security
++const FORCE_ATTACHMENT_EXTENSIONS = new Set(['html', 'htm', 'svg', 'js', 'css', 'xml'])
++
++/**
++ * Determines safe content type and disposition for file serving
++ */
++function getSecureFileHeaders(filename: string, originalContentType: string) {
++  const extension = filename.split('.').pop()?.toLowerCase() || ''
++
++  // Force attachment for potentially dangerous file types
++  if (FORCE_ATTACHMENT_EXTENSIONS.has(extension)) {
++    return {
++      contentType: 'application/octet-stream', // Force download
++      disposition: 'attachment',
++    }
++  }
++
++  // Override content type for safety while preserving legitimate use cases
++  let safeContentType = originalContentType
++
++  // Handle potentially dangerous content types
++  if (originalContentType === 'text/html' || originalContentType === 'image/svg+xml') {
++    safeContentType = 'text/plain' // Prevent browser rendering
++  }
++
++  // Use inline only for verified safe content types
++  const disposition = SAFE_INLINE_TYPES.has(safeContentType) ? 'inline' : 'attachment'
++
++  return {
++    contentType: safeContentType,
++    disposition,
++  }
++}
++
+ /**
+- * Create a file response with appropriate headers
++ * Create a file response with appropriate security headers
+  */
+ export function createFileResponse(file: FileResponse): NextResponse {
++  const { contentType, disposition } = getSecureFileHeaders(file.filename, file.contentType)
++
+   return new NextResponse(file.buffer as BodyInit, {
+     status: 200,
+     headers: {
+-      'Content-Type': file.contentType,
+-      'Content-Disposition': `inline; filename="${file.filename}"`,
++      'Content-Type': contentType,
++      'Content-Disposition': `${disposition}; filename="${file.filename}"`,
+       'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
++      'X-Content-Type-Options': 'nosniff',
++      'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; sandbox;",
+     },
+   })
+ }
+diff --git a/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/copilot/components/user-input/user-input.tsx b/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/copilot/components/user-input/user-input.tsx
+index 9da8fe9..4e0e080 100644
+--- a/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/copilot/components/user-input/user-input.tsx
++++ b/app/workspace/[workspaceId]/w/[workflowId]/components/panel/components/copilot/components/user-input/user-input.tsx
+@@ -796,7 +796,7 @@ const UserInput = forwardRef<UserInputRef, UserInputProps>(
+             type='file'
+             onChange={handleFileChange}
+             className='hidden'
+-            accept='.pdf,.doc,.docx,.txt,.md,.png,.jpg,.jpeg,.gif,.svg'
++            accept='.pdf,.doc,.docx,.txt,.md,.png,.jpg,.jpeg,.gif'
+             multiple
+             disabled={disabled || isLoading}
+           />

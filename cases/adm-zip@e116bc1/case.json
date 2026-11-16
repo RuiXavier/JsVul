@@ -1,0 +1,153 @@
+{
+  "name": "adm-zip",
+  "version": null,
+  "repo": "cthackers/adm-zip",
+  "sha": "e116bc18df51e4e50c493cede82ae7696954b511",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3v6h-hqm4-2rg6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-1002204"
+      ],
+      "ghsa": [
+        "GHSA-3v6h-hqm4-2rg6"
+      ],
+      "snyk": [
+        "npm:adm-zip:20180415"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/util/utils.js",
+          "startline": 24,
+          "startcol": 17,
+          "endline": 24,
+          "endcol": 43,
+          "range": false,
+          "code": "fs.mkdirSync(resolvedPath)"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 109,
+          "startcol": 22,
+          "endline": 109,
+          "endcol": 49,
+          "range": false,
+          "code": "fs.openSync(path, 'w', 438)"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 111,
+          "startcol": 17,
+          "endline": 111,
+          "endcol": 40,
+          "range": false,
+          "code": "fs.chmodSync(path, 438)"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 112,
+          "startcol": 22,
+          "endline": 112,
+          "endcol": 49,
+          "range": false,
+          "code": "fs.openSync(path, 'w', 438)"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 118,
+          "startcol": 13,
+          "endline": 118,
+          "endcol": 44,
+          "range": false,
+          "code": "fs.chmodSync(path, attr || 438)"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 142,
+          "startcol": 25,
+          "endline": 170,
+          "endcol": 27,
+          "range": false,
+          "code": "fs.open(path, 'w', 438, function(err, fd) {\r\n                            if(err) {\r\n                                fs.chmod(path, 438, function(err) {\r\n                                    fs.open(path, 'w', 438, function(err, fd) {\r\n                                        fs.write(fd, content, 0, content.length, 0, function(err, written, buffer) {\r\n                                            fs.close(fd, function(err) {\r\n                                                fs.chmod(path, attr || 438, function() {\r\n                                                    callback(true);\r\n                                                })\r\n                                            });\r\n                                        });\r\n                                    });\r\n                                })\r\n                            } else {\r\n                                if(fd) {\r\n                                    fs.write(fd, content, 0, content.length, 0, function(err, written, buffer) {\r\n                                        fs.close(fd, function(err) {\r\n                                            fs.chmod(path, attr || 438, function() {\r\n                                                callback(true);\r\n                                            })\r\n                                        });\r\n                                    });\r\n                                } else {\r\n                                    fs.chmod(path, attr || 438, function() {\r\n                                        callback(true);\r\n                                    })\r\n                                }\r\n                            }\r\n                        })"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 144,
+          "startcol": 33,
+          "endline": 154,
+          "endcol": 35,
+          "range": false,
+          "code": "fs.chmod(path, 438, function(err) {\r\n                                    fs.open(path, 'w', 438, function(err, fd) {\r\n                                        fs.write(fd, content, 0, content.length, 0, function(err, written, buffer) {\r\n                                            fs.close(fd, function(err) {\r\n                                                fs.chmod(path, attr || 438, function() {\r\n                                                    callback(true);\r\n                                                })\r\n                                            });\r\n                                        });\r\n                                    });\r\n                                })"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 145,
+          "startcol": 37,
+          "endline": 153,
+          "endcol": 39,
+          "range": false,
+          "code": "fs.open(path, 'w', 438, function(err, fd) {\r\n                                        fs.write(fd, content, 0, content.length, 0, function(err, written, buffer) {\r\n                                            fs.close(fd, function(err) {\r\n                                                fs.chmod(path, attr || 438, function() {\r\n                                                    callback(true);\r\n                                                })\r\n                                            });\r\n                                        });\r\n                                    })"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 148,
+          "startcol": 49,
+          "endline": 150,
+          "endcol": 51,
+          "range": false,
+          "code": "fs.chmod(path, attr || 438, function() {\r\n                                                    callback(true);\r\n                                                })"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 159,
+          "startcol": 45,
+          "endline": 161,
+          "endcol": 47,
+          "range": false,
+          "code": "fs.chmod(path, attr || 438, function() {\r\n                                                callback(true);\r\n                                            })"
+        },
+        {
+          "file": "package/util/utils.js",
+          "startline": 165,
+          "startcol": 37,
+          "endline": 167,
+          "endcol": 39,
+          "range": false,
+          "code": "fs.chmod(path, attr || 438, function() {\r\n                                        callback(true);\r\n                                    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/adm-zip.js",
+          "startline": 13,
+          "startcol": 18,
+          "endline": 545,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

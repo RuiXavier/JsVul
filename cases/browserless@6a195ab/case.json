@@ -1,0 +1,72 @@
+{
+  "name": "browserless",
+  "version": null,
+  "repo": "browserless/browserless",
+  "sha": "6a195ab11d393cefcecf9940b38cf6921e3d38d0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8p9r-f949-699g",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7758"
+      ],
+      "ghsa": [
+        "GHSA-8p9r-f949-699g"
+      ],
+      "snyk": [
+        "SNYK-JS-BROWSERLESSCHROME-1023657"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/send/index.js",
+          "startline": 796,
+          "startcol": 16,
+          "endline": 796,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.createReadStream(path, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/routes.ts",
+          "startline": 87,
+          "startcol": 26,
+          "endline": 498,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "848b87e5bea4f8473eea85261a5ff922d6ebd2b6",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/routes.ts",
+            "startline": 87,
+            "startcol": 26,
+            "endline": 505,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

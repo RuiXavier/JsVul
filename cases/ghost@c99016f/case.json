@@ -1,0 +1,126 @@
+{
+  "name": "ghost",
+  "version": null,
+  "repo": "tryghost/ghost",
+  "sha": "c99016fd2fca58eaacbebb9dca6c974aabaa67f6",
+  "subdir": "ghost/core",
+  "siblings": {
+    "@tryghost/adapter-cache-redis": "ghost/adapter-cache-redis",
+    "@tryghost/adapter-manager": "ghost/adapter-manager",
+    "@tryghost/api-framework": "ghost/api-framework",
+    "@tryghost/api-version-compatibility-service": "ghost/api-version-compatibility-service",
+    "@tryghost/audience-feedback": "ghost/audience-feedback",
+    "@tryghost/bootstrap-socket": "ghost/bootstrap-socket",
+    "@tryghost/constants": "ghost/constants",
+    "@tryghost/custom-theme-settings-service": "ghost/custom-theme-settings-service",
+    "@tryghost/data-generator": "ghost/data-generator",
+    "@tryghost/domain-events": "ghost/domain-events",
+    "@tryghost/dynamic-routing-events": "ghost/dynamic-routing-events",
+    "@tryghost/email-analytics-provider-mailgun": "ghost/email-analytics-provider-mailgun",
+    "@tryghost/email-analytics-service": "ghost/email-analytics-service",
+    "@tryghost/email-content-generator": "ghost/email-content-generator",
+    "@tryghost/email-events": "ghost/email-events",
+    "@tryghost/email-service": "ghost/email-service",
+    "@tryghost/email-suppression-list": "ghost/email-suppression-list",
+    "@tryghost/event-aware-cache-wrapper": "ghost/event-aware-cache-wrapper",
+    "@tryghost/express-dynamic-redirects": "ghost/express-dynamic-redirects",
+    "@tryghost/external-media-inliner": "ghost/external-media-inliner",
+    "@tryghost/extract-api-key": "ghost/extract-api-key",
+    "@tryghost/html-to-plaintext": "ghost/html-to-plaintext",
+    "@tryghost/i18n": "ghost/i18n",
+    "@tryghost/importer-handler-content-files": "ghost/importer-handler-content-files",
+    "@tryghost/importer-revue": "ghost/importer-revue",
+    "@tryghost/job-manager": "ghost/job-manager",
+    "@tryghost/link-redirects": "ghost/link-redirects",
+    "@tryghost/link-replacer": "ghost/link-replacer",
+    "@tryghost/link-tracking": "ghost/link-tracking",
+    "@tryghost/magic-link": "ghost/magic-link",
+    "@tryghost/mailgun-client": "ghost/mailgun-client",
+    "@tryghost/member-attribution": "ghost/member-attribution",
+    "@tryghost/member-events": "ghost/member-events",
+    "@tryghost/members-api": "ghost/members-api",
+    "@tryghost/members-csv": "ghost/members-csv",
+    "@tryghost/members-events-service": "ghost/members-events-service",
+    "@tryghost/members-importer": "ghost/members-importer",
+    "@tryghost/members-offers": "ghost/offers",
+    "@tryghost/members-payments": "ghost/payments",
+    "@tryghost/members-ssr": "ghost/members-ssr",
+    "@tryghost/members-stripe-service": "ghost/stripe",
+    "@tryghost/mentions-email-report": "ghost/mentions-email-report",
+    "@tryghost/milestones": "ghost/milestones",
+    "@tryghost/minifier": "ghost/minifier",
+    "@tryghost/mw-api-version-mismatch": "ghost/mw-api-version-mismatch",
+    "@tryghost/mw-cache-control": "ghost/mw-cache-control",
+    "@tryghost/mw-error-handler": "ghost/mw-error-handler",
+    "@tryghost/mw-session-from-token": "ghost/mw-session-from-token",
+    "@tryghost/mw-version-match": "ghost/mw-version-match",
+    "@tryghost/mw-vhost": "ghost/mw-vhost",
+    "@tryghost/oembed-service": "ghost/oembed-service",
+    "@tryghost/package-json": "ghost/package-json",
+    "@tryghost/posts-service": "ghost/posts-service",
+    "@tryghost/referrers": "ghost/referrers",
+    "@tryghost/security": "ghost/security",
+    "@tryghost/session-service": "ghost/session-service",
+    "@tryghost/settings-path-manager": "ghost/settings-path-manager",
+    "@tryghost/slack-notifications": "ghost/slack-notifications",
+    "@tryghost/staff-service": "ghost/staff-service",
+    "@tryghost/stats-service": "ghost/stats-service",
+    "@tryghost/tiers": "ghost/tiers",
+    "@tryghost/update-check-service": "ghost/update-check-service",
+    "@tryghost/verification-trigger": "ghost/verification-trigger",
+    "@tryghost/version-notifications-data-service": "ghost/version-notifications-data-service",
+    "@tryghost/webmentions": "ghost/webmentions"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2023-32235",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-32235"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/core/frontend/web/middleware/static-theme.js",
+          "startline": 37,
+          "startcol": 5,
+          "endline": 40,
+          "endcol": 22,
+          "range": false,
+          "code": "express.static(themeEngine.getActive().path, {\n        maxAge: (configMaxAge || configMaxAge === 0) ? configMaxAge : constants.ONE_YEAR_MS\n    }\n    )(req, res, next)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "378dd913aa8d0fd0da29b0ffced8884579598b0f",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/core/frontend/web/middleware/static-theme.js",
+            "startline": 67,
+            "startcol": 5,
+            "endline": 70,
+            "endcol": 22,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

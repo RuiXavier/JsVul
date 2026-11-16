@@ -1,0 +1,63 @@
+{
+  "name": "node-vboxmanage",
+  "version": null,
+  "repo": "danielgindi/node-vboxmanage",
+  "sha": "a3d9c9e9e9f15adcf8258eb260fdca7553333741",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-whq6-mj2r-mjqc",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10783"
+      ],
+      "ghsa": [
+        "GHSA-whq6-mj2r-mjqc"
+      ],
+      "snyk": [
+        "SNYK-JS-VBOXMANAGEJS-607910"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 69,
+          "startcol": 9,
+          "endline": 76,
+          "endcol": 11,
+          "range": false,
+          "code": "ChildProcess.exec(vBoxManageBinary + ' ' + command.join(' '), {}, (err, stdout, stderr) => {\n            if (err) {\n                err.stderr = stderr;\n                return reject(err);\n            }\n\n            return resolve({stdout: stdout, stderr: stderr});\n        })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 43,
+          "startcol": 21,
+          "endline": 78,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

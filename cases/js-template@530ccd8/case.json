@@ -1,0 +1,70 @@
+{
+  "name": "js-template",
+  "version": null,
+  "repo": "blakeembrey/js-template",
+  "sha": "530ccd830cc895056662de9e4602dea3813c835b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-q765-wm9j-66qj",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-45390"
+      ],
+      "ghsa": [
+        "GHSA-q765-wm9j-66qj"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 64,
+          "startcol": 10,
+          "endline": 64,
+          "endcol": 43,
+          "range": false,
+          "code": "new Function(`return (${body});`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 59,
+          "startcol": 8,
+          "endline": 65,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b8d9aa999e464816c6cfb14acd1ad0f5d1e335aa",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 59,
+            "startcol": 8,
+            "endline": 62,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

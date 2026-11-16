@@ -1,0 +1,210 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4.0
+
+defaults: &defaults
+  parameters:
+    maven_version:
+      type: string
+      default: ''
+    jdk_version:
+      type: string
+      default: '8'
+    node_version:
+      type: string
+      default: '16'
+  working_directory: ~/snyk-mvn-plugin
+
+windows_defaults: &windows_defaults
+  environment:
+    npm_config_loglevel: silent
+  executor:
+    name: win/default
+
+test_matrix_unix: &test_matrix_unix
+  matrix:
+    parameters:
+      jdk_version: ['8.0.342-amzn', '17.0.4.1.fx-librca']
+      maven_version: ['3.3.9', '3.6.3', '3.8.4']
+      node_version: ['12', '16']
+test_matrix_win: &test_matrix_win
+  matrix:
+    parameters:
+      jdk_version: ['8', '17']
+      maven_version: ['3.3.9.2', '3.6.3', '3.8.4']
+      node_version: ['12', '16']
+
+commands:
+  install_deps:
+    description: Install dependencies
+    steps:
+      - run:
+          name: Install dependencies
+          command: npm install
+  install_node_npm:
+    description: Install correct Node version
+    parameters:
+      node_version:
+        type: string
+        default: ''
+    steps:
+      - run:
+          name: Install correct version of Node
+          command: nvm install << parameters.node_version >>
+      - run:
+          name: Use correct version of Node
+          command: nvm use << parameters.node_version >>
+  show_node_version:
+    description: Log Node and npm version
+    steps:
+      - run:
+          name: Node version
+          command: node --version
+      - run:
+          name: NPM version
+          command: npm --version
+  install_sdkman:
+    description: Install SDKMAN
+    steps:
+      - run:
+          name: Installing SDKMAN
+          command: |
+            curl -s "https://get.sdkman.io?rcupdate=false" | bash
+            echo -e '\nsource "/home/circleci/.sdkman/bin/sdkman-init.sh"' >> $BASH_ENV
+            source $BASH_ENV
+  install_jdk_unix:
+    description: Install JDK
+    parameters:
+      jdk_version:
+        type: string
+        default: ''
+    steps:
+      - run:
+          name: Installing JDK
+          command: sdk install java $(sdk list java | grep -o -m1 "<< parameters.jdk_version >>\.[0-9\.]\+hs-adpt")
+  install_jdk_windows:
+    description: Install JDK
+    parameters:
+      jdk_version:
+        type: string
+        default: ''
+    steps:
+      - run:
+          name: Installing JDK
+          command: choco install openjdk
+  install_maven_unix:
+    description: Install maven
+    parameters:
+      maven_version:
+        type: string
+        default: ''
+    steps:
+      - run:
+          name: Installing Maven
+          command: sdk install maven << parameters.maven_version >>
+  install_maven_windows:
+    description: Install maven
+    parameters:
+      maven_version:
+        type: string
+        default: ''
+    steps:
+      - run: choco install maven --version=<< parameters.maven_version >>
+
+jobs:
+  lint:
+    <<: *defaults
+    docker:
+      - image: circleci/node:<< parameters.node_version >>
+    steps:
+      - checkout
+      - install_deps
+      - show_node_version
+      - run:
+          name: Run lint
+          command: npm run lint
+
+  test-windows:
+    <<: *defaults
+    <<: *windows_defaults
+    steps:
+      - run: git config --global core.autocrlf false
+      - checkout
+      - install_node_npm:
+          node_version: << parameters.node_version >>
+      - install_jdk_windows
+      - install_maven_windows:
+          maven_version: << parameters.maven_version >>
+      - install_deps
+      - show_node_version
+      - run:
+          name: Run tests
+          command: npm test
+
+  test-unix:
+    <<: *defaults
+    docker:
+      - image: circleci/node:<< parameters.node_version >>
+    environment:
+      MAVEN_VERSION: << parameters.maven_version >>
+      JDK: << parameters.jdk_version >>
+    steps:
+      - checkout
+      - install_sdkman
+      - install_jdk_unix:
+          jdk_version: << parameters.jdk_version >>
+      - install_maven_unix:
+          maven_version: << parameters.maven_version >>
+      - install_deps
+      - show_node_version
+      - run:
+          name: Run tests
+          command: npm test
+
+  release:
+    <<: *defaults
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout
+      - install_deps
+      - run: sudo npm i -g semantic-release @semantic-release/exec pkg
+      - run:
+          name: Publish to GitHub
+          command: semantic-release
+
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - lint:
+          name: Lint
+          context: nodejs-install
+          node_version: 'lts'
+          filters:
+            branches:
+              ignore:
+                - master
+
+      # UNIX tests
+      - test-unix:
+          name: Unix Tests for Maven=<<matrix.maven_version>> JDK=<<matrix.jdk_version>> Node=<<matrix.node_version>>
+          context: nodejs-install
+          <<: *test_matrix_unix
+
+      # Windows tests
+      - test-windows:
+          name: Windows Tests for Maven=<<matrix.maven_version>> JDK=<<matrix.jdk_version>> Node=<<matrix.node_version>>
+          context: nodejs-install
+          <<: *test_matrix_win
+
+      # Release
+      - release:
+          name: Release
+          context: nodejs-app-release
+          node_version: '16'
+          filters:
+            branches:
+              only:
+                - master

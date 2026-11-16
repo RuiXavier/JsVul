@@ -1,0 +1,61 @@
+{
+  "name": "dive",
+  "version": null,
+  "repo": "openagentplatform/dive",
+  "sha": "bf69242c1c5145113a394c38aa5e62886323dccf",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/electron/main/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2r34-7pgx-vvrc",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-58176"
+      ],
+      "ghsa": [
+        "GHSA-2r34-7pgx-vvrc"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/App.tsx",
+          "startline": 20,
+          "startcol": 1,
+          "endline": 170,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "acae6d40354d380f69f8241e9122a43ff64cff11",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/App.tsx",
+            "startline": 21,
+            "startcol": 1,
+            "endline": 219,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

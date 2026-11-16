@@ -1,0 +1,69 @@
+{
+  "name": "roo-code",
+  "version": null,
+  "repo": "roocodeinc/roo-code",
+  "sha": "868487709791601a7ff47f3c02bcc52252a8efdf",
+  "subdir": "src",
+  "siblings": {
+    "@roo-code/ipc": "packages/ipc",
+    "@roo-code/telemetry": "packages/telemetry",
+    "@roo-code/types": "packages/types"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "extension",
+  "entry": [
+    "package/extension.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-p76r-7mc3-qh7c",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-58373"
+      ],
+      "ghsa": [
+        "GHSA-p76r-7mc3-qh7c"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/core/ignore/RooIgnoreController.ts",
+          "startline": 87,
+          "startcol": 2,
+          "endline": 104,
+          "endcol": 2,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "sourceKinds": [
+        "file"
+      ],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "a79c3d04a676aca9224a823c3e7ab338256c10ba",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/core/ignore/RooIgnoreController.ts",
+            "startline": 89,
+            "startcol": 2,
+            "endline": 116,
+            "endcol": 2,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "git-tag-annotation-action",
+  "version": null,
+  "repo": "ericcornelissen/git-tag-annotation-action",
+  "sha": "7455eacf55118afc75f1801f773362a1f5d11232",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "action",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-hgx2-4pp9-357g",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-15272"
+      ],
+      "ghsa": [
+        "GHSA-hgx2-4pp9-357g"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/main.js",
+          "startline": 11,
+          "startcol": 5,
+          "endline": 17,
+          "endcol": 7,
+          "range": false,
+          "code": "exec(`git for-each-ref --format='%(contents)' ${tag}`, (err, stdout) => {\n      if (err) {\n        core.setFailed(err);\n      } else {\n        core.setOutput('git-tag-annotation', stdout);\n      }\n    })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/main.js",
+          "startline": 4,
+          "startcol": 1,
+          "endline": 21,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "9f30756375cc4b1b6c66f274fc9c591fa901455a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/main.js",
+            "startline": 9,
+            "startcol": 1,
+            "endline": 29,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

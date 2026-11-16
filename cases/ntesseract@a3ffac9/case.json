@@ -1,0 +1,62 @@
+{
+  "name": "ntesseract",
+  "version": null,
+  "repo": "taoyuan/ntesseract",
+  "sha": "a3ffac95b322b7460d04b9fea10529725a635305",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-w868-4576-rv24",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-28446"
+      ],
+      "ghsa": [
+        "GHSA-w868-4576-rv24"
+      ],
+      "snyk": [
+        "SNYK-JS-NTESSERACT-1050982"
+      ],
+      "cwe": [
+        "CWE-77"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/tesseract.js",
+          "startline": 97,
+          "startcol": 19,
+          "endline": 130,
+          "endcol": 7,
+          "range": false,
+          "code": "child_process.exec(command, opts, function(err) {\n      if (err) {\n        // Something went wrong executing the assembled command\n        callback(err, null);\n        clearTimeout(timer);\n        return;\n      }\n\n      // Find one of the three possible extension\n      glob(output + '.+(html|hocr|txt)', function(err, files){\n        if (err) {\n          callback(err, null);\n          clearTimeout(timer);\n          return;\n        }\n        fs.readFile(files[0], Tesseract.outputEncoding, function(err, data) {\n          if (err) {\n            callback(err, null);\n            clearTimeout(timer);\n            return;\n          }\n\n          const index = Tesseract.tmpFiles.indexOf(output);\n          if (~index) Tesseract.tmpFiles.splice(index, 1);\n\n          fs.unlink(files[0], function () {\n            // no-op\n          });\n\n          callback(null, data)\n          clearTimeout(timer);\n        });\n      })\n    })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "fcbc36f381798b4362179c0cdf9961b437c7b619",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/tesseract.js",
+            "startline": 101,
+            "startcol": 19,
+            "endline": 134,
+            "endcol": 6,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

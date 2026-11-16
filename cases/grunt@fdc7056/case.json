@@ -1,0 +1,80 @@
+{
+  "name": "grunt",
+  "version": null,
+  "repo": "gruntjs/grunt",
+  "sha": "fdc7056b9ad12c09b9a8d31d96ab18aa3b75edb1",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2022-0436",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-0436"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/grunt/file.js",
+          "startline": 301,
+          "startcol": 5,
+          "endline": 301,
+          "endcol": 28,
+          "range": false,
+          "code": "fs.readdirSync(srcpath)"
+        },
+        {
+          "file": "package/lib/grunt/file.js",
+          "startline": 214,
+          "startcol": 16,
+          "endline": 214,
+          "endcol": 49,
+          "range": false,
+          "code": "fs.readFileSync(String(filepath))"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/grunt/file.js",
+          "startline": 295,
+          "startcol": 13,
+          "endline": 308,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "sourceKinds": [
+        "file"
+      ],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "aad3d4521c3098fb255fb2db8f2e1d691a033665",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/grunt/file.js",
+            "startline": 296,
+            "startcol": 13,
+            "endline": 311,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

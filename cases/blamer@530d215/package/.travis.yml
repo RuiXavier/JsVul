@@ -1,0 +1,16 @@
+sudo: false
+language: node_js
+env:
+  CODECOV_TOKEN="967cc3b5-600b-4b03-a6b2-6939a817c70e"
+node_js:
+  - 10
+  - 12
+# keep the npm cache to speed up installs
+cache:
+  directories:
+    - "$HOME/.npm"
+script:
+  - yarn cov
+  - yarn build
+after_success:
+  - codecov -f coverage/lcov.info

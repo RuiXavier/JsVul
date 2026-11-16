@@ -1,0 +1,63 @@
+{
+  "name": "framework",
+  "version": null,
+  "repo": "totaljs/framework",
+  "sha": "fcdf74ca6eee6b559502845944e66ada2f460eba",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3wj8-vp9h-rm6m",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-23344"
+      ],
+      "ghsa": [
+        "GHSA-3wj8-vp9h-rm6m"
+      ],
+      "snyk": [
+        "SNYK-JS-TOTALJS-1077069"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/utils.js",
+          "startline": 6628,
+          "startcol": 11,
+          "endline": 6628,
+          "endcol": 41,
+          "range": false,
+          "code": "new Function('w', 'a', 'b', a)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/utils.js",
+          "startline": 6606,
+          "startcol": 15,
+          "endline": 6631,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

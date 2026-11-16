@@ -1,0 +1,70 @@
+{
+  "name": "etherpad-lite",
+  "version": null,
+  "repo": "ether/etherpad-lite",
+  "sha": "0dfecb3af77b0b546714c714a52274f55e4437cf",
+  "subdir": "src",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/node/hooks/express/static.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2015-3309",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2015-3309"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node/utils/Minify.js",
+          "startline": 396,
+          "startcol": 5,
+          "endline": 396,
+          "endcol": 47,
+          "range": false,
+          "code": "fs.readFile(ROOT_DIR + filename, callback)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/node/utils/Minify.js",
+          "startline": 140,
+          "startcol": 1,
+          "endline": 241,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0fa7650df8f940ed6b577d79836a78eb09726c4b",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/node/utils/Minify.js",
+            "startline": 140,
+            "startcol": 1,
+            "endline": 240,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

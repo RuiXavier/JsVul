@@ -1,0 +1,60 @@
+{
+  "name": "path-sanitizer",
+  "version": null,
+  "repo": "cabraviva/path-sanitizer",
+  "sha": "b37caa71af1d43720f1598454d9c72dd0e259ad1",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/lib/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-94p5-r7cc-3rpr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-56198"
+      ],
+      "ghsa": [
+        "GHSA-94p5-r7cc-3rpr"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/index.ts",
+          "startline": 55,
+          "startcol": 16,
+          "endline": 110,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b6d2319eac910dffdfacc8460f5b5cc5a1518ead",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/index.ts",
+            "startline": 55,
+            "startcol": 16,
+            "endline": 124,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

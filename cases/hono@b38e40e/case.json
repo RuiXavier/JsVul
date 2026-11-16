@@ -1,0 +1,60 @@
+{
+  "name": "hono",
+  "version": null,
+  "repo": "honojs/hono",
+  "sha": "b38e40e21ab9fd1330b2b0d17d0e4cac78b37ab7",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/deno_dist/middleware.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3mpf-rcc7-5347",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-32869"
+      ],
+      "ghsa": [
+        "GHSA-3mpf-rcc7-5347"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/deno_dist/middleware/serve-static/index.ts",
+          "startline": 20,
+          "startcol": 28,
+          "endline": 87,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "92e65fbb6e5e7372650e7690dbd84938432d9e65",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/deno_dist/middleware/serve-static/index.ts",
+            "startline": 20,
+            "startcol": 28,
+            "endline": 86,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "nodebb",
+  "version": null,
+  "repo": "nodebb/nodebb",
+  "sha": "40d73e2a54427630531e584d8fb1157fd0d136f9",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:nodebb:20161120",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:nodebb:20161120"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "originalClass": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/plugins/install.js",
+          "startline": 106,
+          "startcol": 3,
+          "endline": 112,
+          "endcol": 6,
+          "range": false,
+          "code": "require('child_process').exec(command, function (err, stdout) {\n\t\t\tif (err) {\n\t\t\t\treturn callback(err);\n\t\t\t}\n\t\t\twinston.verbose('[plugins] ' + stdout);\n\t\t\tcallback();\n\t\t })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/plugins/install.js",
+          "startline": 15,
+          "startcol": 18,
+          "endline": 150,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

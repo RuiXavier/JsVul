@@ -1,0 +1,61 @@
+{
+  "name": "anything-llm",
+  "version": null,
+  "repo": "mintplex-labs/anything-llm",
+  "sha": "2374939ffb551ab2929d7f9d5827fe6597fa8caa",
+  "subdir": "server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-3104",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-3104"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "command-injection",
+      "sinks": [
+        {
+          "file": "package/utils/helpers/updateENV.js",
+          "startline": 542,
+          "startcol": 1,
+          "endline": 583,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bfedfebfab032e6f4d5a369c8a2f947c5d0c5286",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/utils/helpers/updateENV.js",
+            "startline": 542,
+            "startcol": 1,
+            "endline": 591,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "larvitbase-api",
+  "version": null,
+  "repo": "larvit/larvitbase-api",
+  "sha": "9c274f96e113ff9479fce7a6da8bc5cefb5f5d78",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2019-5479",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-5479"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 200,
+          "startcol": 4,
+          "endline": 200,
+          "endcol": 42,
+          "range": false,
+          "code": "require(req.routed.controllerFullPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 13,
+          "startcol": 1,
+          "endline": 226,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0e953337e75770abdcc0a8bb71932a44d2239514",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 13,
+            "startcol": 1,
+            "endline": 233,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

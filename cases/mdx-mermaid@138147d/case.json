@@ -1,0 +1,60 @@
+{
+  "name": "mdx-mermaid",
+  "version": null,
+  "repo": "sjwall/mdx-mermaid",
+  "sha": "138147d303fc71f7c6e2c4cffb9a5396fafb26cb",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/mdxast-mermaid.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-rvgm-35jw-q628",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-36036"
+      ],
+      "ghsa": [
+        "GHSA-rvgm-35jw-q628"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/Mermaid.tsx",
+          "startline": 43,
+          "startcol": 24,
+          "endline": 99,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f2b99386660fd13316823529c3f1314ebbcdfd2a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/Mermaid.tsx",
+            "startline": 36,
+            "startcol": 24,
+            "endline": 93,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

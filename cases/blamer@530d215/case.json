@@ -1,0 +1,72 @@
+{
+  "name": "blamer",
+  "version": null,
+  "repo": "kucherenko/blamer",
+  "sha": "530d2152bb96a6ac240f47f78d9dccd2e84487b9",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-6f9p-g466-f8v8",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-26143"
+      ],
+      "ghsa": [
+        "GHSA-6f9p-g466-f8v8"
+      ],
+      "snyk": [
+        "SNYK-JS-BLAMER-5731318"
+      ],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/execa/index.js",
+          "startline": 169,
+          "startcol": 12,
+          "endline": 169,
+          "endcol": 76,
+          "range": false,
+          "code": "childProcess.spawnSync(parsed.file, parsed.args, parsed.options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/vcs/git.ts",
+          "startline": 20,
+          "startcol": 8,
+          "endline": 35,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0965877f115753371a2570f10a63c455d2b2cde3",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/vcs/git.ts",
+            "startline": 21,
+            "startcol": 8,
+            "endline": 41,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

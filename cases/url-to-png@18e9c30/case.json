@@ -1,0 +1,60 @@
+{
+  "name": "url-to-png",
+  "version": null,
+  "repo": "jasonraimondi/url-to-png",
+  "sha": "18e9c30e1cfb70b3ca1389c3d36703349697e828",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/main.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-665w-mwrr-77q3",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-37169"
+      ],
+      "ghsa": [
+        "GHSA-665w-mwrr-77q3"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/lib/image_render.ts",
+          "startline": 65,
+          "startcol": 15,
+          "endline": 65,
+          "endcol": 47,
+          "range": false,
+          "code": "page.goto(url, this.NAV_OPTIONS)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "9336020c5e603323f5cf4a2ac3bb9a7735cf61f7",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/image_render.ts",
+            "startline": 65,
+            "startcol": 9,
+            "endline": 65,
+            "endcol": 46,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

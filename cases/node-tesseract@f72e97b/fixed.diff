@@ -1,0 +1,934 @@
+diff --git a/lib/tesseract.js b/lib/tesseract.js
+index 54846f8..563deb4 100644
+--- a/lib/tesseract.js
++++ b/lib/tesseract.js
+@@ -4,12 +4,12 @@
+  * Module dependencies.
+  */
+ var utils = require('./utils');
+-var exec = require('child_process').exec;
++var execFile = require('child_process').execFile;
+ var fs = require('fs');
+ var tmpdir = require('os').tmpdir(); // let the os take care of removing zombie tmp files
+ var uuid = require('uuid');
+ var path = require('path');
+-var { glob, } = require("glob");
++var { globSync, } = require("glob");
+ 
+ var Tesseract = {
+ 
+@@ -51,7 +51,7 @@ var Tesseract = {
+       callback(Error('Invalid image path'));
+       return;
+     }
+-    
++
+     var defaultOptions = utils.merge({}, Tesseract.options);
+     options = utils.merge(defaultOptions, options);
+ 
+@@ -65,23 +65,23 @@ var Tesseract = {
+     var command = [options.binary, image, output];
+ 
+     if (options.l !== null) {
+-      command.push('-l ' + options.l);
++      command.push('-l')
++      command.push(options.l);
+     }
+ 
+     if (options.psm !== null) {
+-      command.push('--psm ' + options.psm);
++      command.push('--psm')
++      command.push(options.psm);
+     }
+ 
+     if (options.config !== null) {
+       command.push(options.config);
+     }
+ 
+-    command = command.join(' ');
+-
+     var opts = options.env || {};
+ 
+     // Run the tesseract command
+-    exec(command, opts, function(err, stdout, stderr) {
++    execFile(command[0], command.slice(1), opts, function(err, stdout, stderr) {
+       if (err) {
+         // Something went wrong executing the assembled command
+         callback(err, null);
+@@ -98,11 +98,9 @@ var Tesseract = {
+       }
+ 
+       // Find one of the three possible extension
+-      glob(output + '.+(html|hocr|txt)', function(err, files){
+-        if (err) {
+-          callback(err, null);
+-          return;
+-        }
++      try {
++        const files = globSync(output + '.{html,hocr,txt}');
++        const readFiles = function(files) {
+         fs.readFile(files[0], Tesseract.outputEncoding, function(err, data) {
+           if (err) {
+             callback(err, null);
+@@ -116,7 +114,11 @@ var Tesseract = {
+ 
+           callback(null, data, extra);
+         });
+-      })
++        };
++        readFiles(files);
++      } catch (err) {
++        callback(err, null);
++      }
+     }); // end exec
+ 
+   }
+diff --git a/package-lock.json b/package-lock.json
+index 15672e7..e34a10f 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+-  "name": "dawnsparks-tesseract",
+-  "version": "0.4.0",
++  "name": "dawnsparks-node-tesseract",
++  "version": "0.4.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "dawnsparks-tesseract",
+-      "version": "0.4.0",
++      "name": "dawnsparks-node-tesseract",
++      "version": "0.4.1",
+       "license": "MIT",
+       "dependencies": {
+         "glob": "^9.0.1",
+diff --git a/package.json b/package.json
+index 9a3f6ca..a5248f2 100644
+--- a/package.json
++++ b/package.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "dawnsparks-node-tesseract",
+-  "version": "0.4.0",
++  "version": "0.4.1",
+   "author": "Rona Dini Hari <hari.ronadini@gmail.com>",
+   "description": "A fork of a simple wrapper for the Tesseract OCR package",
+   "main": "index.js",
+   "repository": {
+     "type": "git",
+-    "url": "https://rona_dinihari@bitbucket.org/dawnsparks/dawnsparks-node-tesseract.git"
++    "url": "https://github.com/rona-dinihari/dawnsparks-node-tesseract.git"
+   },
+   "keywords": [
+     "tesseract",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+deleted file mode 100644
+index 5a83eba..0000000
+--- a/pnpm-lock.yaml
++++ /dev/null
+@@ -1,634 +0,0 @@
+-lockfileVersion: '9.0'
+-
+-settings:
+-  autoInstallPeers: true
+-  excludeLinksFromLockfile: false
+-
+-importers:
+-
+-  .:
+-    dependencies:
+-      glob:
+-        specifier: ^9.0.1
+-        version: 9.3.5
+-      uuid:
+-        specifier: ^9.0.0
+-        version: 9.0.1
+-    devDependencies:
+-      mocha:
+-        specifier: ^10.2.0
+-        version: 10.8.2
+-      should:
+-        specifier: ~2.1.1
+-        version: 2.1.1
+-
+-packages:
+-
+-  ansi-colors@4.1.3:
+-    resolution: {integrity: sha512-/6w/C21Pm1A7aZitlI5Ni/2J6FFQN8i1Cvz3kHABAAbw93v/NlvKdVOqz7CCWz/3iv/JplRSEEZ83XION15ovw==}
+-    engines: {node: '>=6'}
+-
+-  ansi-regex@5.0.1:
+-    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
+-    engines: {node: '>=8'}
+-
+-  ansi-styles@4.3.0:
+-    resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
+-    engines: {node: '>=8'}
+-
+-  anymatch@3.1.3:
+-    resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
+-    engines: {node: '>= 8'}
+-
+-  argparse@2.0.1:
+-    resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+-
+-  balanced-match@1.0.2:
+-    resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+-
+-  binary-extensions@2.3.0:
+-    resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
+-    engines: {node: '>=8'}
+-
+-  brace-expansion@2.1.7:
+-    resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
+-
+-  braces@3.0.3:
+-    resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
+-    engines: {node: '>=8'}
+-
+-  browser-stdout@1.3.1:
+-    resolution: {integrity: sha512-qhAVI1+Av2X7qelOfAIYwXONood6XlZE/fXaBSmW/T5SzLAmCgzi+eiWE7fUvbHaeNBQH13UftjpXxsfLkMpgw==}
+-
+-  camelcase@6.3.0:
+-    resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
+-    engines: {node: '>=10'}
+-
+-  chalk@4.1.2:
+-    resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
+-    engines: {node: '>=10'}
+-
+-  chokidar@3.6.0:
+-    resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
+-    engines: {node: '>= 8.10.0'}
+-
+-  cliui@7.0.4:
+-    resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
+-
+-  color-convert@2.0.1:
+-    resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
+-    engines: {node: '>=7.0.0'}
+-
+-  color-name@1.1.4:
+-    resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+-
+-  debug@4.4.3:
+-    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
+-    engines: {node: '>=6.0'}
+-    peerDependencies:
+-      supports-color: '*'
+-    peerDependenciesMeta:
+-      supports-color:
+-        optional: true
+-
+-  decamelize@4.0.0:
+-    resolution: {integrity: sha512-9iE1PgSik9HeIIw2JO94IidnE3eBoQrFJ3w7sFuzSX4DpmZ3v5sZpUiV5Swcf6mQEF+Y0ru8Neo+p+nyh2J+hQ==}
+-    engines: {node: '>=10'}
+-
+-  diff@5.2.2:
+-    resolution: {integrity: sha512-vtcDfH3TOjP8UekytvnHH1o1P4FcUdt4eQ1Y+Abap1tk/OB2MWQvcwS2ClCd1zuIhc3JKOx6p3kod8Vfys3E+A==}
+-    engines: {node: '>=0.3.1'}
+-
+-  emoji-regex@8.0.0:
+-    resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
+-
+-  escalade@3.2.0:
+-    resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
+-    engines: {node: '>=6'}
+-
+-  escape-string-regexp@4.0.0:
+-    resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
+-    engines: {node: '>=10'}
+-
+-  fill-range@7.1.1:
+-    resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
+-    engines: {node: '>=8'}
+-
+-  find-up@5.0.0:
+-    resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
+-    engines: {node: '>=10'}
+-
+-  flat@5.0.2:
+-    resolution: {integrity: sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==}
+-    hasBin: true
+-
+-  fs.realpath@1.0.0:
+-    resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
+-
+-  fsevents@2.3.3:
+-    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+-    os: [darwin]
+-
+-  get-caller-file@2.0.5:
+-    resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
+-    engines: {node: 6.* || 8.* || >= 10.*}
+-
+-  glob-parent@5.1.2:
+-    resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
+-    engines: {node: '>= 6'}
+-
+-  glob@8.1.0:
+-    resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
+-    engines: {node: '>=12'}
+-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+-
+-  glob@9.3.5:
+-    resolution: {integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==}
+-    engines: {node: '>=16 || 14 >=14.17'}
+-    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+-
+-  has-flag@4.0.0:
+-    resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
+-    engines: {node: '>=8'}
+-
+-  he@1.2.0:
+-    resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
+-    hasBin: true
+-
+-  inflight@1.0.6:
+-    resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+-    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+-
+-  inherits@2.0.4:
+-    resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
+-
+-  is-binary-path@2.1.0:
+-    resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
+-    engines: {node: '>=8'}
+-
+-  is-extglob@2.1.1:
+-    resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
+-    engines: {node: '>=0.10.0'}
+-
+-  is-fullwidth-code-point@3.0.0:
+-    resolution: {integrity: sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==}
+-    engines: {node: '>=8'}
+-
+-  is-glob@4.0.3:
+-    resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
+-    engines: {node: '>=0.10.0'}
+-
+-  is-number@7.0.0:
+-    resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
+-    engines: {node: '>=0.12.0'}
+-
+-  is-plain-obj@2.1.0:
+-    resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
+-    engines: {node: '>=8'}
+-
+-  is-unicode-supported@0.1.0:
+-    resolution: {integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==}
+-    engines: {node: '>=10'}
+-
+-  js-yaml@4.3.2:
+-    resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
+-    hasBin: true
+-
+-  locate-path@6.0.0:
+-    resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
+-    engines: {node: '>=10'}
+-
+-  log-symbols@4.1.0:
+-    resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
+-    engines: {node: '>=10'}
+-
+-  lru-cache@10.4.3:
+-    resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
+-
+-  minimatch@5.1.9:
+-    resolution: {integrity: sha512-7o1wEA2RyMP7Iu7GNba9vc0RWWGACJOCZBJX2GJWip0ikV+wcOsgVuY9uE8CPiyQhkGFSlhuSkZPavN7u1c2Fw==}
+-    engines: {node: '>=10'}
+-
+-  minimatch@8.0.7:
+-    resolution: {integrity: sha512-V+1uQNdzybxa14e/p00HZnQNNcTjnRJjDxg2V8wtkjFctq4M7hXFws4oekyTP0Jebeq7QYtpFyOeBAjc88zvYg==}
+-    engines: {node: '>=16 || 14 >=14.17'}
+-
+-  minipass@4.2.8:
+-    resolution: {integrity: sha512-fNzuVyifolSLFL4NzpF+wEF4qrgqaaKX0haXPQEdQ7NKAN+WecoKMHV09YcuL/DHxrUsYQOK3MiuDf7Ip2OXfQ==}
+-    engines: {node: '>=8'}
+-
+-  minipass@7.1.3:
+-    resolution: {integrity: sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==}
+-    engines: {node: '>=16 || 14 >=14.17'}
+-
+-  mocha@10.8.2:
+-    resolution: {integrity: sha512-VZlYo/WE8t1tstuRmqgeyBgCbJc/lEdopaa+axcKzTBJ+UIdlAB9XnmvTCAH4pwR4ElNInaedhEBmZD8iCSVEg==}
+-    engines: {node: '>= 14.0.0'}
+-    hasBin: true
+-
+-  ms@2.1.3:
+-    resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
+-
+-  normalize-path@3.0.0:
+-    resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
+-    engines: {node: '>=0.10.0'}
+-
+-  once@1.4.0:
+-    resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
+-
+-  p-limit@3.1.0:
+-    resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
+-    engines: {node: '>=10'}
+-
+-  p-locate@5.0.0:
+-    resolution: {integrity: sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==}
+-    engines: {node: '>=10'}
+-
+-  path-exists@4.0.0:
+-    resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
+-    engines: {node: '>=8'}
+-
+-  path-scurry@1.11.1:
+-    resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
+-    engines: {node: '>=16 || 14 >=14.18'}
+-
+-  picomatch@2.3.2:
+-    resolution: {integrity: sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==}
+-    engines: {node: '>=8.6'}
+-
+-  randombytes@2.1.0:
+-    resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
+-
+-  readdirp@3.6.0:
+-    resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
+-    engines: {node: '>=8.10.0'}
+-
+-  require-directory@2.1.1:
+-    resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
+-    engines: {node: '>=0.10.0'}
+-
+-  safe-buffer@5.2.1:
+-    resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
+-
+-  serialize-javascript@6.0.2:
+-    resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
+-
+-  should@2.1.1:
+-    resolution: {integrity: sha512-w9EBOxgQMNmWxqPgjaCOz21FcuYepdNjTGxw0EyIvibY1CdB4UqHjBqEvN5xj5B+tzwrndTaNFwp79yX2E1cFw==}
+-    engines: {node: '>= 0.2.0'}
+-
+-  string-width@4.2.3:
+-    resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
+-    engines: {node: '>=8'}
+-
+-  strip-ansi@6.0.1:
+-    resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
+-    engines: {node: '>=8'}
+-
+-  strip-json-comments@3.1.1:
+-    resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
+-    engines: {node: '>=8'}
+-
+-  supports-color@7.2.0:
+-    resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
+-    engines: {node: '>=8'}
+-
+-  supports-color@8.1.1:
+-    resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
+-    engines: {node: '>=10'}
+-
+-  to-regex-range@5.0.1:
+-    resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
+-    engines: {node: '>=8.0'}
+-
+-  uuid@9.0.1:
+-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+-    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+-    hasBin: true
+-
+-  workerpool@6.5.1:
+-    resolution: {integrity: sha512-Fs4dNYcsdpYSAfVxhnl1L5zTksjvOJxtC5hzMNl+1t9B8hTJTdKDyZ5ju7ztgPy+ft9tBFXoOlDNiOT9WUXZlA==}
+-
+-  wrap-ansi@7.0.0:
+-    resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
+-    engines: {node: '>=10'}
+-
+-  wrappy@1.0.2:
+-    resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+-
+-  y18n@5.0.8:
+-    resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
+-    engines: {node: '>=10'}
+-
+-  yargs-parser@20.2.9:
+-    resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
+-    engines: {node: '>=10'}
+-
+-  yargs-unparser@2.0.0:
+-    resolution: {integrity: sha512-7pRTIA9Qc1caZ0bZ6RYRGbHJthJWuakf+WmHK0rVeLkNrrGhfoabBNdue6kdINI6r4if7ocq9aD/n7xwKOdzOA==}
+-    engines: {node: '>=10'}
+-
+-  yargs@16.2.2:
+-    resolution: {integrity: sha512-Nt9ZJjXTv5R8MHbqby/wXQ6Gi0Bb3TcYZkR1bzuL4yB2OxWPkXknz513gEF0GoA6tn00UpbPvERW8rzCuWCA6w==}
+-    engines: {node: '>=10'}
+-
+-  yocto-queue@0.1.0:
+-    resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
+-    engines: {node: '>=10'}
+-
+-snapshots:
+-
+-  ansi-colors@4.1.3: {}
+-
+-  ansi-regex@5.0.1: {}
+-
+-  ansi-styles@4.3.0:
+-    dependencies:
+-      color-convert: 2.0.1
+-
+-  anymatch@3.1.3:
+-    dependencies:
+-      normalize-path: 3.0.0
+-      picomatch: 2.3.2
+-
+-  argparse@2.0.1: {}
+-
+-  balanced-match@1.0.2: {}
+-
+-  binary-extensions@2.3.0: {}
+-
+-  brace-expansion@2.1.7:
+-    dependencies:
+-      balanced-match: 1.0.2
+-
+-  braces@3.0.3:
+-    dependencies:
+-      fill-range: 7.1.1
+-
+-  browser-stdout@1.3.1: {}
+-
+-  camelcase@6.3.0: {}
+-
+-  chalk@4.1.2:
+-    dependencies:
+-      ansi-styles: 4.3.0
+-      supports-color: 7.2.0
+-
+-  chokidar@3.6.0:
+-    dependencies:
+-      anymatch: 3.1.3
+-      braces: 3.0.3
+-      glob-parent: 5.1.2
+-      is-binary-path: 2.1.0
+-      is-glob: 4.0.3
+-      normalize-path: 3.0.0
+-      readdirp: 3.6.0
+-    optionalDependencies:
+-      fsevents: 2.3.3
+-
+-  cliui@7.0.4:
+-    dependencies:
+-      string-width: 4.2.3
+-      strip-ansi: 6.0.1
+-      wrap-ansi: 7.0.0
+-
+-  color-convert@2.0.1:
+-    dependencies:
+-      color-name: 1.1.4
+-
+-  color-name@1.1.4: {}
+-
+-  debug@4.4.3(supports-color@8.1.1):
+-    dependencies:
+-      ms: 2.1.3
+-    optionalDependencies:
+-      supports-color: 8.1.1
+-
+-  decamelize@4.0.0: {}
+-
+-  diff@5.2.2: {}
+-
+-  emoji-regex@8.0.0: {}
+-
+-  escalade@3.2.0: {}
+-
+-  escape-string-regexp@4.0.0: {}
+-
+-  fill-range@7.1.1:
+-    dependencies:
+-      to-regex-range: 5.0.1
+-
+-  find-up@5.0.0:
+-    dependencies:
+-      locate-path: 6.0.0
+-      path-exists: 4.0.0
+-
+-  flat@5.0.2: {}
+-
+-  fs.realpath@1.0.0: {}
+-
+-  fsevents@2.3.3:
+-    optional: true
+-
+-  get-caller-file@2.0.5: {}
+-
+-  glob-parent@5.1.2:
+-    dependencies:
+-      is-glob: 4.0.3
+-
+-  glob@8.1.0:
+-    dependencies:
+-      fs.realpath: 1.0.0
+-      inflight: 1.0.6
+-      inherits: 2.0.4
+-      minimatch: 5.1.9
+-      once: 1.4.0
+-
+-  glob@9.3.5:
+-    dependencies:
+-      fs.realpath: 1.0.0
+-      minimatch: 8.0.7
+-      minipass: 4.2.8
+-      path-scurry: 1.11.1
+-
+-  has-flag@4.0.0: {}
+-
+-  he@1.2.0: {}
+-
+-  inflight@1.0.6:
+-    dependencies:
+-      once: 1.4.0
+-      wrappy: 1.0.2
+-
+-  inherits@2.0.4: {}
+-
+-  is-binary-path@2.1.0:
+-    dependencies:
+-      binary-extensions: 2.3.0
+-
+-  is-extglob@2.1.1: {}
+-
+-  is-fullwidth-code-point@3.0.0: {}
+-
+-  is-glob@4.0.3:
+-    dependencies:
+-      is-extglob: 2.1.1
+-
+-  is-number@7.0.0: {}
+-
+-  is-plain-obj@2.1.0: {}
+-
+-  is-unicode-supported@0.1.0: {}
+-
+-  js-yaml@4.3.2:
+-    dependencies:
+-      argparse: 2.0.1
+-
+-  locate-path@6.0.0:
+-    dependencies:
+-      p-locate: 5.0.0
+-
+-  log-symbols@4.1.0:
+-    dependencies:
+-      chalk: 4.1.2
+-      is-unicode-supported: 0.1.0
+-
+-  lru-cache@10.4.3: {}
+-
+-  minimatch@5.1.9:
+-    dependencies:
+-      brace-expansion: 2.1.7
+-
+-  minimatch@8.0.7:
+-    dependencies:
+-      brace-expansion: 2.1.7
+-
+-  minipass@4.2.8: {}
+-
+-  minipass@7.1.3: {}
+-
+-  mocha@10.8.2:
+-    dependencies:
+-      ansi-colors: 4.1.3
+-      browser-stdout: 1.3.1
+-      chokidar: 3.6.0
+-      debug: 4.4.3(supports-color@8.1.1)
+-      diff: 5.2.2
+-      escape-string-regexp: 4.0.0
+-      find-up: 5.0.0
+-      glob: 8.1.0
+-      he: 1.2.0
+-      js-yaml: 4.3.2
+-      log-symbols: 4.1.0
+-      minimatch: 5.1.9
+-      ms: 2.1.3
+-      serialize-javascript: 6.0.2
+-      strip-json-comments: 3.1.1
+-      supports-color: 8.1.1
+-      workerpool: 6.5.1
+-      yargs: 16.2.2
+-      yargs-parser: 20.2.9
+-      yargs-unparser: 2.0.0
+-
+-  ms@2.1.3: {}
+-
+-  normalize-path@3.0.0: {}
+-
+-  once@1.4.0:
+-    dependencies:
+-      wrappy: 1.0.2
+-
+-  p-limit@3.1.0:
+-    dependencies:
+-      yocto-queue: 0.1.0
+-
+-  p-locate@5.0.0:
+-    dependencies:
+-      p-limit: 3.1.0
+-
+-  path-exists@4.0.0: {}
+-
+-  path-scurry@1.11.1:
+-    dependencies:
+-      lru-cache: 10.4.3
+-      minipass: 7.1.3
+-
+-  picomatch@2.3.2: {}
+-
+-  randombytes@2.1.0:
+-    dependencies:
+-      safe-buffer: 5.2.1
+-
+-  readdirp@3.6.0:
+-    dependencies:
+-      picomatch: 2.3.2
+-
+-  require-directory@2.1.1: {}
+-
+-  safe-buffer@5.2.1: {}
+-
+-  serialize-javascript@6.0.2:
+-    dependencies:
+-      randombytes: 2.1.0
+-
+-  should@2.1.1: {}
+-
+-  string-width@4.2.3:
+-    dependencies:
+-      emoji-regex: 8.0.0
+-      is-fullwidth-code-point: 3.0.0
+-      strip-ansi: 6.0.1
+-
+-  strip-ansi@6.0.1:
+-    dependencies:
+-      ansi-regex: 5.0.1
+-
+-  strip-json-comments@3.1.1: {}
+-
+-  supports-color@7.2.0:
+-    dependencies:
+-      has-flag: 4.0.0
+-
+-  supports-color@8.1.1:
+-    dependencies:
+-      has-flag: 4.0.0
+-
+-  to-regex-range@5.0.1:
+-    dependencies:
+-      is-number: 7.0.0
+-
+-  uuid@9.0.1: {}
+-
+-  workerpool@6.5.1: {}
+-
+-  wrap-ansi@7.0.0:
+-    dependencies:
+-      ansi-styles: 4.3.0
+-      string-width: 4.2.3
+-      strip-ansi: 6.0.1
+-
+-  wrappy@1.0.2: {}
+-
+-  y18n@5.0.8: {}
+-
+-  yargs-parser@20.2.9: {}
+-
+-  yargs-unparser@2.0.0:
+-    dependencies:
+-      camelcase: 6.3.0
+-      decamelize: 4.0.0
+-      flat: 5.0.2
+-      is-plain-obj: 2.1.0
+-
+-  yargs@16.2.2:
+-    dependencies:
+-      cliui: 7.0.4
+-      escalade: 3.2.0
+-      get-caller-file: 2.0.5
+-      require-directory: 2.1.1
+-      string-width: 4.2.3
+-      y18n: 5.0.8
+-      yargs-parser: 20.2.9
+-
+-  yocto-queue@0.1.0: {}
+diff --git a/test/tesseract.js b/test/tesseract.js
+index ab11592..6ed0ea4 100644
+--- a/test/tesseract.js
++++ b/test/tesseract.js
+@@ -9,28 +9,32 @@ const fs = require('fs');
+ describe('process', function(){
+   it('should return the string "node-tesseract"', function(done){
+ 
+-    var testImage = "\"" + __dirname + '/test.png' + "\"";
++    var testImage = path.join(__dirname, 'test with spaces.png');
+ 
+     tesseract.process(testImage, function(err, text) {
+-      text.trim().should.equal('node-tesseract');
+-      done();
++      if (err) {
++        done(err);
++      } else {
++        text.trim().should.equal('node-tesseract');
++        done();
++      }
+     });
+-
+-    done();
+   })
+ })
+ 
+ describe('orientation', function(){
+   it('returns orientation equal to 0 using psm 1', function(done){
+ 
+-    var testImage = "\"" + __dirname + '/test.png' + "\"";
++    var testImage = path.join(__dirname, 'test with spaces.png');
+ 
+     tesseract.process(testImage, { psm: 1 }, function(err, text, extra) {
+-      extra.orientation.should.equal(0);
+-      done();
++      if (err) {
++        done(err);
++      } else {
++        extra.orientation.should.equal(0);
++        done();
++      }
+     });
+-
+-    done();
+   })
+ })
+ 
+diff --git a/test/test with spaces.png b/test/test with spaces.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..9ebe3629076bd4f6fcde5061bdf89e205e23bf0d
+GIT binary patch
+literal 2977
+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
+G!u}1E`x@2&
+
+literal 0
+HcmV?d00001
+
+diff --git a/test/test.png b/test/test.png
+deleted file mode 100644
+index 9ebe3629076bd4f6fcde5061bdf89e205e23bf0d..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 2977
+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
+G!u}1E`x@2&
+

@@ -1,0 +1,42 @@
+{
+  "name": "git-tag-annotation-action",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Github Action for obtaining the annotation of a git tag",
+  "homepage": "https://github.com/ericcornelissen/git-tag-annotation-action#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "build": "ncc build index.js -m -o lib",
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericcornelissen/git-tag-annotation-action.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ericcornelissen/git-tag-annotation-action/issues"
+  },
+  "author": {
+    "name": "Eric Cornelissen",
+    "email": "ericornelissen@gmail.com",
+    "url": "https://ericcornelissen.dev/"
+  },
+  "keywords": [
+    "git",
+    "tag",
+    "annotation",
+    "git-actions",
+    "actions"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.2.6"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.24.1",
+    "jest": "^26.6.1"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "smor",
+  "version": null,
+  "repo": "eldoy/smor",
+  "sha": "81c23d57255eb181e361cd2b21ebdde74575becb",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-HANGERSTEAK-608973",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-HANGERSTEAK-608973"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/hangersteak.js",
+          "startline": 58,
+          "startcol": 20,
+          "endline": 58,
+          "endcol": 65,
+          "range": false,
+          "code": "fs.createReadStream(filePath, { start, end })"
+        },
+        {
+          "file": "package/lib/hangersteak.js",
+          "startline": 85,
+          "startcol": 7,
+          "endline": 87,
+          "endcol": 9,
+          "range": false,
+          "code": "fs.stat(filePath, function(err, stat) {\n        err ? reject(err) : resolve(stat)\n      })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

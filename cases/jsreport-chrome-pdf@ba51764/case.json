@@ -1,0 +1,53 @@
+{
+  "name": "jsreport-chrome-pdf",
+  "version": null,
+  "repo": "jsreport/jsreport-chrome-pdf",
+  "sha": "ba51764dae68403893f9f0e0ce7d060b78ee26c4",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-934w-hvj4-7fr6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7762"
+      ],
+      "ghsa": [
+        "GHSA-934w-hvj4-7fr6"
+      ],
+      "snyk": [
+        "SNYK-JS-JSREPORTCHROMEPDF-1037310"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/conversion.js",
+          "startline": 2,
+          "startcol": 18,
+          "endline": 261,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

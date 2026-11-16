@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>JSONPath Demo</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h2>JSONPath Demo <i id="demoNode">(To demo on Node instead, see the <a href="https://npm.runkit.com/jsonpath-plus">library on Runkit</a>.)</i>
+</h2>
+    <form onsubmit="return false">
+      <div class="row">
+        <label class="grow"><b>JSONPath:</b>
+          <input type="text" id="jsonpath" placeholder="$.books" value="$..book[?(@parent.bicycle && @parent.bicycle.color === &quot;red&quot;)].category" />
+        </label>
+        <label><b>eval:</b>
+          <select id="eval">
+            <option value="safe">safe</option>
+            <option value="native">native</option>
+            <option value="false">false</option>
+          </select>
+        </label>
+        <label><b>ignoreEvalErrors:</b>
+          <select id="ignoreEvalErrors">
+            <option value="false">false (default)</option>
+            <option value="true">true</option>
+          </select>
+        </label>
+      </div>
+      <div id="jsonSampleContainer" class="container">
+        <label><b>JSON sample:</b>
+          <textarea id="jsonSample" placeholder="{&quot;books&quot;: []}">
+{
+  "store": {
+    "book": [
+      {
+        "category": "reference",
+        "author": "Nigel Rees",
+        "title": "Sayings of the Century",
+        "price": 8.95
+      },
+      {
+        "category": "fiction",
+        "author": "Evelyn Waugh",
+        "title": "Sword of Honour",
+        "price": 12.99
+      },
+      {
+        "category": "fiction",
+        "author": "Herman Melville",
+        "title": "Moby Dick",
+        "isbn": "0-553-21311-3",
+        "price": 8.99
+      },
+      {
+        "category": "fiction",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-395-19395-8",
+        "price": 22.99
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95
+    }
+  }
+}
+</textarea>
+        </label>
+      </div>
+      <div id="resultContainer" class="container">
+        <label><b>Results:</b>
+          <textarea id="results"></textarea>
+        </label>
+      </div>
+    </form>
+    <script src="../dist/index-browser-umd.cjs"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

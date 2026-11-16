@@ -1,0 +1,63 @@
+{
+  "name": "thrift",
+  "version": null,
+  "repo": "apache/thrift",
+  "sha": "d566da7739c9aae63fe7fc9d267887fa73e5dda7",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2018-11798",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-11798"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/nodejs/lib/thrift/web_server.js",
+          "startline": 430,
+          "startcol": 7,
+          "endline": 447,
+          "endcol": 9,
+          "range": false,
+          "code": "fs.readFile(filename, \"binary\", function(err, file) {\n        if (err) {\n          response.writeHead(500);\n          response.end(err + \"\\n\");\n          return;\n        }\n        var headers = {};\n        var contentType = contentTypesByExtension[path.extname(filename)];\n        if (contentType) {\n          headers[\"Content-Type\"] = contentType;\n        }\n        for (var k in options.headers) {\n          headers[k] = options.headers[k];\n        }\n        response.writeHead(200, headers);\n        response.write(file, \"binary\");\n        response.end();\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/nodejs/lib/thrift/web_server.js",
+          "startline": 275,
+          "startcol": 27,
+          "endline": 559,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

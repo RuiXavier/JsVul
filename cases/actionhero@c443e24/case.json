@@ -1,0 +1,70 @@
+{
+  "name": "actionhero",
+  "version": null,
+  "repo": "actionhero/actionhero",
+  "sha": "c443e24462ebe23677f8e67e0bc8a89c1a237390",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/api.js",
+    "package/initializers/initFileServer.js",
+    "package/actions/file.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:actionhero:20121127",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:actionhero:20121127"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/initializers/initFileServer.js",
+          "startline": 68,
+          "startcol": 3,
+          "endline": 109,
+          "endcol": 5,
+          "range": false,
+          "code": "api.fs.readFile(file, function (err, data) {\n\t\t\tif(err){\n\t\t\t\tapi.log(\"error reading: \"+file, \"red\");\n\t\t\t}else{\n\t\t\t\tif(connection.req != null){\n          connection.responseHeaders.push(['Content-Type', api.mime.lookup(file)]);\n\t\t\t\t\tconnection.responseHeaders.push(['Expires', new Date(new Date().getTime() + api.configData.commonWeb.flatFileCacheDuration * 1000).toUTCString()]);\n\t\t\t\t\tconnection.responseHeaders.push(['Cache-Control', \"max-age=\" + api.configData.commonWeb.flatFileCacheDuration + \", must-revalidate\"]);\n\t\t\t\t\tapi.webServer.cleanHeaders(api, connection);\n          connection.res.writeHead(200, connection.responseHeaders);\n\t\t\t\t\tconnection.res.end(data);\n\t\t\t\t}else{\n\t\t\t\t\ttry { \n\t\t\t\t\t\tconnection.write(data + \"\\r\\n\"); \n\t\t\t\t\t\tconnection.messageCount++;\n\t\t\t\t\t}catch(e){}\n\t\t\t\t}\n\t\t\t\tif(api.configData.log.logRequests){\n\t\t\t\t\tvar full_url = null;\n\t\t\t\t\tvar duration = null;\n\t\t\t\t\tvar type = null;\n\t\t\t\t\tif(connection.req != null && connection.req.headers != null){\n\t\t\t\t\t\tfull_url = connection.req.headers.host + connection.req.url\n\t\t\t\t\t\tduration = new Date().getTime() - connection.timer.startTime;\n\t\t\t\t\t\ttype = \"web\";\n\t\t\t\t\t}else{\n\t\t\t\t\t\ttype = \"socket\";\n\t\t\t\t\t\tfull_url = type;\n\t\t\t\t\t\tduration = type;\n\t\t\t\t\t}\n\t\t\t\t\tapi.logJSON({\n\t\t\t\t\t\tlabel: \"file @ \" + type,\n\t\t\t\t\t\tto: connection.remoteIP,\n\t\t\t\t\t\tfile: file,\n\t\t\t\t\t\trequest: full_url,\n\t\t\t\t\t\tsize: data.length,\n\t\t\t\t\t\tduration: duration\n\t\t\t\t\t}, \"grey\");\n\t\t\t\t}\n\t\t\t}\n\t\t\tprocess.nextTick(function() { next(connection, false); });\n\t\t})"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/initializers/initFileServer.js",
+          "startline": 4,
+          "startcol": 22,
+          "endline": 128,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "76e7429633de6df5078f2d3f0e2550bc755d7bb1",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/initializers/initFileServer.js",
+            "startline": 4,
+            "startcol": 22,
+            "endline": 133,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

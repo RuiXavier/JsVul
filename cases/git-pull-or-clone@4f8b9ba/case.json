@@ -1,0 +1,72 @@
+{
+  "name": "git-pull-or-clone",
+  "version": null,
+  "repo": "feross/git-pull-or-clone",
+  "sha": "4f8b9baf295e6d2e5dd987abca820987afb7643c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3x62-x456-q2vm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-24437"
+      ],
+      "ghsa": [
+        "GHSA-3x62-x456-q2vm"
+      ],
+      "snyk": [
+        "SNYK-JS-GITPULLORCLONE-2434307"
+      ],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/cross-spawn/index.js",
+          "startline": 12,
+          "startcol": 21,
+          "endline": 12,
+          "endcol": 74,
+          "range": false,
+          "code": "cp.spawn(parsed.command, parsed.args, parsed.options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 8,
+          "startcol": 1,
+          "endline": 47,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f9ce092be13cc32e685dfa26e7705e9c6e3108a3",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 8,
+            "startcol": 1,
+            "endline": 47,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

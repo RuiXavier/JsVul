@@ -1,0 +1,65 @@
+{
+  "name": "git-js",
+  "version": null,
+  "repo": "steveukx/git-js",
+  "sha": "0a623e53fd4b7617ca9c4d1d51bc53d105f52b2b",
+  "subdir": "simple-git",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9w5j-4mwv-2wj8",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25860"
+      ],
+      "ghsa": [
+        "GHSA-9w5j-4mwv-2wj8"
+      ],
+      "snyk": [
+        "SNYK-JS-SIMPLEGIT-3177391"
+      ],
+      "cwe": [
+        "CWE-78",
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/lib/runners/git-executor-chain.ts",
+          "startline": 214,
+          "startcol": 26,
+          "endline": 214,
+          "endcol": 60,
+          "range": false,
+          "code": "spawn(command, args, spawnOptions)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ec97a39ab60b89e870c5170121cd9c1603cc1951",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/runners/git-executor-chain.ts",
+            "startline": 214,
+            "startcol": 26,
+            "endline": 214,
+            "endcol": 59,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

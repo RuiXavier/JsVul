@@ -1,0 +1,101 @@
+{
+  "name": "gatsby",
+  "version": null,
+  "repo": "gatsbyjs/gatsby",
+  "sha": "18a47dadfdb0e38daf4371739ebaeb2593d3e6f6",
+  "subdir": "packages/gatsby",
+  "siblings": {
+    "@gatsbyjs/parcel-namer-relative-to-cwd": "packages/gatsby-parcel-namer-relative-to-cwd",
+    "babel-plugin-remove-graphql-queries": "packages/babel-plugin-remove-graphql-queries",
+    "babel-preset-gatsby": "packages/babel-preset-gatsby",
+    "create-gatsby": "packages/create-gatsby",
+    "gatsby-cli": "packages/gatsby-cli",
+    "gatsby-core-utils": "packages/gatsby-core-utils",
+    "gatsby-graphiql-explorer": "packages/gatsby-graphiql-explorer",
+    "gatsby-legacy-polyfills": "packages/gatsby-legacy-polyfills",
+    "gatsby-link": "packages/gatsby-link",
+    "gatsby-page-utils": "packages/gatsby-page-utils",
+    "gatsby-parcel-config": "packages/gatsby-parcel-config",
+    "gatsby-plugin-page-creator": "packages/gatsby-plugin-page-creator",
+    "gatsby-plugin-typescript": "packages/gatsby-plugin-typescript",
+    "gatsby-plugin-utils": "packages/gatsby-plugin-utils",
+    "gatsby-react-router-scroll": "packages/gatsby-react-router-scroll",
+    "gatsby-script": "packages/gatsby-script",
+    "gatsby-sharp": "packages/gatsby-sharp",
+    "gatsby-telemetry": "packages/gatsby-telemetry",
+    "gatsby-worker": "packages/gatsby-worker"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/commands/develop-process.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-c6f8-8r25-c4gc",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-34238"
+      ],
+      "ghsa": [
+        "GHSA-c6f8-8r25-c4gc"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/utils/start-server.ts",
+          "startline": 417,
+          "startcol": 25,
+          "endline": 417,
+          "endcol": 63,
+          "range": false,
+          "code": "fs.readFileSync(absolutePath, `utf-8`)"
+        },
+        {
+          "file": "package/node_modules/fs-extra/node_modules/graceful-fs/graceful-fs.js",
+          "startline": 118,
+          "startcol": 14,
+          "endline": 125,
+          "endcol": 9,
+          "range": false,
+          "code": "fs$readFile(path, options, function (err) {\n        if (err && (err.code === 'EMFILE' || err.code === 'ENFILE'))\n          enqueue([go$readFile, [path, options, cb], err, startTime || Date.now(), Date.now()])\n        else {\n          if (typeof cb === 'function')\n            cb.apply(this, arguments)\n        }\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/utils/start-server.ts",
+          "startline": 70,
+          "startcol": 8,
+          "endline": 869,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ae5a654eb346b2e7a9d341b809b2f82d34c0f17c",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/start-server.ts",
+            "startline": 71,
+            "startcol": 8,
+            "endline": 900,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

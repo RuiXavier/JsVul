@@ -1,0 +1,70 @@
+{
+  "name": "ipx",
+  "version": null,
+  "repo": "unjs/ipx",
+  "sha": "df55edb9c49bb56536cc9277efb24557edacd747",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-mm3p-j368-7jcr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-54387"
+      ],
+      "ghsa": [
+        "GHSA-mm3p-j368-7jcr"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/storage/node-fs.ts",
+          "startline": 61,
+          "startcol": 23,
+          "endline": 61,
+          "endcol": 44,
+          "range": false,
+          "code": "fs.readFile(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/storage/node-fs.ts",
+          "startline": 28,
+          "startcol": 8,
+          "endline": 96,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "81693ddbfc062cc922e4e2406e8427ab4e3ad214",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/storage/node-fs.ts",
+            "startline": 28,
+            "startcol": 8,
+            "endline": 96,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

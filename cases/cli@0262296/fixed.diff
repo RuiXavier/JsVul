@@ -1,0 +1,24 @@
+diff --git a/src/openURLMiddleware.ts b/src/openURLMiddleware.ts
+index 822c30d..5886007 100644
+--- a/src/openURLMiddleware.ts
++++ b/src/openURLMiddleware.ts
+@@ -31,6 +31,19 @@ async function openURLMiddleware(
+ 
+     const {url} = req.body as {url: string};
+ 
++    try {
++      const parsedUrl = new URL(url);
++      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
++        res.writeHead(400);
++        res.end('Invalid URL protocol');
++        return;
++      }
++    } catch (error) {
++      res.writeHead(400);
++      res.end('Invalid URL format');
++      return;
++    }
++
+     await open(url);
+ 
+     res.writeHead(200);

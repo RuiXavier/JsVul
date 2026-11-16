@@ -1,0 +1,60 @@
+{
+  "name": "dyad",
+  "version": null,
+  "repo": "dyad-sh/dyad",
+  "sha": "67c67e7bec76f56664a7ea7b48ccc829ca8a9dbd",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/main.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-7fxm-c5xx-7vpq",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-58766"
+      ],
+      "ghsa": [
+        "GHSA-7fxm-c5xx-7vpq"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/components/preview_panel/PreviewIframe.tsx",
+          "startline": 127,
+          "startcol": 30,
+          "endline": 562,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "1c0255ab126d3b38ae9e78b17cdab9a07e5f0185",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/components/preview_panel/PreviewIframe.tsx",
+            "startline": 127,
+            "startcol": 30,
+            "endline": 563,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

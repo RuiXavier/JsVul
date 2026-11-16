@@ -1,0 +1,70 @@
+{
+  "name": "binance-trading-bot",
+  "version": null,
+  "repo": "chrisleekr/binance-trading-bot",
+  "sha": "dd8e1a91b872a48aec47bbe1280c1c6ea96784d9",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/app/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-wq6j-4388-4gg5",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-27106"
+      ],
+      "ghsa": [
+        "GHSA-wq6j-4388-4gg5"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/shelljs/src/exec.js",
+          "startline": 136,
+          "startcol": 11,
+          "endline": 148,
+          "endcol": 5,
+          "range": false,
+          "code": "child.exec(cmd, opts, function (err, stdout, stderr) {\n    if (callback) {\n      if (!err) {\n        callback(0, stdout, stderr);\n      } else if (err.code === undefined) {\n        // See issue #536\n        /* istanbul ignore next */\n        callback(1, stdout, stderr);\n      } else {\n        callback(err.code, stdout, stderr);\n      }\n    }\n  })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/app/frontend/webserver/handlers/restore-post.js",
+          "startline": 8,
+          "startcol": 27,
+          "endline": 73,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "99d464cf8ef858d441189993054ec5f5f86e6213",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/app/frontend/webserver/handlers/restore-post.js",
+            "startline": 10,
+            "startcol": 27,
+            "endline": 81,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

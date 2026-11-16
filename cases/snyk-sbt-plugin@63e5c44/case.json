@@ -1,0 +1,79 @@
+{
+  "name": "snyk-sbt-plugin",
+  "version": null,
+  "repo": "snyk/snyk-sbt-plugin",
+  "sha": "63e5c44063b33bd5c06072d192e9d804c5644d75",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/lib/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4x6g-3cmx-w76r",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-22984"
+      ],
+      "ghsa": [
+        "GHSA-4x6g-3cmx-w76r"
+      ],
+      "snyk": [
+        "SNYK-JS-SNYK-3038622",
+        "SNYK-JS-SNYKDOCKERPLUGIN-3039679",
+        "SNYK-JS-SNYKGRADLEPLUGIN-3038624",
+        "SNYK-JS-SNYKMVNPLUGIN-3038623",
+        "SNYK-JS-SNYKPYTHONPLUGIN-3039677",
+        "SNYK-JS-SNYKSBTPLUGIN-3038626",
+        "SNYK-JS-SNYKSNYKCOCOAPODSPLUGIN-3038625",
+        "SNYK-JS-SNYKSNYKHEXPLUGIN-3039680"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/sub-process.ts",
+          "startline": 28,
+          "startcol": 18,
+          "endline": 28,
+          "endcol": 65,
+          "range": false,
+          "code": "childProcess.spawn(command, args, spawnOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/sub-process.ts",
+          "startline": 12,
+          "startcol": 24,
+          "endline": 68,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "99c09eb12c9f8f2b237aea9627aab1ae3cab6437",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/sub-process.ts",
+            "startline": 13,
+            "startcol": 24,
+            "endline": 70,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

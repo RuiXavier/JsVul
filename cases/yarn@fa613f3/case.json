@@ -1,0 +1,77 @@
+{
+  "name": "yarn",
+  "version": null,
+  "repo": "yarnpkg/yarn",
+  "sha": "fa613f3a71756a06a24d6c93c6b1fa7231eccd9a",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/cli/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2020-8131",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-8131"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/tar-fs/index.js",
+          "startline": 257,
+          "startcol": 9,
+          "endline": 257,
+          "endcol": 49,
+          "range": false,
+          "code": "xfs.symlink(header.linkname, name, stat)"
+        },
+        {
+          "file": "package/node_modules/tar-fs/index.js",
+          "startline": 278,
+          "startcol": 16,
+          "endline": 278,
+          "endcol": 43,
+          "range": false,
+          "code": "xfs.createWriteStream(name)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/fetchers/tarball-fetcher.js",
+          "startline": 86,
+          "startcol": 3,
+          "endline": 205,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0e7133ca28618513503b4e1d9063f1c18ea318e5",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/fetchers/tarball-fetcher.js",
+            "startline": 86,
+            "startcol": 3,
+            "endline": 210,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

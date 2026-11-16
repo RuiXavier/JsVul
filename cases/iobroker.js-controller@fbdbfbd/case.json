@@ -1,0 +1,72 @@
+{
+  "name": "iobroker.js-controller",
+  "version": null,
+  "repo": "iobroker/iobroker.js-controller",
+  "sha": "fbdbfbdb766490db65cde0b0ca5dd46221c5a912",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-cmch-296j-wfvw",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10767"
+      ],
+      "ghsa": [
+        "GHSA-cmch-296j-wfvw"
+      ],
+      "snyk": [
+        "SNYK-JS-IOBROKERJSCONTROLLER-534881"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/objects/objectsInMemFileDB.js",
+          "startline": 364,
+          "startcol": 44,
+          "endline": 364,
+          "endcol": 69,
+          "range": false,
+          "code": "fs.readFileSync(location)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/objects/objectsUtils.js",
+          "startline": 464,
+          "startcol": 1,
+          "endline": 485,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f6e292c6750a491a5000d0f851b2fede4f9e2fda",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/objects/objectsUtils.js",
+            "startline": 464,
+            "startcol": 1,
+            "endline": 491,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

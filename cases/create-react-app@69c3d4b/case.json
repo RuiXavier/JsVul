@@ -1,0 +1,73 @@
+{
+  "name": "create-react-app",
+  "version": null,
+  "repo": "facebook/create-react-app",
+  "sha": "69c3d4b04c233ba9fb9d16691056bd09076177b1",
+  "subdir": "packages/react-dev-utils",
+  "siblings": {
+    "react-error-overlay": "packages/react-error-overlay"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/errorOverlayMiddleware.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2018-6342",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-6342"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78",
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/launchEditor.js",
+          "startline": 336,
+          "startcol": 21,
+          "endline": 340,
+          "endcol": 6,
+          "range": false,
+          "code": "child_process.spawn(\n      'cmd.exe',\n      ['/C', editor].concat(args),\n      { stdio: 'inherit' }\n    )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/launchEditor.js",
+          "startline": 268,
+          "startcol": 1,
+          "endline": 355,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "577a274d8cf829941d848ce10f69d2a4935a9f2a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/launchEditor.js",
+            "startline": 273,
+            "startcol": 1,
+            "endline": 383,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

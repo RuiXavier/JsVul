@@ -1,0 +1,72 @@
+{
+  "name": "openmcp-client",
+  "version": null,
+  "repo": "lstm-kirigaya/openmcp-client",
+  "sha": "92e5e4529a43e7d23ec3435269296ccb48635eff",
+  "subdir": "service",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-43m4-p3rv-c4v8",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-58062"
+      ],
+      "ghsa": [
+        "GHSA-43m4-p3rv-c4v8"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/open/index.js",
+          "startline": 244,
+          "startcol": 21,
+          "endline": 244,
+          "endcol": 83,
+          "range": false,
+          "code": "childProcess.spawn(command, cliArguments, childProcessOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/mcp/auth.service.ts",
+          "startline": 180,
+          "startcol": 3,
+          "endline": 183,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "9c3799d6ffae8d0cdfab25a53af75e1afc85f6c3",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/mcp/auth.service.ts",
+            "startline": 181,
+            "startcol": 3,
+            "endline": 184,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

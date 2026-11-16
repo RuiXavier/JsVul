@@ -1,0 +1,73 @@
+{
+  "name": "nodemailer",
+  "version": null,
+  "repo": "nodemailer/nodemailer",
+  "sha": "7e7b2b23ed9a56ce60245bf1c7a444e5981a259b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-48ww-j4fc-435p",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7769"
+      ],
+      "ghsa": [
+        "GHSA-48ww-j4fc-435p"
+      ],
+      "snyk": [
+        "SNYK-JAVA-ORGWEBJARSNPM-1039742",
+        "SNYK-JS-NODEMAILER-1038834"
+      ],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/sendmail-transport/index.js",
+          "startline": 100,
+          "startcol": 24,
+          "endline": 100,
+          "endcol": 52,
+          "range": false,
+          "code": "this._spawn(this.path, args)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/sendmail-transport/index.js",
+          "startline": 62,
+          "startcol": 5,
+          "endline": 205,
+          "endcol": 5,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ba31c64c910d884579875c52d57ac45acc47aa54",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/sendmail-transport/index.js",
+            "startline": 62,
+            "startcol": 5,
+            "endline": 213,
+            "endcol": 5,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

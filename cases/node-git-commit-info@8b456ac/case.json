@@ -1,0 +1,73 @@
+{
+  "name": "node-git-commit-info",
+  "version": null,
+  "repo": "jpeer264/node-git-commit-info",
+  "sha": "8b456acbc919e98a9f04b399c1581bbf213d83bd",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-h42j-mrmp-9369",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-26134"
+      ],
+      "ghsa": [
+        "GHSA-h42j-mrmp-9369"
+      ],
+      "snyk": [
+        "SNYK-JS-GITCOMMITINFO-5740174"
+      ],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/execa/index.js",
+          "startline": 169,
+          "startcol": 12,
+          "endline": 169,
+          "endcol": 76,
+          "range": false,
+          "code": "childProcess.spawnSync(parsed.file, parsed.args, parsed.options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.ts",
+          "startline": 24,
+          "startcol": 23,
+          "endline": 71,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f7c491ede51f886a988af9b266797cb24591d18c",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.ts",
+            "startline": 25,
+            "startcol": 23,
+            "endline": 76,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

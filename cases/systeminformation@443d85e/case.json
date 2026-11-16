@@ -1,0 +1,72 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "443d85e3b880fae640bff3032878eb90566ec852",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-94xh-2fmc-xf5j",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7752"
+      ],
+      "ghsa": [
+        "GHSA-94xh-2fmc-xf5j"
+      ],
+      "snyk": [
+        "SNYK-JS-SYSTEMINFORMATION-1021909"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/internet.js",
+          "startline": 49,
+          "startcol": 11,
+          "endline": 56,
+          "endcol": 13,
+          "range": false,
+          "code": "exec(cmd + args, function (error, stdout) {\n            let statusCode = parseInt(stdout.toString());\n            result.status = statusCode || 404;\n            result.ok = !error && (statusCode === 200 || statusCode === 301 || statusCode === 302 || statusCode === 304);\n            result.ms = (result.ok ? Date.now() - t : -1);\n            if (callback) { callback(result); }\n            resolve(result);\n          })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/internet.js",
+          "startline": 32,
+          "startcol": 1,
+          "endline": 95,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "931fecaec2c1a7dcc10457bb8cd552d08089da61",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/internet.js",
+            "startline": 32,
+            "startcol": 1,
+            "endline": 101,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

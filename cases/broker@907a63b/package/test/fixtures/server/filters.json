@@ -1,0 +1,57 @@
+{
+  "private": [
+    {
+      "path": "/echo-param/:param",
+      "method": "GET",
+      "origin": "http://localhost:${originPort}"
+    },
+
+    {
+      "path": "/echo-body/:param?",
+      "method": "POST",
+      "origin": "http://localhost:${originPort}"
+    },
+
+    {
+      "path": "/echo-headers/:param?",
+      "method": "POST",
+      "origin": "http://localhost:${originPort}"
+    },
+
+    {
+      "path": "/echo-query",
+      "method": "GET",
+      "origin": "http://localhost:${originPort}"
+    },
+
+    {
+      "path": "/echo-query/:param?",
+      "method": "GET",
+      "origin": "http://localhost:${originPort}"
+    },
+
+    {
+      "path": "/test-blob/*",
+      "method": "GET",
+      "origin": "http://localhost:${originPort}",
+    }
+
+  ],
+  "public": [
+    {
+      "path": "/test-blob/*",
+      "method": "GET",
+      "stream": true
+    },
+    {
+      "path": "/*",
+      "method": "GET"
+    },
+
+    {
+      "path": "/*",
+      "method": "POST"
+    }
+
+  ]
+}

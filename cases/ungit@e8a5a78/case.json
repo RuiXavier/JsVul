@@ -1,0 +1,63 @@
+{
+  "name": "ungit",
+  "version": null,
+  "repo": "fredriknoren/ungit",
+  "sha": "e8a5a78566701f364c2097e4dc403fe558bca917",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-hf8c-xr89-vfm5",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25766"
+      ],
+      "ghsa": [
+        "GHSA-hf8c-xr89-vfm5"
+      ],
+      "snyk": [
+        "SNYK-JS-UNGIT-2414099"
+      ],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/source/git-promise.js",
+          "startline": 69,
+          "startcol": 26,
+          "endline": 69,
+          "endcol": 78,
+          "range": false,
+          "code": "child_process.spawn(gitBin, args.commands, procOpts)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/source/git-api.js",
+          "startline": 19,
+          "startcol": 23,
+          "endline": 1083,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

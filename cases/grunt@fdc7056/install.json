@@ -1,0 +1,6 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0"}
+  ],
+  "skip": ["package/test/fixtures/load-npm-tasks"]
+}

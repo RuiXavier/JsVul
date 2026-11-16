@@ -1,0 +1,73 @@
+{
+  "name": "pwndoc",
+  "version": null,
+  "repo": "pwndoc/pwndoc",
+  "sha": "c797d6b37a17bd3b6538239e012d47708ad0f6ef",
+  "subdir": "backend",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/app.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-mxw8-vgvx-89hx",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-27410"
+      ],
+      "ghsa": [
+        "GHSA-mxw8-vgvx-89hx"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/routes/backup.js",
+          "startline": 517,
+          "startcol": 29,
+          "endline": 517,
+          "endcol": 71,
+          "range": false,
+          "code": "fs.mkdirSync(`${destPath}/${header.name}`)"
+        },
+        {
+          "file": "package/src/routes/backup.js",
+          "startline": 527,
+          "startcol": 45,
+          "endline": 527,
+          "endcol": 95,
+          "range": false,
+          "code": "fs.createWriteStream(`${destPath}/${header.name}`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/routes/backup.js",
+          "startline": 1,
+          "startcol": 18,
+          "endline": 893,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

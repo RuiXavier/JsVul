@@ -1,0 +1,58 @@
+{
+  "name": "git-interface",
+  "version": null,
+  "repo": "yarkeev/git-interface",
+  "sha": "eef249da859421e865012f5c5fe47b1bbc979ff0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2022-1440",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-1440"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 25,
+          "startcol": 18,
+          "endline": 25,
+          "endcol": 62,
+          "range": false,
+          "code": "spawn('git', commandArgs, { cwd: this.dir })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f828aa790016fee3aa667f7b44cf94bf0aa8c60d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 25,
+            "startcol": 18,
+            "endline": 25,
+            "endcol": 61,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

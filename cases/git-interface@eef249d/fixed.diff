@@ -1,0 +1,94 @@
+diff --git a/package.json b/package.json
+index 649ac3b..f864781 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "git-interface",
+-	"version": "2.1.1",
++	"version": "2.1.2",
+ 	"description": "some interfaces for work with git repository",
+ 	"main": "dist/index",
+ 	"typings": "dist/index",
+@@ -9,7 +9,7 @@
+ 		"build": "npm run clean && npm run ts",
+ 		"dev": "npm run clean &&  ./node_modules/.bin/tsc -w",
+ 		"ts": "./node_modules/.bin/tsc",
+-		"prepublish": "npm run build"
++		"prepublishOnly": "npm run build && bump"
+ 	},
+ 	"repository": {
+ 		"type": "git",
+@@ -35,6 +35,7 @@
+ 	"homepage": "https://github.com/yarkeev/git-interface",
+ 	"devDependencies": {
+ 		"@types/node": "^10.10.3",
+-		"typescript": "^3.0.3"
++		"typescript": "^3.0.3",
++		"version-bump-prompt": "^6.1.0"
+ 	}
+ }
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+deleted file mode 100644
+index c0e87d7..0000000
+--- a/pnpm-lock.yaml
++++ /dev/null
+@@ -1,32 +0,0 @@
+-lockfileVersion: '9.0'
+-
+-settings:
+-  autoInstallPeers: true
+-  excludeLinksFromLockfile: false
+-
+-importers:
+-
+-  .:
+-    devDependencies:
+-      '@types/node':
+-        specifier: ^10.10.3
+-        version: 10.17.60
+-      typescript:
+-        specifier: ^3.0.3
+-        version: 3.9.10
+-
+-packages:
+-
+-  '@types/node@10.17.60':
+-    resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
+-
+-  typescript@3.9.10:
+-    resolution: {integrity: sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==}
+-    engines: {node: '>=4.2.0'}
+-    hasBin: true
+-
+-snapshots:
+-
+-  '@types/node@10.17.60': {}
+-
+-  typescript@3.9.10: {}
+diff --git a/src/index.ts b/src/index.ts
+index 5236ced..7ca7b31 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -61,12 +61,10 @@ export class Git extends EventEmitter{
+ 	}
+ 
+ 	public clone(repository: string, dest: string, options?: { depth?: number}) {
+-
+ 		const opt = options || { depth: Infinity }
++		const depthOption = opt.depth !== Infinity ? `--depth=${opt.depth}` : '';
+ 
+-		const depthOption = opt.depth !== Infinity ? ` --depth=${opt.depth}` : '';
+-
+-		return this.gitExec(`clone ${repository} ${dest}${depthOption}`);
++		return this.gitExec(`clone ${depthOption} -- ${repository} ${dest}`);
+ 	}
+ 
+ 	public checkout(branchName: string) {
+@@ -309,4 +307,4 @@ export class Git extends EventEmitter{
+ 		});
+ 	}
+ 
+-}
+\ No newline at end of file
++}

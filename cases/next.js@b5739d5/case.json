@@ -1,0 +1,62 @@
+{
+  "name": "next.js",
+  "version": null,
+  "repo": "vercel/next.js",
+  "sha": "b5739d53614de76b937435ae1ef7867d40c9dac3",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/server/next.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2018-6184",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-6184"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/server/render.js",
+          "startline": 230,
+          "startcol": 5,
+          "endline": 230,
+          "endcol": 20,
+          "range": false,
+          "code": "send(req, path)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0b6575b47085e4fd86ed657ee66f5136a650acdf",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/server/render.js",
+            "startline": 230,
+            "startcol": 5,
+            "endline": 230,
+            "endcol": 19,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

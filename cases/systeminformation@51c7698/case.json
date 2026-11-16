@@ -1,0 +1,92 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "51c7698b91789e00d2308c9f95249ca3bb27a176",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-cvv5-9h9w-qp2m",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-56334"
+      ],
+      "ghsa": [
+        "GHSA-cvv5-9h9w-qp2m"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "originalClass": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/network.js",
+          "startline": 403,
+          "startcol": 23,
+          "endline": 403,
+          "endcol": 106,
+          "range": false,
+          "code": "execSync(`netsh wlan show profiles \"${SSID}\" | findstr \"802.1X\"`, util.execOptsWin)"
+        },
+        {
+          "file": "package/lib/network.js",
+          "startline": 404,
+          "startcol": 26,
+          "endline": 404,
+          "endcol": 106,
+          "range": false,
+          "code": "execSync(`netsh wlan show profiles \"${SSID}\" | findstr \"EAP\"`, util.execOptsWin)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/network.js",
+          "startline": 357,
+          "startcol": 1,
+          "endline": 421,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [
+        {
+          "file": "package/lib/network.js",
+          "startline": 349,
+          "startcol": 20,
+          "endline": 349,
+          "endcol": 117,
+          "range": false
+        }
+      ],
+      "sourceKinds": [
+        "process-output"
+      ],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f7af0a67b78e7894335a6cad510566a25e06ae41",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/network.js",
+            "startline": 357,
+            "startcol": 1,
+            "endline": 431,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

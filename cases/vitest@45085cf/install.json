@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0", "omit": ["@vitest/mocker", "@vitest/runner", "@vitest/ui", "@vitest/utils", "@vitest/ws-client", "vitest"], "siblings": ["@vitest/mocker", "@vitest/pretty-format", "@vitest/spy", "@vitest/utils"]}
+  ]
+}

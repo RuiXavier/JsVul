@@ -1,0 +1,64 @@
+{
+  "name": "typed-function",
+  "version": null,
+  "repo": "josdejong/typed-function",
+  "sha": "9a8cac3cb8ae89fd0a9b3ae2dfde27cd1aa5a60a",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3qh4-r86r-grvm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2017-1001004"
+      ],
+      "ghsa": [
+        "GHSA-3qh4-r86r-grvm"
+      ],
+      "snyk": [
+        "SNYK-JS-TYPEDFUNCTION-174139"
+      ],
+      "cwe": [
+        "CWE-20",
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/typed-function.js",
+          "startline": 1115,
+          "startcol": 22,
+          "endline": 1115,
+          "endcol": 66,
+          "range": false,
+          "code": "new Function(refs.name, 'createError', body)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/typed-function.js",
+          "startline": 23,
+          "startcol": 9,
+          "endline": 1387,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "yarn",
+  "version": null,
+  "repo": "yarnpkg/yarn",
+  "sha": "ac04da8d94a431d6e37257598a4dacd9490f8b56",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/cli/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2019-10773",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10773"
+      ],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-YARN-537806",
+        "SNYK-JS-YARN-537806,"
+      ],
+      "cwe": [
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/util/fs.js",
+          "startline": 709,
+          "startcol": 11,
+          "endline": 709,
+          "endcol": 31,
+          "range": false,
+          "code": "fsSymlink(src, dest)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/util/normalize-manifest/fix.js",
+          "startline": 26,
+          "startcol": 17,
+          "endline": 333,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

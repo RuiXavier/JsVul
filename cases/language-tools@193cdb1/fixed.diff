@@ -1,0 +1,352 @@
+diff --git a/package.json b/package.json
+index 8e63bc3..f3071ed 100644
+--- a/package.json
++++ b/package.json
+@@ -99,6 +99,16 @@
+         "command": "prisma.restartLanguageServer",
+         "title": "Restart Language Server",
+         "category": "Prisma"
++      },
++      {
++        "command": "prisma.resetCurrentFmtBinDecision",
++        "title": "Reset current Prisma format binary execution decision",
++        "category": "Prisma"
++      },
++      {
++        "command": "prisma.resetAllBinDecisions",
++        "title": "Reset all Prisma format binary execution decisions",
++        "category": "Prisma"
+       }
+     ]
+   },
+diff --git a/src/binaryValidator.ts b/src/binaryValidator.ts
+new file mode 100644
+index 0000000..e2c71e9
+--- /dev/null
++++ b/src/binaryValidator.ts
+@@ -0,0 +1,60 @@
++import { ExtensionContext, window } from 'vscode'
++
++export const PRISMA_ALLOWED_BINS_KEY = 'prismaAllowedBins'
++
++export type BinaryState = {
++  allowed: boolean
++}
++
++export enum BinaryPopupStatus {
++  Allow,
++  Deny,
++}
++
++export type BinaryStorage = { libs: { [key: string]: BinaryState } }
++
++export const checkAndAskForBinaryExecution = async (
++  context: ExtensionContext,
++  binaryPath: string | undefined,
++  bins: BinaryStorage | undefined,
++): Promise<boolean> => {
++  // empty binary path means we are using the default binary
++  if (!binaryPath || binaryPath === '') {
++    return true
++  }
++  const existingBinaryState = bins?.libs[binaryPath]
++  if (!existingBinaryState) {
++    const item = await window.showInformationMessage(
++      `Your VS Code workspace is defining a custom binary path for the Prisma extension: '${binaryPath}'. Do you trust this binary and allow the extension to execute it?`,
++      {
++        modal: true,
++      },
++      { title: 'Allow', value: BinaryPopupStatus.Allow },
++      { title: 'Deny', value: BinaryPopupStatus.Deny },
++    )
++    if (item === undefined) {
++      // dialog was cancelled
++      return false
++    }
++
++    let result = false
++
++    if (item.value === BinaryPopupStatus.Allow) {
++      result = true
++    }
++
++    // store the state
++    bins = bins ? bins : { libs: {} }
++    bins.libs[binaryPath] = { allowed: result }
++    await context.globalState.update(PRISMA_ALLOWED_BINS_KEY, bins)
++    return result
++  } else {
++    return existingBinaryState.allowed
++  }
++}
++
++export const printBinaryCheckWarning = async () => {
++  await window.showWarningMessage(
++    "Execution of Prisma extension's binary defined in settings was not allowed. Please either change the binary path or reset the approval by opening the VS Code command palette and search for 'Reset current Prisma format binary execution decision', then press Enter.",
++  )
++}
+diff --git a/src/plugins/prisma-language-server/index.ts b/src/plugins/prisma-language-server/index.ts
+index fa92022..d682961 100644
+--- a/src/plugins/prisma-language-server/index.ts
++++ b/src/plugins/prisma-language-server/index.ts
+@@ -6,6 +6,7 @@ import {
+   CodeActionContext,
+   Command,
+   commands,
++  ExtensionContext,
+   Range,
+   TextDocument,
+   window,
+@@ -21,6 +22,12 @@ import {
+   ServerOptions,
+   TransportKind,
+ } from 'vscode-languageclient/node'
++import {
++  BinaryStorage,
++  checkAndAskForBinaryExecution,
++  printBinaryCheckWarning,
++  PRISMA_ALLOWED_BINS_KEY,
++} from '../../binaryValidator'
+ import TelemetryReporter from '../../telemetryReporter'
+ import {
+   applySnippetWorkspaceEdit,
+@@ -28,6 +35,8 @@ import {
+   checkForOtherPrismaExtension,
+   isDebugOrTestSession,
+   isSnippetEdit,
++  restartClient,
++  createLanguageServer,
+ } from '../../util'
+ import { PrismaVSCodePlugin } from '../types'
+ 
+@@ -41,16 +50,18 @@ let watcher: chokidar.FSWatcher
+ const isDebugMode = () => process.env.VSCODE_DEBUG_MODE === 'true'
+ const isE2ETestOnPullRequest = () => process.env.localLSP === 'true'
+ 
+-function createLanguageServer(
++const activateClient = (
++  context: ExtensionContext,
+   serverOptions: ServerOptions,
+   clientOptions: LanguageClientOptions,
+-): LanguageClient {
+-  return new LanguageClient(
+-    'prisma',
+-    'Prisma Language Server',
+-    serverOptions,
+-    clientOptions,
+-  )
++) => {
++  // Create the language client
++  client = createLanguageServer(serverOptions, clientOptions)
++
++  const disposable = client.start()
++
++  // Start the client. This will also launch the server
++  context.subscriptions.push(disposable)
+ }
+ 
+ const plugin: PrismaVSCodePlugin = {
+@@ -157,21 +168,70 @@ const plugin: PrismaVSCodePlugin = {
+         },
+       } as any,
+     }
++    const config = workspace.getConfiguration('prisma')
++    const allowedBins = context.globalState.get<BinaryStorage>(
++      PRISMA_ALLOWED_BINS_KEY,
++    )
+ 
+-    // Create the language client
+-    client = createLanguageServer(serverOptions, clientOptions)
+-
+-    const disposable = client.start()
+-
+-    // Start the client. This will also launch the server
+-    context.subscriptions.push(disposable)
++    workspace.onDidChangeConfiguration(
++      async (e) => {
++        const binChanged = e.affectsConfiguration('prisma.prismaFmtBinPath')
++        if (binChanged) {
++          client = await restartClient(
++            context,
++            client,
++            serverOptions,
++            clientOptions,
++          )
++        }
++      },
++      null,
++      context.subscriptions,
++    )
+ 
++    const launchAllowed = await checkAndAskForBinaryExecution(
++      context,
++      config.get('prismaFmtBinPath'),
++      allowedBins,
++    )
+     context.subscriptions.push(
++      commands.registerCommand('prisma.resetAllBinDecisions', async () => {
++        await context.globalState.update(PRISMA_ALLOWED_BINS_KEY, { libs: {} })
++        client = await restartClient(
++          context,
++          client,
++          serverOptions,
++          clientOptions,
++        )
++      }),
++      commands.registerCommand(
++        'prisma.resetCurrentFmtBinDecision',
++        async () => {
++          const decisions = context.globalState.get<BinaryStorage>(
++            PRISMA_ALLOWED_BINS_KEY,
++          )
++          const currentBin: string | undefined = workspace
++            .getConfiguration('prisma')
++            .get('prismaFmtBinPath')
++          if (decisions && currentBin && currentBin !== '') {
++            delete decisions.libs[currentBin]
++          }
++          await context.globalState.update(PRISMA_ALLOWED_BINS_KEY, decisions)
++          client = await restartClient(
++            context,
++            client,
++            serverOptions,
++            clientOptions,
++          )
++        },
++      ),
+       commands.registerCommand('prisma.restartLanguageServer', async () => {
+-        await client.stop()
+-        client = createLanguageServer(serverOptions, clientOptions)
+-        context.subscriptions.push(client.start())
+-        await client.onReady()
++        client = await restartClient(
++          context,
++          client,
++          serverOptions,
++          clientOptions,
++        )
+         window.showInformationMessage('Prisma language server restarted.') // eslint-disable-line @typescript-eslint/no-floating-promises
+       }),
+       commands.registerCommand(
+@@ -180,6 +240,12 @@ const plugin: PrismaVSCodePlugin = {
+       ),
+     )
+ 
++    if (launchAllowed) {
++      activateClient(context, serverOptions, clientOptions)
++    } else {
++      await printBinaryCheckWarning()
++    }
++
+     if (!isDebugOrTest) {
+       // eslint-disable-next-line
+       const extensionId = 'prisma.' + packageJson.name
+diff --git a/src/test/binaryValidator.test.ts b/src/test/binaryValidator.test.ts
+new file mode 100644
+index 0000000..2ccd313
+--- /dev/null
++++ b/src/test/binaryValidator.test.ts
+@@ -0,0 +1,29 @@
++import {
++  checkAndAskForBinaryExecution,
++  BinaryStorage,
++} from '../binaryValidator'
++import * as asset from 'assert'
++
++suite('Binary validation test', () => {
++  const context: any = {
++    globalState: {
++      update: () => {
++        /**/
++      },
++    },
++  }
++  const path = '/user/bin/test'
++  test('should return false when path is in deny state', async () => {
++    const bins: BinaryStorage = { libs: { [path]: { allowed: false } } }
++
++    const checkResult = await checkAndAskForBinaryExecution(context, path, bins)
++    asset.strictEqual(checkResult, false)
++  })
++
++  test('should return true when path is in allow state', async () => {
++    const bins: BinaryStorage = { libs: { [path]: { allowed: true } } }
++
++    const checkResult = await checkAndAskForBinaryExecution(context, path, bins)
++    asset.strictEqual(checkResult, true)
++  })
++})
+diff --git a/src/util.ts b/src/util.ts
+index 1e86166..aaa80ef 100644
+--- a/src/util.ts
++++ b/src/util.ts
+@@ -6,8 +6,15 @@ import {
+   TextEditorEdit,
+   env,
+   workspace,
++  ExtensionContext,
+ } from 'vscode'
+-import { CodeAction, TextDocumentIdentifier } from 'vscode-languageclient/node'
++import {
++  CodeAction,
++  LanguageClient,
++  TextDocumentIdentifier,
++  ServerOptions,
++  LanguageClientOptions,
++} from 'vscode-languageclient/node'
+ import {
+   denyListDarkColorThemes,
+   denyListLightColorThemes,
+@@ -15,6 +22,12 @@ import {
+ import { homedir } from 'os'
+ import { readdirSync } from 'fs'
+ import path from 'path'
++import {
++  BinaryStorage,
++  checkAndAskForBinaryExecution,
++  printBinaryCheckWarning,
++  PRISMA_ALLOWED_BINS_KEY,
++} from './binaryValidator'
+ 
+ export function isDebugOrTestSession(): boolean {
+   return env.sessionId === 'someValue.sessionId'
+@@ -117,3 +130,39 @@ export function applySnippetWorkspaceEdit(): (
+     }
+   }
+ }
++
++export function createLanguageServer(
++  serverOptions: ServerOptions,
++  clientOptions: LanguageClientOptions,
++): LanguageClient {
++  return new LanguageClient(
++    'prisma',
++    'Prisma Language Server',
++    serverOptions,
++    clientOptions,
++  )
++}
++export const restartClient = async (
++  context: ExtensionContext,
++  client: LanguageClient,
++  serverOptions: ServerOptions,
++  clientOptions: LanguageClientOptions,
++): Promise<LanguageClient> => {
++  client?.diagnostics?.dispose()
++  if (client) await client.stop()
++  // try to create a new client if options are passed
++  const allowed = await checkAndAskForBinaryExecution(
++    context,
++    workspace.getConfiguration('prisma').get('prismaFmtBinPath'),
++    context.globalState.get<BinaryStorage>(PRISMA_ALLOWED_BINS_KEY),
++  )
++  if (allowed) {
++    client = createLanguageServer(serverOptions, clientOptions)
++    context.subscriptions.push(client.start())
++    await client.onReady()
++    return client
++  } else {
++    await printBinaryCheckWarning()
++    return client
++  }
++}

@@ -1,0 +1,87 @@
+{
+  "name": "toolkit",
+  "version": null,
+  "repo": "actions/toolkit",
+  "sha": "415c42d27ca2a24f3801dd9406344aaea00b7866",
+  "subdir": "packages/artifact",
+  "siblings": {
+    "@actions/core": "packages/core",
+    "@actions/exec": "packages/exec",
+    "@actions/github": "packages/github",
+    "@actions/http-client": "packages/http-client",
+    "@actions/io": "packages/io"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/artifact.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-6q32-hq47-5qq3",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-42471"
+      ],
+      "ghsa": [
+        "GHSA-6q32-hq47-5qq3"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/mkdirp/index.js",
+          "startline": 27,
+          "startcol": 5,
+          "endline": 55,
+          "endcol": 7,
+          "range": false,
+          "code": "xfs.mkdir(p, mode, function (er) {\n        if (!er) {\n            made = made || p;\n            return cb(null, made);\n        }\n        switch (er.code) {\n            case 'ENOENT':\n                /* istanbul ignore if */\n                if (path.dirname(p) === p) return cb(er);\n                mkdirP(path.dirname(p), opts, function (er, made) {\n                    /* istanbul ignore if */\n                    if (er) cb(er, made);\n                    else mkdirP(p, opts, cb, made);\n                });\n                break;\n\n            // In the case of any other error, just see if there's a dir\n            // there already.  If so, then hooray!  If not, then something\n            // is borked.\n            default:\n                xfs.stat(p, function (er2, stat) {\n                    // if the stat fails, then that's super weird.\n                    // let the original error be the failure reason.\n                    if (er2 || !stat.isDirectory()) cb(er, made)\n                    else cb(null, made);\n                });\n                break;\n        }\n    })"
+        },
+        {
+          "file": "package/node_modules/unzip-stream/lib/extract.js",
+          "startline": 58,
+          "startcol": 27,
+          "endline": 58,
+          "endcol": 57,
+          "range": false,
+          "code": "fs.createWriteStream(destPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/internal/download/download-artifact.ts",
+          "startline": 59,
+          "startcol": 8,
+          "endline": 101,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "88f7a7bc6539cac7ffa0c3a28c2ddfd247aab279",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/internal/download/download-artifact.ts",
+            "startline": 67,
+            "startcol": 8,
+            "endline": 154,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

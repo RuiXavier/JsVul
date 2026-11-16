@@ -1,0 +1,68 @@
+{
+  "name": "squirrelly",
+  "version": null,
+  "repo": "bgub/squirrelly",
+  "sha": "10cd3823d0059fb7a16e62a7fcc6e48f1e7b7e27",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-40453",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-40453"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/compile.ts",
+          "startline": 32,
+          "startcol": 12,
+          "endline": 37,
+          "endcol": 6,
+          "range": false,
+          "code": "new ctor(\n      options.varName,\n      'c', // SqrlConfig\n      'cb', // optional callback\n      compileToString(str, options)\n    )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/compile.ts",
+          "startline": 14,
+          "startcol": 16,
+          "endline": 52,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "426f930e5ca1501404cd887071e734ec5feb0bcf",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/compile.ts",
+            "startline": 14,
+            "startcol": 16,
+            "endline": 55,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

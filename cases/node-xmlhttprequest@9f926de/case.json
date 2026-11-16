@@ -1,0 +1,66 @@
+{
+  "name": "node-xmlhttprequest",
+  "version": null,
+  "repo": "driverdan/node-xmlhttprequest",
+  "sha": "9f926dedd60b5ec7bbed3fb77ac92b67bfa8b899",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-h4j5-c7cj-74xg",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-28502"
+      ],
+      "ghsa": [
+        "GHSA-h4j5-c7cj-74xg"
+      ],
+      "snyk": [
+        "SNYK-JAVA-ORGWEBJARSNPM-1082937",
+        "SNYK-JAVA-ORGWEBJARSNPM-1082938",
+        "SNYK-JS-XMLHTTPREQUEST-1082935",
+        "SNYK-JS-XMLHTTPREQUESTSSL-1082936"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/XMLHttpRequest.js",
+          "startline": 483,
+          "startcol": 22,
+          "endline": 483,
+          "endcol": 64,
+          "range": false,
+          "code": "spawn(process.argv[0], [\"-e\", execString])"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/XMLHttpRequest.js",
+          "startline": 18,
+          "startcol": 26,
+          "endline": 599,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

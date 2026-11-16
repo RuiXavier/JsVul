@@ -1,0 +1,72 @@
+{
+  "name": "angular-http-server",
+  "version": null,
+  "repo": "simonh1000/angular-http-server",
+  "sha": "d171a771a92e4685b24fb77cb894a7b7b8024c5c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4rvg-955w-h68q",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-3713"
+      ],
+      "ghsa": [
+        "GHSA-4rvg-955w-h68q"
+      ],
+      "snyk": [
+        "npm:angular-http-server:20180426"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/angular-http-server.js",
+          "startline": 69,
+          "startcol": 26,
+          "endline": 69,
+          "endcol": 59,
+          "range": false,
+          "code": "fs.readFileSync(possibleFilename)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/angular-http-server.js",
+          "startline": 45,
+          "startcol": 1,
+          "endline": 83,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "8bafc9577161469f5dea01e0b98ea9c525d063e9",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/angular-http-server.js",
+            "startline": 45,
+            "startcol": 1,
+            "endline": 86,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

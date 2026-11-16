@@ -1,0 +1,83 @@
+{
+  "name": "joplin",
+  "version": null,
+  "repo": "laurent22/joplin",
+  "sha": "06359834d680472b9f02e79995b3f2989c21e425",
+  "subdir": "packages/server",
+  "siblings": {
+    "@joplin/fork-htmlparser2": "packages/fork-htmlparser2",
+    "@joplin/fork-sax": "packages/fork-sax",
+    "@joplin/fork-uslug": "packages/fork-uslug",
+    "@joplin/htmlpack": "packages/htmlpack",
+    "@joplin/lib": "packages/lib",
+    "@joplin/onenote-converter": "packages/onenote-converter",
+    "@joplin/renderer": "packages/renderer",
+    "@joplin/turndown": "packages/turndown",
+    "@joplin/turndown-plugin-gfm": "packages/turndown-plugin-gfm",
+    "@joplin/utils": "packages/utils"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/app.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5xv6-7jm3-fmg5",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-27409"
+      ],
+      "ghsa": [
+        "GHSA-5xv6-7jm3-fmg5"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/graceful-fs/graceful-fs.js",
+          "startline": 118,
+          "startcol": 14,
+          "endline": 125,
+          "endcol": 9,
+          "range": false,
+          "code": "fs$readFile(path, options, function (err) {\n        if (err && (err.code === 'EMFILE' || err.code === 'ENFILE'))\n          enqueue([go$readFile, [path, options, cb], err, startTime || Date.now(), Date.now()])\n        else {\n          if (typeof cb === 'function')\n            cb.apply(this, arguments)\n        }\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/utils/joplinUtils.ts",
+          "startline": 119,
+          "startcol": 8,
+          "endline": 125,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "975f16d21c6924c50dea00012e58df17161678f6",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/joplinUtils.ts",
+            "startline": 128,
+            "startcol": 8,
+            "endline": 141,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

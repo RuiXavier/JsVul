@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": [], "flags": "", "pnpm": "11.8.0", "omit": ["@backstage/backend-app-api", "@backstage/backend-dev-utils", "@backstage/backend-plugin-api", "@backstage/cli-common", "@backstage/config", "@backstage/config-loader", "@backstage/errors", "@backstage/integration", "@backstage/integration-aws-node", "@backstage/types"], "siblings": ["@backstage/backend-app-api", "@backstage/backend-dev-utils", "@backstage/backend-plugin-api", "@backstage/backend-tasks", "@backstage/catalog-client", "@backstage/catalog-model", "@backstage/cli-common", "@backstage/cli-node", "@backstage/config", "@backstage/config-loader", "@backstage/errors", "@backstage/integration", "@backstage/integration-aws-node", "@backstage/plugin-auth-node", "@backstage/plugin-permission-common", "@backstage/plugin-permission-node", "@backstage/types"]}
+  ]
+}

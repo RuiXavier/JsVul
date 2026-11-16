@@ -1,0 +1,9 @@
+{
+  "title": "Youtube",
+  "enabled": true,
+  "systemId": "youtube",
+  "icon": "bi-youtube",
+  "canBeAddedToColumn": true,
+  "singleInstance": false,
+  "version": "0.0.0.1"
+}

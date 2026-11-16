@@ -1,0 +1,88 @@
+diff --git a/package.json b/package.json
+index 988e747..4ffc4c8 100644
+--- a/package.json
++++ b/package.json
+@@ -19,6 +19,7 @@
+     "debug": "^4.3.3"
+   },
+   "devDependencies": {
++    "@simple-git/babel-config": "^1.0.0",
+     "@kwsites/promise-result": "^1.1.0",
+     "@types/debug": "^4.1.5",
+     "@types/jest": "^27.0.3",
+diff --git a/src/lib/tasks/fetch.ts b/src/lib/tasks/fetch.ts
+index d5f57e1..556e28a 100644
+--- a/src/lib/tasks/fetch.ts
++++ b/src/lib/tasks/fetch.ts
+@@ -2,12 +2,23 @@ import { FetchResult } from '../../../typings';
+ import { parseFetchResult } from '../parsers/parse-fetch';
+ import { StringTask } from '../types';
+ 
+-export function fetchTask(remote: string, branch: string, customArgs: string[]): StringTask<FetchResult> {
++import { configurationErrorTask, EmptyTask } from './task';
++
++function disallowedCommand(command: string) {
++   return /^--upload-pack(=|$)/.test(command);
++}
++
++export function fetchTask(remote: string, branch: string, customArgs: string[]): StringTask<FetchResult> | EmptyTask {
+    const commands = ['fetch', ...customArgs];
+    if (remote && branch) {
+       commands.push(remote, branch);
+    }
+ 
++   const banned = commands.find(disallowedCommand);
++   if (banned) {
++      return configurationErrorTask(`git.fetch: potential exploit argument blocked.`);
++   }
++
+    return {
+       commands,
+       format: 'utf-8',
+diff --git a/test/unit/fetch.spec.ts b/test/unit/fetch.spec.ts
+index c6583e4..2445193 100644
+--- a/test/unit/fetch.spec.ts
++++ b/test/unit/fetch.spec.ts
+@@ -1,7 +1,8 @@
+-import { assertExecutedCommands, closeWithSuccess, like, newSimpleGit } from './__fixtures__';
+-import { SimpleGit } from "../../typings";
++import { promiseError } from '@kwsites/promise-result';
++import { assertExecutedCommands, assertGitError, closeWithSuccess, like, newSimpleGit } from './__fixtures__';
++import { SimpleGit } from '../../typings';
+ 
+-describe('push', () => {
++describe('fetch', () => {
+    let git: SimpleGit;
+    let callback: jest.Mock;
+ 
+@@ -58,4 +59,30 @@ describe('push', () => {
+       assertExecutedCommands('fetch', '--all', '-v');
+    });
+ 
++
++   describe('failures', () => {
++
++      it('disallows upload-pack as remote/branch', async () => {
++         const error = await promiseError(git.fetch('origin', '--upload-pack=touch ./foo'));
++
++         assertGitError(error, 'potential exploit argument blocked');
++      });
++
++      it('disallows upload-pack as varargs', async () => {
++         const error = await promiseError(git.fetch('origin', 'main', {
++            '--upload-pack': 'touch ./foo'
++         }));
++
++         assertGitError(error, 'potential exploit argument blocked');
++      });
++
++      it('disallows upload-pack as varargs', async () => {
++         const error = await promiseError(git.fetch('origin', 'main', [
++            '--upload-pack', 'touch ./foo'
++         ]));
++
++         assertGitError(error, 'potential exploit argument blocked');
++      });
++
++   })
+ });

@@ -1,0 +1,77 @@
+{
+  "name": "url-to-png",
+  "version": null,
+  "repo": "jasonraimondi/url-to-png",
+  "sha": "ef8391480c25332fc74d6cf841eab2969e18db27",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/mod.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-vvmv-wrvp-9gjr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-39918"
+      ],
+      "ghsa": [
+        "GHSA-vvmv-wrvp-9gjr"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/lib/storage/filesystem.ts",
+          "startline": 15,
+          "startcol": 20,
+          "endline": 15,
+          "endcol": 42,
+          "range": false,
+          "code": "fs.readFile(imagePath)"
+        },
+        {
+          "file": "package/src/lib/storage/filesystem.ts",
+          "startline": 25,
+          "startcol": 13,
+          "endline": 25,
+          "endcol": 43,
+          "range": false,
+          "code": "fs.writeFile(imagePath, image)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e4eaeca6493b21cd515b582fd6c0af09ede54507",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/storage/filesystem.ts",
+            "startline": 15,
+            "startcol": 20,
+            "endline": 15,
+            "endcol": 41,
+            "range": false
+          },
+          {
+            "file": "fixed/src/lib/storage/filesystem.ts",
+            "startline": 25,
+            "startcol": 13,
+            "endline": 25,
+            "endcol": 42,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

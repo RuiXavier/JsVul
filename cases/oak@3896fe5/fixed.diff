@@ -1,0 +1,63 @@
+diff --git a/send.test.ts b/send.test.ts
+index d10388c..1ade88f 100644
+--- a/send.test.ts
++++ b/send.test.ts
+@@ -1,6 +1,10 @@
+ // Copyright 2018-2024 the oak authors. All rights reserved. MIT license.
+ 
+-import { assertEquals, assertStrictEquals } from "./deps_test.ts";
++import {
++  assertEquals,
++  assertRejects,
++  assertStrictEquals,
++} from "./deps_test.ts";
+ import {
+   createMockApp,
+   createMockContext,
+@@ -13,6 +17,7 @@ import { assert, errors, eTag } from "./deps.ts";
+ import type { RouteParams } from "./router.ts";
+ import { send } from "./send.ts";
+ import { isNode } from "./utils/type_guards.ts";
++import { httpErrors } from "./mod.ts";
+ 
+ function setup<
+   // deno-lint-ignore no-explicit-any
+@@ -482,3 +487,16 @@ Deno.test({
+     context.response.destroy();
+   },
+ });
++
++Deno.test({
++  name: "send - security - decoding paths to subvert checks",
++  async fn() {
++    const { context } = setup("/poc%2f../.test.json");
++    await assertRejects(async () => {
++      await send(context, context.request.url.pathname, {
++        root: "./fixtures",
++        hidden: false,
++      });
++    }, httpErrors.NotFound);
++  },
++});
+diff --git a/send.ts b/send.ts
+index 8492238..bb8b456 100644
+--- a/send.ts
++++ b/send.ts
+@@ -30,7 +30,7 @@ import {
+ } from "./deps.ts";
+ import type { Response } from "./response.ts";
+ import { isNode } from "./utils/type_guards.ts";
+-import { decodeComponent } from "./utils/decode_component.ts";
++import { decode } from "./utils/decode.ts";
+ import { resolvePath } from "./utils/resolve_path.ts";
+ 
+ if (isNode()) {
+@@ -179,7 +179,7 @@ export async function send(
+     root,
+   } = options;
+   const trailingSlash = path[path.length - 1] === "/";
+-  path = decodeComponent(path.substring(parse(path).root.length));
++  path = decode(path.substring(parse(path).root.length));
+   if (index && trailingSlash) {
+     path += index;
+   }

@@ -1,0 +1,76 @@
+{
+  "name": "public",
+  "version": null,
+  "repo": "tnantoka/public",
+  "sha": "c5c14107c00eb37c677eabcc5566938a0dee685c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-rwv8-jvff-jq28",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2018-3731"
+      ],
+      "ghsa": [
+        "GHSA-rwv8-jvff-jq28"
+      ],
+      "snyk": [
+        "SNYK-JS-PUBLIC-460390"
+      ],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/bin/public",
+          "startline": 78,
+          "startcol": 5,
+          "endline": 110,
+          "endcol": 7,
+          "range": false,
+          "code": "fs.readFile(filePath, function(err, data) {\n      if (err) {\n        res.writeHead(200, { 'Content-Type': 'text/html' });\n        // Index files if 404 or directory\n        if ([2, 21, 28, -1, -21].indexOf(err.errno) < 0) {\n          res.write(['<h1>', res.message, '</h1>'].join(''));\n          res.end(['<pre>', JSON.stringify(err, null, '  '), '</pre>'].join(''));\n          return;\n        } else {\n          if (err.errno == 2) { // 404\n            filePath = path.dirname(filePath);\n          }\n          fs.readdir(filePath, function(err, files) {\n            if (err) {\n              res.write(['<h1>', res.message, '</h1>'].join(''));\n              res.end(['<pre>', JSON.stringify(err, null, '  '), '</pre>'].join(''));\n              return;\n            }\n            var list = ['<ul>'];\n            files.unshift('..');\n            files.forEach(function(file) {\n              list.push('<li><a href=\"', path.join(base, file),'\">', file, '</a></li>');\n            });\n            list.push('</ul>');\n            res.write(['<h1>', 'Index of \"', abs, '\"</h1>'].join(''));\n            res.end(list.join('\\n'));\n          });\n        }\n        return;\n      }\n      res.writeHead(200, { 'Content-Type': mime.lookup(filePath) });\n      res.end(data);\n    })"
+        },
+        {
+          "file": "package/bin/public",
+          "startline": 90,
+          "startcol": 11,
+          "endline": 104,
+          "endcol": 13,
+          "range": false,
+          "code": "fs.readdir(filePath, function(err, files) {\n            if (err) {\n              res.write(['<h1>', res.message, '</h1>'].join(''));\n              res.end(['<pre>', JSON.stringify(err, null, '  '), '</pre>'].join(''));\n              return;\n            }\n            var list = ['<ul>'];\n            files.unshift('..');\n            files.forEach(function(file) {\n              list.push('<li><a href=\"', path.join(base, file),'\">', file, '</a></li>');\n            });\n            list.push('</ul>');\n            res.write(['<h1>', 'Index of \"', abs, '\"</h1>'].join(''));\n            res.end(list.join('\\n'));\n          })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/bin/public",
+          "startline": 72,
+          "startcol": 21,
+          "endline": 111,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

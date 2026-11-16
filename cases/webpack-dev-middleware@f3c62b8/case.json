@@ -1,0 +1,79 @@
+{
+  "name": "webpack-dev-middleware",
+  "version": null,
+  "repo": "webpack/webpack-dev-middleware",
+  "sha": "f3c62b817614e95fd8caa6227ce0fbba8d8eaab3",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-wr3j-pwj9-hqq6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-29180"
+      ],
+      "ghsa": [
+        "GHSA-wr3j-pwj9-hqq6"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/middleware.js",
+          "startline": 258,
+          "startcol": 69,
+          "endline": 260,
+          "endcol": 22,
+          "range": false,
+          "code": "(\n            context.outputFileSystem.readFileSync\n          )(filename)"
+        },
+        {
+          "file": "package/src/middleware.js",
+          "startline": 252,
+          "startcol": 13,
+          "endline": 255,
+          "endcol": 15,
+          "range": false,
+          "code": "(context.outputFileSystem.createReadStream)(filename, {\n              start,\n              end,\n            })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/utils/getFilenameFromUrl.js",
+          "startline": 52,
+          "startcol": 1,
+          "endline": 144,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "189c4ac7d2344ec132a4689e74dc837ec5be0132",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils/getFilenameFromUrl.js",
+            "startline": 86,
+            "startcol": 1,
+            "endline": 195,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

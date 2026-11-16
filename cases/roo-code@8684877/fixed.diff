@@ -1,0 +1,107 @@
+diff --git a/core/ignore/RooIgnoreController.ts b/core/ignore/RooIgnoreController.ts
+index fda6c37..45054cc 100644
+--- a/core/ignore/RooIgnoreController.ts
++++ b/core/ignore/RooIgnoreController.ts
+@@ -1,6 +1,7 @@
+ import path from "path"
+ import { fileExistsAtPath } from "../../utils/fs"
+ import fs from "fs/promises"
++import fsSync from "fs"
+ import ignore, { Ignore } from "ignore"
+ import * as vscode from "vscode"
+ 
+@@ -81,6 +82,7 @@ export class RooIgnoreController {
+ 
+ 	/**
+ 	 * Check if a file should be accessible to the LLM
++	 * Automatically resolves symlinks
+ 	 * @param filePath - Path to check (relative to cwd)
+ 	 * @returns true if file is accessible, false if ignored
+ 	 */
+@@ -90,15 +92,25 @@ export class RooIgnoreController {
+ 			return true
+ 		}
+ 		try {
+-			// Normalize path to be relative to cwd and use forward slashes
+ 			const absolutePath = path.resolve(this.cwd, filePath)
+-			const relativePath = path.relative(this.cwd, absolutePath).toPosix()
+ 
+-			// Ignore expects paths to be path.relative()'d
++			// Follow symlinks to get the real path
++			let realPath: string
++			try {
++				realPath = fsSync.realpathSync(absolutePath)
++			} catch {
++				// If realpath fails (file doesn't exist, broken symlink, etc.),
++				// use the original path
++				realPath = absolutePath
++			}
++
++			// Convert real path to relative for .rooignore checking
++			const relativePath = path.relative(this.cwd, realPath).toPosix()
++
++			// Check if the real path is ignored
+ 			return !this.ignoreInstance.ignores(relativePath)
+ 		} catch (error) {
+-			// console.error(`Error validating access for ${filePath}:`, error)
+-			// Ignore is designed to work with relative file paths, so will throw error for paths outside cwd. We are allowing access to all files outside cwd.
++			// Allow access to files outside cwd or on errors (backward compatibility)
+ 			return true
+ 		}
+ 	}
+diff --git a/core/ignore/__tests__/RooIgnoreController.spec.ts b/core/ignore/__tests__/RooIgnoreController.spec.ts
+index 3fa7914..41d7947 100644
+--- a/core/ignore/__tests__/RooIgnoreController.spec.ts
++++ b/core/ignore/__tests__/RooIgnoreController.spec.ts
+@@ -6,10 +6,12 @@ import { RooIgnoreController, LOCK_TEXT_SYMBOL } from "../RooIgnoreController"
+ import * as vscode from "vscode"
+ import * as path from "path"
+ import * as fs from "fs/promises"
++import * as fsSync from "fs"
+ import { fileExistsAtPath } from "../../../utils/fs"
+ 
+ // Mock dependencies
+ vi.mock("fs/promises")
++vi.mock("fs")
+ vi.mock("../../../utils/fs")
+ 
+ // Mock vscode
+@@ -66,6 +68,10 @@ describe("RooIgnoreController", () => {
+ 		mockFileExists = fileExistsAtPath as Mock<typeof fileExistsAtPath>
+ 		mockReadFile = fs.readFile as Mock<typeof fs.readFile>
+ 
++		// Setup fsSync mocks with default behavior (return path as-is, like regular files)
++		const mockRealpathSync = vi.mocked(fsSync.realpathSync)
++		mockRealpathSync.mockImplementation((filePath) => filePath.toString())
++
+ 		// Create controller
+ 		controller = new RooIgnoreController(TEST_CWD)
+ 	})
+@@ -217,6 +223,27 @@ describe("RooIgnoreController", () => {
+ 			expect(emptyController.validateAccess("secrets/api-keys.json")).toBe(true)
+ 			expect(emptyController.validateAccess(".git/HEAD")).toBe(true)
+ 		})
++
++		/**
++		 * Tests symlink resolution
++		 */
++		it("should block symlinks pointing to ignored files", () => {
++			// Mock fsSync.realpathSync to simulate symlink resolution
++			const mockRealpathSync = vi.mocked(fsSync.realpathSync)
++			mockRealpathSync.mockImplementation((filePath) => {
++				// Simulate "config.json" being a symlink to "node_modules/package.json"
++				if (filePath.toString().endsWith("config.json")) {
++					return path.join(TEST_CWD, "node_modules/package.json")
++				}
++				return filePath.toString()
++			})
++
++			// Direct access to ignored file should be blocked
++			expect(controller.validateAccess("node_modules/package.json")).toBe(false)
++
++			// Symlink to ignored file should also be blocked
++			expect(controller.validateAccess("config.json")).toBe(false)
++		})
+ 	})
+ 
+ 	describe("validateCommand", () => {

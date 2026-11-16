@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": null, "other_locks": [], "flags": "", "pnpm": "11.8.0"}
+  ]
+}

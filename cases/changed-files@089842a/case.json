@@ -1,0 +1,62 @@
+{
+  "name": "changed-files",
+  "version": null,
+  "repo": "tj-actions/changed-files",
+  "sha": "089842a7a899531f61a45ef6ea69c485e1d62dbe",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "action",
+  "entry": [
+    "package/src/main.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-mcph-m25j-8j63",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-51664"
+      ],
+      "ghsa": [
+        "GHSA-mcph-m25j-8j63"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-74",
+        "CWE-77"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/utils.ts",
+          "startline": 1331,
+          "startcol": 26,
+          "endline": 1364,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0102c07446a3cad972f4afcbd0ee4dbc4b6d2d1b",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/utils.ts",
+            "startline": 1332,
+            "startcol": 26,
+            "endline": 1372,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

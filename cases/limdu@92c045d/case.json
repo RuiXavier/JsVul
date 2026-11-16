@@ -1,0 +1,71 @@
+{
+  "name": "limdu",
+  "version": null,
+  "repo": "erelsgl/limdu",
+  "sha": "92c045d30de99fd490627d0c4b441d532b0e4a83",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2020-4066",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-4066"
+      ],
+      "ghsa": [],
+      "snyk": [
+        "SNYK-JS-LIMDU-572951"
+      ],
+      "cwe": [
+        "CWE-78",
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/classifiers/svm/SvmLinear.js",
+          "startline": 103,
+          "startcol": 17,
+          "endline": 103,
+          "endcol": 48,
+          "range": false,
+          "code": "child_process.execSync(command)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/classifiers/svm/SvmLinear.js",
+          "startline": 65,
+          "startcol": 15,
+          "endline": 113,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "03475a6a6bb253de6fad8f7f39cfb3504f11438d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/classifiers/svm/SvmLinear.js",
+            "startline": 63,
+            "startcol": 15,
+            "endline": 107,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

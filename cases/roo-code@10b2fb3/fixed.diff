@@ -1,0 +1,679 @@
+diff --git a/core/assistant-message/presentAssistantMessage.ts b/core/assistant-message/presentAssistantMessage.ts
+index 54916cf..21c973a 100644
+--- a/core/assistant-message/presentAssistantMessage.ts
++++ b/core/assistant-message/presentAssistantMessage.ts
+@@ -261,8 +261,15 @@ export async function presentAssistantMessage(cline: Task) {
+ 				type: ClineAsk,
+ 				partialMessage?: string,
+ 				progressStatus?: ToolProgressStatus,
++				isProtected?: boolean,
+ 			) => {
+-				const { response, text, images } = await cline.ask(type, partialMessage, false, progressStatus)
++				const { response, text, images } = await cline.ask(
++					type,
++					partialMessage,
++					false,
++					progressStatus,
++					isProtected || false,
++				)
+ 
+ 				if (response !== "yesButtonClicked") {
+ 					// Handle both messageResponse and noButtonClicked with text.
+diff --git a/core/prompts/responses.ts b/core/prompts/responses.ts
+index dc6e08c..3f38789 100644
+--- a/core/prompts/responses.ts
++++ b/core/prompts/responses.ts
+@@ -2,6 +2,7 @@ import { Anthropic } from "@anthropic-ai/sdk"
+ import * as path from "path"
+ import * as diff from "diff"
+ import { RooIgnoreController, LOCK_TEXT_SYMBOL } from "../ignore/RooIgnoreController"
++import { RooProtectedController } from "../protect/RooProtectedController"
+ 
+ export const formatResponse = {
+ 	toolDenied: () => `The user denied this operation.`,
+@@ -95,6 +96,7 @@ Otherwise, if you have not completed the task and do not need additional informa
+ 		didHitLimit: boolean,
+ 		rooIgnoreController: RooIgnoreController | undefined,
+ 		showRooIgnoredFiles: boolean,
++		rooProtectedController?: RooProtectedController,
+ 	): string => {
+ 		const sorted = files
+ 			.map((file) => {
+@@ -143,7 +145,13 @@ Otherwise, if you have not completed the task and do not need additional informa
+ 					// Otherwise, mark it with a lock symbol
+ 					rooIgnoreParsed.push(LOCK_TEXT_SYMBOL + " " + filePath)
+ 				} else {
+-					rooIgnoreParsed.push(filePath)
++					// Check if file is write-protected (only for non-ignored files)
++					const isWriteProtected = rooProtectedController?.isWriteProtected(absoluteFilePath) || false
++					if (isWriteProtected) {
++						rooIgnoreParsed.push("🛡️ " + filePath)
++					} else {
++						rooIgnoreParsed.push(filePath)
++					}
+ 				}
+ 			}
+ 		}
+diff --git a/core/protect/RooProtectedController.ts b/core/protect/RooProtectedController.ts
+new file mode 100644
+index 0000000..b74b6a9
+--- /dev/null
++++ b/core/protect/RooProtectedController.ts
+@@ -0,0 +1,103 @@
++import path from "path"
++import ignore, { Ignore } from "ignore"
++
++export const SHIELD_SYMBOL = "\u{1F6E1}"
++
++/**
++ * Controls write access to Roo configuration files by enforcing protection patterns.
++ * Prevents auto-approved modifications to sensitive Roo configuration files.
++ */
++export class RooProtectedController {
++	private cwd: string
++	private ignoreInstance: Ignore
++
++	// Predefined list of protected Roo configuration patterns
++	private static readonly PROTECTED_PATTERNS = [
++		".rooignore",
++		".roomodes",
++		".roorules*",
++		".clinerules*",
++		".roo/**",
++		".rooprotected", // For future use
++	]
++
++	constructor(cwd: string) {
++		this.cwd = cwd
++		// Initialize ignore instance with protected patterns
++		this.ignoreInstance = ignore()
++		this.ignoreInstance.add(RooProtectedController.PROTECTED_PATTERNS)
++	}
++
++	/**
++	 * Check if a file is write-protected
++	 * @param filePath - Path to check (relative to cwd)
++	 * @returns true if file is write-protected, false otherwise
++	 */
++	isWriteProtected(filePath: string): boolean {
++		try {
++			// Normalize path to be relative to cwd and use forward slashes
++			const absolutePath = path.resolve(this.cwd, filePath)
++			const relativePath = path.relative(this.cwd, absolutePath).toPosix()
++
++			// Use ignore library to check if file matches any protected pattern
++			return this.ignoreInstance.ignores(relativePath)
++		} catch (error) {
++			// If there's an error processing the path, err on the side of caution
++			// Ignore is designed to work with relative file paths, so will throw error for paths outside cwd
++			console.error(`Error checking protection for ${filePath}:`, error)
++			return false
++		}
++	}
++
++	/**
++	 * Get set of write-protected files from a list
++	 * @param paths - Array of paths to filter (relative to cwd)
++	 * @returns Set of protected file paths
++	 */
++	getProtectedFiles(paths: string[]): Set<string> {
++		const protectedFiles = new Set<string>()
++
++		for (const filePath of paths) {
++			if (this.isWriteProtected(filePath)) {
++				protectedFiles.add(filePath)
++			}
++		}
++
++		return protectedFiles
++	}
++
++	/**
++	 * Filter an array of paths, marking which ones are protected
++	 * @param paths - Array of paths to check (relative to cwd)
++	 * @returns Array of objects with path and protection status
++	 */
++	annotatePathsWithProtection(paths: string[]): Array<{ path: string; isProtected: boolean }> {
++		return paths.map((filePath) => ({
++			path: filePath,
++			isProtected: this.isWriteProtected(filePath),
++		}))
++	}
++
++	/**
++	 * Get display message for protected file operations
++	 */
++	getProtectionMessage(): string {
++		return "This is a Roo configuration file and requires approval for modifications"
++	}
++
++	/**
++	 * Get formatted instructions about protected files for the LLM
++	 * @returns Formatted instructions about file protection
++	 */
++	getInstructions(): string {
++		const patterns = RooProtectedController.PROTECTED_PATTERNS.join(", ")
++		return `# Protected Files\n\n(The following Roo configuration file patterns are write-protected and always require approval for modifications, regardless of autoapproval settings. When using list_files, you'll notice a ${SHIELD_SYMBOL} next to files that are write-protected.)\n\nProtected patterns: ${patterns}`
++	}
++
++	/**
++	 * Get the list of protected patterns (for testing/debugging)
++	 */
++	static getProtectedPatterns(): readonly string[] {
++		return RooProtectedController.PROTECTED_PATTERNS
++	}
++}
+diff --git a/core/protect/__tests__/RooProtectedController.spec.ts b/core/protect/__tests__/RooProtectedController.spec.ts
+new file mode 100644
+index 0000000..63d8809
+--- /dev/null
++++ b/core/protect/__tests__/RooProtectedController.spec.ts
+@@ -0,0 +1,141 @@
++import path from "path"
++import { RooProtectedController } from "../RooProtectedController"
++
++describe("RooProtectedController", () => {
++	const TEST_CWD = "/test/workspace"
++	let controller: RooProtectedController
++
++	beforeEach(() => {
++		controller = new RooProtectedController(TEST_CWD)
++	})
++
++	describe("isWriteProtected", () => {
++		it("should protect .rooignore file", () => {
++			expect(controller.isWriteProtected(".rooignore")).toBe(true)
++		})
++
++		it("should protect files in .roo directory", () => {
++			expect(controller.isWriteProtected(".roo/config.json")).toBe(true)
++			expect(controller.isWriteProtected(".roo/settings/user.json")).toBe(true)
++			expect(controller.isWriteProtected(".roo/modes/custom.json")).toBe(true)
++		})
++
++		it("should protect .rooprotected file", () => {
++			expect(controller.isWriteProtected(".rooprotected")).toBe(true)
++		})
++
++		it("should protect .roomodes files", () => {
++			expect(controller.isWriteProtected(".roomodes")).toBe(true)
++		})
++
++		it("should protect .roorules* files", () => {
++			expect(controller.isWriteProtected(".roorules")).toBe(true)
++			expect(controller.isWriteProtected(".roorules.md")).toBe(true)
++		})
++
++		it("should protect .clinerules* files", () => {
++			expect(controller.isWriteProtected(".clinerules")).toBe(true)
++			expect(controller.isWriteProtected(".clinerules.md")).toBe(true)
++		})
++
++		it("should not protect other files starting with .roo", () => {
++			expect(controller.isWriteProtected(".roosettings")).toBe(false)
++			expect(controller.isWriteProtected(".rooconfig")).toBe(false)
++		})
++
++		it("should not protect regular files", () => {
++			expect(controller.isWriteProtected("src/index.ts")).toBe(false)
++			expect(controller.isWriteProtected("package.json")).toBe(false)
++			expect(controller.isWriteProtected("README.md")).toBe(false)
++		})
++
++		it("should not protect files that contain 'roo' but don't start with .roo", () => {
++			expect(controller.isWriteProtected("src/roo-utils.ts")).toBe(false)
++			expect(controller.isWriteProtected("config/roo.config.js")).toBe(false)
++		})
++
++		it("should handle nested paths correctly", () => {
++			expect(controller.isWriteProtected(".roo/config.json")).toBe(true) // .roo/** matches at root
++			expect(controller.isWriteProtected("nested/.rooignore")).toBe(true) // .rooignore matches anywhere by default
++			expect(controller.isWriteProtected("nested/.roomodes")).toBe(true) // .roomodes matches anywhere by default
++			expect(controller.isWriteProtected("nested/.roorules.md")).toBe(true) // .roorules* matches anywhere by default
++		})
++
++		it("should handle absolute paths by converting to relative", () => {
++			const absolutePath = path.join(TEST_CWD, ".rooignore")
++			expect(controller.isWriteProtected(absolutePath)).toBe(true)
++		})
++
++		it("should handle paths with different separators", () => {
++			expect(controller.isWriteProtected(".roo\\config.json")).toBe(true)
++			expect(controller.isWriteProtected(".roo/config.json")).toBe(true)
++		})
++	})
++
++	describe("getProtectedFiles", () => {
++		it("should return set of protected files from a list", () => {
++			const files = ["src/index.ts", ".rooignore", "package.json", ".roo/config.json", "README.md"]
++
++			const protectedFiles = controller.getProtectedFiles(files)
++
++			expect(protectedFiles).toEqual(new Set([".rooignore", ".roo/config.json"]))
++		})
++
++		it("should return empty set when no files are protected", () => {
++			const files = ["src/index.ts", "package.json", "README.md"]
++
++			const protectedFiles = controller.getProtectedFiles(files)
++
++			expect(protectedFiles).toEqual(new Set())
++		})
++	})
++
++	describe("annotatePathsWithProtection", () => {
++		it("should annotate paths with protection status", () => {
++			const files = ["src/index.ts", ".rooignore", ".roo/config.json", "package.json"]
++
++			const annotated = controller.annotatePathsWithProtection(files)
++
++			expect(annotated).toEqual([
++				{ path: "src/index.ts", isProtected: false },
++				{ path: ".rooignore", isProtected: true },
++				{ path: ".roo/config.json", isProtected: true },
++				{ path: "package.json", isProtected: false },
++			])
++		})
++	})
++
++	describe("getProtectionMessage", () => {
++		it("should return appropriate protection message", () => {
++			const message = controller.getProtectionMessage()
++			expect(message).toBe("This is a Roo configuration file and requires approval for modifications")
++		})
++	})
++
++	describe("getInstructions", () => {
++		it("should return formatted instructions about protected files", () => {
++			const instructions = controller.getInstructions()
++
++			expect(instructions).toContain("# Protected Files")
++			expect(instructions).toContain("write-protected")
++			expect(instructions).toContain(".rooignore")
++			expect(instructions).toContain(".roo/**")
++			expect(instructions).toContain("\u{1F6E1}") // Shield symbol
++		})
++	})
++
++	describe("getProtectedPatterns", () => {
++		it("should return the list of protected patterns", () => {
++			const patterns = RooProtectedController.getProtectedPatterns()
++
++			expect(patterns).toEqual([
++				".rooignore",
++				".roomodes",
++				".roorules*",
++				".clinerules*",
++				".roo/**",
++				".rooprotected",
++			])
++		})
++	})
++})
+diff --git a/core/task/Task.ts b/core/task/Task.ts
+index e881749..a6a9d89 100644
+--- a/core/task/Task.ts
++++ b/core/task/Task.ts
+@@ -65,6 +65,7 @@ import { SYSTEM_PROMPT } from "../prompts/system"
+ import { ToolRepetitionDetector } from "../tools/ToolRepetitionDetector"
+ import { FileContextTracker } from "../context-tracking/FileContextTracker"
+ import { RooIgnoreController } from "../ignore/RooIgnoreController"
++import { RooProtectedController } from "../protect/RooProtectedController"
+ import { type AssistantMessageContent, parseAssistantMessage, presentAssistantMessage } from "../assistant-message"
+ import { truncateConversationIfNeeded } from "../sliding-window"
+ import { ClineProvider } from "../webview/ClineProvider"
+@@ -144,6 +145,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 
+ 	toolRepetitionDetector: ToolRepetitionDetector
+ 	rooIgnoreController?: RooIgnoreController
++	rooProtectedController?: RooProtectedController
+ 	fileContextTracker: FileContextTracker
+ 	urlContentFetcher: UrlContentFetcher
+ 	terminalProcess?: RooTerminalProcess
+@@ -223,6 +225,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 		this.taskNumber = -1
+ 
+ 		this.rooIgnoreController = new RooIgnoreController(this.cwd)
++		this.rooProtectedController = new RooProtectedController(this.cwd)
+ 		this.fileContextTracker = new FileContextTracker(provider, this.taskId)
+ 
+ 		this.rooIgnoreController.initialize().catch((error) => {
+@@ -406,6 +409,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 		text?: string,
+ 		partial?: boolean,
+ 		progressStatus?: ToolProgressStatus,
++		isProtected?: boolean,
+ 	): Promise<{ response: ClineAskResponse; text?: string; images?: string[] }> {
+ 		// If this Cline instance was aborted by the provider, then the only
+ 		// thing keeping us alive is a promise still running in the background,
+@@ -433,6 +437,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 					lastMessage.text = text
+ 					lastMessage.partial = partial
+ 					lastMessage.progressStatus = progressStatus
++					lastMessage.isProtected = isProtected
+ 					// TODO: Be more efficient about saving and posting only new
+ 					// data or one whole message at a time so ignore partial for
+ 					// saves, and only post parts of partial message instead of
+@@ -444,7 +449,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 					// state.
+ 					askTs = Date.now()
+ 					this.lastMessageTs = askTs
+-					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, partial })
++					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, partial, isProtected })
+ 					throw new Error("Current ask promise was ignored (#2)")
+ 				}
+ 			} else {
+@@ -471,6 +476,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 					lastMessage.text = text
+ 					lastMessage.partial = false
+ 					lastMessage.progressStatus = progressStatus
++					lastMessage.isProtected = isProtected
+ 					await this.saveClineMessages()
+ 					this.updateClineMessage(lastMessage)
+ 				} else {
+@@ -480,7 +486,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 					this.askResponseImages = undefined
+ 					askTs = Date.now()
+ 					this.lastMessageTs = askTs
+-					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text })
++					await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
+ 				}
+ 			}
+ 		} else {
+@@ -490,7 +496,7 @@ export class Task extends EventEmitter<ClineEvents> {
+ 			this.askResponseImages = undefined
+ 			askTs = Date.now()
+ 			this.lastMessageTs = askTs
+-			await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text })
++			await this.addToClineMessages({ ts: askTs, type: "ask", ask: type, text, isProtected })
+ 		}
+ 
+ 		await pWaitFor(() => this.askResponse !== undefined || this.lastMessageTs !== askTs, { interval: 100 })
+diff --git a/core/tools/insertContentTool.ts b/core/tools/insertContentTool.ts
+index 0963bc7..af8d917 100644
+--- a/core/tools/insertContentTool.ts
++++ b/core/tools/insertContentTool.ts
+@@ -66,6 +66,9 @@ export async function insertContentTool(
+ 			return
+ 		}
+ 
++		// Check if file is write-protected
++		const isWriteProtected = cline.rooProtectedController?.isWriteProtected(relPath) || false
++
+ 		const absolutePath = path.resolve(cline.cwd, relPath)
+ 		const fileExists = await fileExistsAtPath(absolutePath)
+ 
+@@ -124,10 +127,11 @@ export async function insertContentTool(
+ 			...sharedMessageProps,
+ 			diff,
+ 			lineNumber: lineNumber,
++			isProtected: isWriteProtected,
+ 		} satisfies ClineSayTool)
+ 
+ 		const didApprove = await cline
+-			.ask("tool", completeMessage, false)
++			.ask("tool", completeMessage, isWriteProtected)
+ 			.then((response) => response.response === "yesButtonClicked")
+ 
+ 		if (!didApprove) {
+diff --git a/core/tools/listFilesTool.ts b/core/tools/listFilesTool.ts
+index 6d40de7..1fabca2 100644
+--- a/core/tools/listFilesTool.ts
++++ b/core/tools/listFilesTool.ts
+@@ -64,6 +64,7 @@ export async function listFilesTool(
+ 				didHitLimit,
+ 				cline.rooIgnoreController,
+ 				showRooIgnoredFiles,
++				cline.rooProtectedController,
+ 			)
+ 
+ 			const completeMessage = JSON.stringify({ ...sharedMessageProps, content: result } satisfies ClineSayTool)
+diff --git a/core/tools/multiApplyDiffTool.ts b/core/tools/multiApplyDiffTool.ts
+index ba36cd3..8a75d58 100644
+--- a/core/tools/multiApplyDiffTool.ts
++++ b/core/tools/multiApplyDiffTool.ts
+@@ -161,7 +161,6 @@ Expected structure:
+ Original error: ${errorMessage}`
+ 			throw new Error(detailedError)
+ 		}
+-
+ 	} else if (legacyPath && typeof legacyDiffContent === "string") {
+ 		// Handle legacy parameters (old way)
+ 		usingLegacyParams = true
+@@ -236,6 +235,9 @@ Original error: ${errorMessage}`
+ 				continue
+ 			}
+ 
++			// Check if file is write-protected
++			const isWriteProtected = cline.rooProtectedController?.isWriteProtected(relPath) || false
++
+ 			// Verify file exists
+ 			const absolutePath = path.resolve(cline.cwd, relPath)
+ 			const fileExists = await fileExistsAtPath(absolutePath)
+@@ -258,6 +260,11 @@ Original error: ${errorMessage}`
+ 
+ 		// Handle batch approval if there are multiple files
+ 		if (operationsToApprove.length > 1) {
++			// Check if any files are write-protected
++			const hasProtectedFiles = operationsToApprove.some(
++				(opResult) => cline.rooProtectedController?.isWriteProtected(opResult.path) || false,
++			)
++
+ 			// Prepare batch diff data
+ 			const batchDiffs = operationsToApprove.map((opResult) => {
+ 				const readablePath = getReadablePath(cline.cwd, opResult.path)
+@@ -279,9 +286,10 @@ Original error: ${errorMessage}`
+ 			const completeMessage = JSON.stringify({
+ 				tool: "appliedDiff",
+ 				batchDiffs,
++				isProtected: hasProtectedFiles,
+ 			} satisfies ClineSayTool)
+ 
+-			const { response, text, images } = await cline.ask("tool", completeMessage, false)
++			const { response, text, images } = await cline.ask("tool", completeMessage, hasProtectedFiles)
+ 
+ 			// Process batch response
+ 			if (response === "yesButtonClicked") {
+@@ -485,9 +493,11 @@ ${errorDetails ? `\nTechnical details:\n${errorDetails}\n` : ""}
+ 				await cline.diffViewProvider.scrollToFirstDiff()
+ 
+ 				// For batch operations, we've already gotten approval
++				const isWriteProtected = cline.rooProtectedController?.isWriteProtected(relPath) || false
+ 				const sharedMessageProps: ClineSayTool = {
+ 					tool: "appliedDiff",
+ 					path: getReadablePath(cline.cwd, relPath),
++					isProtected: isWriteProtected,
+ 				}
+ 
+ 				// If single file, ask for approval
+@@ -511,7 +521,9 @@ ${errorDetails ? `\nTechnical details:\n${errorDetails}\n` : ""}
+ 						)
+ 					}
+ 
+-					didApprove = await askApproval("tool", operationMessage, toolProgressStatus)
++					// Check if file is write-protected
++					const isWriteProtected = cline.rooProtectedController?.isWriteProtected(relPath) || false
++					didApprove = await askApproval("tool", operationMessage, toolProgressStatus, isWriteProtected)
+ 				}
+ 
+ 				if (!didApprove) {
+diff --git a/core/tools/searchAndReplaceTool.ts b/core/tools/searchAndReplaceTool.ts
+index 58d246b..967d533 100644
+--- a/core/tools/searchAndReplaceTool.ts
++++ b/core/tools/searchAndReplaceTool.ts
+@@ -123,6 +123,9 @@ export async function searchAndReplaceTool(
+ 			return
+ 		}
+ 
++		// Check if file is write-protected
++		const isWriteProtected = cline.rooProtectedController?.isWriteProtected(validRelPath) || false
++
+ 		const absolutePath = path.resolve(cline.cwd, validRelPath)
+ 		const fileExists = await fileExistsAtPath(absolutePath)
+ 
+@@ -207,9 +210,13 @@ export async function searchAndReplaceTool(
+ 		await cline.diffViewProvider.update(newContent, true)
+ 
+ 		// Request user approval for changes
+-		const completeMessage = JSON.stringify({ ...sharedMessageProps, diff } satisfies ClineSayTool)
++		const completeMessage = JSON.stringify({
++			...sharedMessageProps,
++			diff,
++			isProtected: isWriteProtected,
++		} satisfies ClineSayTool)
+ 		const didApprove = await cline
+-			.ask("tool", completeMessage, false)
++			.ask("tool", completeMessage, isWriteProtected)
+ 			.then((response) => response.response === "yesButtonClicked")
+ 
+ 		if (!didApprove) {
+diff --git a/core/tools/writeToFileTool.ts b/core/tools/writeToFileTool.ts
+index f7543d6..d4469e9 100644
+--- a/core/tools/writeToFileTool.ts
++++ b/core/tools/writeToFileTool.ts
+@@ -56,6 +56,9 @@ export async function writeToFileTool(
+ 		return
+ 	}
+ 
++	// Check if file is write-protected
++	const isWriteProtected = cline.rooProtectedController?.isWriteProtected(relPath) || false
++
+ 	// Check if file exists using cached map or fs.access
+ 	let fileExists: boolean
+ 
+@@ -90,6 +93,7 @@ export async function writeToFileTool(
+ 		path: getReadablePath(cline.cwd, removeClosingTag("path", relPath)),
+ 		content: newContent,
+ 		isOutsideWorkspace,
++		isProtected: isWriteProtected,
+ 	}
+ 
+ 	try {
+@@ -201,7 +205,7 @@ export async function writeToFileTool(
+ 					: undefined,
+ 			} satisfies ClineSayTool)
+ 
+-			const didApprove = await askApproval("tool", completeMessage)
++			const didApprove = await askApproval("tool", completeMessage, undefined, isWriteProtected)
+ 
+ 			if (!didApprove) {
+ 				await cline.diffViewProvider.revertChanges()
+diff --git a/core/webview/ClineProvider.ts b/core/webview/ClineProvider.ts
+index 9d41148..57fa16a 100644
+--- a/core/webview/ClineProvider.ts
++++ b/core/webview/ClineProvider.ts
+@@ -1276,6 +1276,7 @@ export class ClineProvider
+ 			alwaysAllowReadOnlyOutsideWorkspace,
+ 			alwaysAllowWrite,
+ 			alwaysAllowWriteOutsideWorkspace,
++			alwaysAllowWriteProtected,
+ 			alwaysAllowExecute,
+ 			alwaysAllowBrowser,
+ 			alwaysAllowMcp,
+@@ -1369,6 +1370,7 @@ export class ClineProvider
+ 			alwaysAllowReadOnlyOutsideWorkspace: alwaysAllowReadOnlyOutsideWorkspace ?? false,
+ 			alwaysAllowWrite: alwaysAllowWrite ?? false,
+ 			alwaysAllowWriteOutsideWorkspace: alwaysAllowWriteOutsideWorkspace ?? false,
++			alwaysAllowWriteProtected: alwaysAllowWriteProtected ?? false,
+ 			alwaysAllowExecute: alwaysAllowExecute ?? false,
+ 			alwaysAllowBrowser: alwaysAllowBrowser ?? false,
+ 			alwaysAllowMcp: alwaysAllowMcp ?? false,
+@@ -1529,6 +1531,7 @@ export class ClineProvider
+ 			alwaysAllowReadOnlyOutsideWorkspace: stateValues.alwaysAllowReadOnlyOutsideWorkspace ?? false,
+ 			alwaysAllowWrite: stateValues.alwaysAllowWrite ?? false,
+ 			alwaysAllowWriteOutsideWorkspace: stateValues.alwaysAllowWriteOutsideWorkspace ?? false,
++			alwaysAllowWriteProtected: stateValues.alwaysAllowWriteProtected ?? false,
+ 			alwaysAllowExecute: stateValues.alwaysAllowExecute ?? false,
+ 			alwaysAllowBrowser: stateValues.alwaysAllowBrowser ?? false,
+ 			alwaysAllowMcp: stateValues.alwaysAllowMcp ?? false,
+diff --git a/core/webview/webviewMessageHandler.ts b/core/webview/webviewMessageHandler.ts
+index a60c5fe..673f1bc 100644
+--- a/core/webview/webviewMessageHandler.ts
++++ b/core/webview/webviewMessageHandler.ts
+@@ -155,6 +155,10 @@ export const webviewMessageHandler = async (
+ 			await updateGlobalState("alwaysAllowWriteOutsideWorkspace", message.bool ?? undefined)
+ 			await provider.postStateToWebview()
+ 			break
++		case "alwaysAllowWriteProtected":
++			await updateGlobalState("alwaysAllowWriteProtected", message.bool ?? undefined)
++			await provider.postStateToWebview()
++			break
+ 		case "alwaysAllowExecute":
+ 			await updateGlobalState("alwaysAllowExecute", message.bool ?? undefined)
+ 			await provider.postStateToWebview()
+diff --git a/node_modules/@roo-code/types/src/global-settings.ts b/node_modules/@roo-code/types/src/global-settings.ts
+index 253f98f..5b729a1 100644
+--- a/node_modules/@roo-code/types/src/global-settings.ts
++++ b/node_modules/@roo-code/types/src/global-settings.ts
+@@ -36,6 +36,7 @@ export const globalSettingsSchema = z.object({
+ 	alwaysAllowReadOnlyOutsideWorkspace: z.boolean().optional(),
+ 	alwaysAllowWrite: z.boolean().optional(),
+ 	alwaysAllowWriteOutsideWorkspace: z.boolean().optional(),
++	alwaysAllowWriteProtected: z.boolean().optional(),
+ 	writeDelayMs: z.number().optional(),
+ 	alwaysAllowBrowser: z.boolean().optional(),
+ 	alwaysApproveResubmit: z.boolean().optional(),
+@@ -177,6 +178,7 @@ export const EVALS_SETTINGS: RooCodeSettings = {
+ 	alwaysAllowReadOnlyOutsideWorkspace: false,
+ 	alwaysAllowWrite: true,
+ 	alwaysAllowWriteOutsideWorkspace: false,
++	alwaysAllowWriteProtected: false,
+ 	writeDelayMs: 1000,
+ 	alwaysAllowBrowser: true,
+ 	alwaysApproveResubmit: true,
+diff --git a/node_modules/@roo-code/types/src/message.ts b/node_modules/@roo-code/types/src/message.ts
+index aebd1fe..914f02e 100644
+--- a/node_modules/@roo-code/types/src/message.ts
++++ b/node_modules/@roo-code/types/src/message.ts
+@@ -153,6 +153,7 @@ export const clineMessageSchema = z.object({
+ 	checkpoint: z.record(z.string(), z.unknown()).optional(),
+ 	progressStatus: toolProgressStatusSchema.optional(),
+ 	contextCondense: contextCondenseSchema.optional(),
++	isProtected: z.boolean().optional(),
+ })
+ 
+ export type ClineMessage = z.infer<typeof clineMessageSchema>
+diff --git a/shared/ExtensionMessage.ts b/shared/ExtensionMessage.ts
+index 3f6333d..921a457 100644
+--- a/shared/ExtensionMessage.ts
++++ b/shared/ExtensionMessage.ts
+@@ -151,6 +151,7 @@ export type ExtensionState = Pick<
+ 	| "alwaysAllowReadOnlyOutsideWorkspace"
+ 	| "alwaysAllowWrite"
+ 	| "alwaysAllowWriteOutsideWorkspace"
++	| "alwaysAllowWriteProtected"
+ 	// | "writeDelayMs" // Optional in GlobalSettings, required here.
+ 	| "alwaysAllowBrowser"
+ 	| "alwaysApproveResubmit"
+@@ -276,6 +277,7 @@ export interface ClineSayTool {
+ 	mode?: string
+ 	reason?: string
+ 	isOutsideWorkspace?: boolean
++	isProtected?: boolean
+ 	additionalFileCount?: number // Number of additional files in the same read_file request
+ 	search?: string
+ 	replace?: string
+diff --git a/shared/WebviewMessage.ts b/shared/WebviewMessage.ts
+index ae93e3a..26d7f7a 100644
+--- a/shared/WebviewMessage.ts
++++ b/shared/WebviewMessage.ts
+@@ -29,6 +29,7 @@ export interface WebviewMessage {
+ 		| "alwaysAllowReadOnlyOutsideWorkspace"
+ 		| "alwaysAllowWrite"
+ 		| "alwaysAllowWriteOutsideWorkspace"
++		| "alwaysAllowWriteProtected"
+ 		| "alwaysAllowExecute"
+ 		| "webviewDidLaunch"
+ 		| "newTask"
+diff --git a/shared/tools.ts b/shared/tools.ts
+index ffaf41f..98a1be3 100644
+--- a/shared/tools.ts
++++ b/shared/tools.ts
+@@ -8,6 +8,7 @@ export type AskApproval = (
+ 	type: ClineAsk,
+ 	partialMessage?: string,
+ 	progressStatus?: ToolProgressStatus,
++	forceApproval?: boolean,
+ ) => Promise<boolean>
+ 
+ export type HandleError = (action: string, error: Error) => Promise<void>

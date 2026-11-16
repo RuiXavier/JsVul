@@ -1,0 +1,53 @@
+{
+  "name": "broker",
+  "version": null,
+  "repo": "snyk/broker",
+  "sha": "907a63baa2e183f612ab0824beea39b1876b84d4",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9xv2-548x-5h79",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7648"
+      ],
+      "ghsa": [
+        "GHSA-9xv2-548x-5h79"
+      ],
+      "snyk": [
+        "SNYK-JS-SNYKBROKER-570607"
+      ],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/filters/index.js",
+          "startline": 11,
+          "startcol": 18,
+          "endline": 158,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

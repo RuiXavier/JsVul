@@ -1,0 +1,67 @@
+{
+  "name": "node-simple-router",
+  "version": null,
+  "repo": "sandy98/node-simple-router",
+  "sha": "91da4299aee0086cc1e0cc837763578af6f82cea",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5w8q-x7hc-jhp6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2017-16083"
+      ],
+      "ghsa": [
+        "GHSA-5w8q-x7hc-jhp6"
+      ],
+      "snyk": [
+        "npm:node-simple-router:20170523"
+      ],
+      "cwe": [
+        "CWE-22",
+        "CWE-23",
+        "CWE-36",
+        "CWE-73",
+        "CWE-99"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/router.js",
+          "startline": 764,
+          "startcol": 24,
+          "endline": 764,
+          "endcol": 54,
+          "range": false,
+          "code": "fs.createReadStream(full_path)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/router.js",
+          "startline": 2,
+          "startcol": 2,
+          "endline": 1438,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

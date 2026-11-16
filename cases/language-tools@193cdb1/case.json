@@ -1,0 +1,76 @@
+{
+  "name": "language-tools",
+  "version": null,
+  "repo": "prisma/language-tools",
+  "sha": "193cdb13fc9cefeae3f425bc0f47d66e95e26127",
+  "subdir": "packages/vscode",
+  "siblings": {
+    "@prisma/language-server": "packages/language-server"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "extension",
+  "entry": [
+    "package/src/extension.ts",
+    "package/node_modules/@prisma/language-server/src/cli.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-4rf9-43m7-x828",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-21415"
+      ],
+      "ghsa": [
+        "GHSA-4rf9-43m7-x828"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "code-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/@prisma/language-server/src/prisma-fmt/exec.ts",
+          "startline": 8,
+          "startcol": 15,
+          "endline": 8,
+          "endcol": 36,
+          "range": false,
+          "code": "spawn(execPath, args)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/plugins/prisma-language-server/index.ts",
+          "startline": 59,
+          "startcol": 13,
+          "endline": 203,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "94df49c2c3ebfca3e6f5c532382ccd59020422da",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/plugins/prisma-language-server/index.ts",
+            "startline": 70,
+            "startcol": 13,
+            "endline": 269,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

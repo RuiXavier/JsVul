@@ -1,0 +1,9 @@
+{
+  "title": "Taxonomy",
+  "enabled": true,
+  "systemId": "taxonomy",
+  "icon": "bi-tag",
+  "canBeAddedToColumn": true,
+  "singleInstance": false,
+  "version": "0.0.0.1"
+}

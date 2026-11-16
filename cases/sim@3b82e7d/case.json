@@ -1,0 +1,70 @@
+{
+  "name": "sim",
+  "version": null,
+  "repo": "simstudioai/sim",
+  "sha": "3b82e7d2249ff5323a3c239d943494b15b9fa544",
+  "subdir": "apps/sim",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/app/api/files/parse/route.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-7107",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-7107"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/app/api/files/parse/route.ts",
+          "startline": 687,
+          "startcol": 30,
+          "endline": 687,
+          "endcol": 48,
+          "range": false,
+          "code": "readFile(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/app/api/files/parse/route.ts",
+          "startline": 535,
+          "startcol": 1,
+          "endline": 594,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b2450530d1ddd0397a11001a72aa0fde401db16a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/app/api/files/parse/route.ts",
+            "startline": 566,
+            "startcol": 1,
+            "endline": 628,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

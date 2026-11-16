@@ -1,0 +1,68 @@
+{
+  "name": "angular.js",
+  "version": null,
+  "repo": "angular/angular.js",
+  "sha": "db713a1c1b2cf1a9f5f9b52a0e2481be3b0cf1be",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:angular:20140608",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:angular:20140608"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/ng/parse.js",
+          "startline": 938,
+          "startcol": 26,
+          "endline": 938,
+          "endcol": 54,
+          "range": false,
+          "code": "new Function('s', 'k', code)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/ng/parse.js",
+          "startline": 65,
+          "startcol": 1,
+          "endline": 73,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "77ada4c82d6b8fc6d977c26f3cdb48c2f5fbe5a5",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/ng/parse.js",
+            "startline": 69,
+            "startcol": 1,
+            "endline": 81,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

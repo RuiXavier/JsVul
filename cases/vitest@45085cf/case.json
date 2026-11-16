@@ -1,0 +1,68 @@
+{
+  "name": "vitest",
+  "version": null,
+  "repo": "vitest-dev/vitest",
+  "sha": "45085cf8f7b06dfadddcebf4e1f72b075b71f1a6",
+  "subdir": "packages/browser",
+  "siblings": {
+    "@vitest/mocker": "packages/mocker",
+    "@vitest/pretty-format": "packages/pretty-format",
+    "@vitest/spy": "packages/spy",
+    "@vitest/utils": "packages/utils"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/node/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8gvc-j273-4wm5",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-24963"
+      ],
+      "ghsa": [
+        "GHSA-8gvc-j273-4wm5"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/node/plugin.ts",
+          "startline": 117,
+          "startcol": 28,
+          "endline": 117,
+          "endcol": 46,
+          "range": false,
+          "code": "readFileSync(file)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ed9aeba212df04b83ed01810780663ff2cdd0adf",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/node/plugin.ts",
+            "startline": 125,
+            "startcol": 28,
+            "endline": 125,
+            "endcol": 46,
+            "range": false,
+            "code": "readFileSync(file)"
+          }
+        ]
+      }
+    }
+  ]
+}

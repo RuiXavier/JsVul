@@ -1,0 +1,70 @@
+{
+  "name": "find-exec",
+  "version": null,
+  "repo": "shime/find-exec",
+  "sha": "934ae934713bcb7bb9d6264030672d0c974cb541",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-95rp-6gqp-6622",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-40582"
+      ],
+      "ghsa": [
+        "GHSA-95rp-6gqp-6622"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 20,
+          "startcol": 5,
+          "endline": 20,
+          "endcol": 39,
+          "range": false,
+          "code": "exec(command, { stdio: 'ignore' })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 18,
+          "startcol": 1,
+          "endline": 26,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "74fb108097c229b03d6dba4cce81e36aa364b51c",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 19,
+            "startcol": 1,
+            "endline": 27,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

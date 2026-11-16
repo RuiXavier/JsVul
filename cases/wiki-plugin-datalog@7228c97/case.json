@@ -1,0 +1,62 @@
+{
+  "name": "wiki-plugin-datalog",
+  "version": null,
+  "repo": "wardcunningham/wiki-plugin-datalog",
+  "sha": "7228c976217a93f24e026fc03c6a115d531b6d2c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/server/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-pm52-wwrw-c282",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [
+        "GHSA-pm52-wwrw-c282"
+      ],
+      "snyk": [
+        "SNYK-JS-WIKIPLUGINDATALOG-449540"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "originalClass": "code-injection",
+      "sinks": [
+        {
+          "file": "package/server/server.js",
+          "startline": 247,
+          "startcol": 7,
+          "endline": 255,
+          "endcol": 9,
+          "range": false,
+          "code": "exec(curl, (err, stdout, stderr) => {\n        let sample = {\n          exit: err ? err.code : 0,\n          time: Date.now() - t0,\n          stdout: stdout.length,\n          stderr: stderr.length\n        }\n        res.send(JSON.stringify(sample))\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server/server.js",
+          "startline": 7,
+          "startcol": 2,
+          "endline": 262,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

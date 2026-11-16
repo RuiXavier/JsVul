@@ -1,0 +1,62 @@
+{
+  "name": "workspace-tools",
+  "version": null,
+  "repo": "microsoft/workspace-tools",
+  "sha": "24040a5bfa7a20e577b915eef9e1da14a78953e4",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5875-m6jq-vf78",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25865"
+      ],
+      "ghsa": [
+        "GHSA-5875-m6jq-vf78"
+      ],
+      "snyk": [
+        "SNYK-JS-WORKSPACETOOLS-2421201"
+      ],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/git.ts",
+          "startline": 44,
+          "startcol": 19,
+          "endline": 44,
+          "endcol": 85,
+          "range": false,
+          "code": "spawnSync(\"git\", args, { maxBuffer: MaxBufferOption, ...options })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "9bc7e65ce497f87e1f363fd47b8f802f3d3cd978",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/git.ts",
+            "startline": 44,
+            "startcol": 19,
+            "endline": 44,
+            "endcol": 84,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,12 @@
-# What jelly-taint fetches and installs here (its benchmarks/data/jsvul/): each case's commit in repos/ (fixed/ for
-# a fixing commit), JsVul's function extractor, and the list of the files its installs edit
-/repos/
-/fixed/
-/js-function-extractor/
-/edited.txt
+# What install.sh and jelly-taint make inside the cases (the same rules as in jelly-taint-benchmarks): the installed
+# dependencies (the packages of the same repository that a monorepo case keeps in package/node_modules/<name> are
+# tracked all the same, added with git add -f), install.sh's markers and logs, and the fixed/ folders of --fixed
+node_modules/
+pnpm-install.log
+.install/
+.fixed.tmp.*/
+/cases/*/fixed/
+/cases/**/node_modules/**
+/cases/**/.gitattributes
+# the install logs that jelly-taint writes (benchmarks/cli.py)
+.jelly-benchmark-install.log

@@ -1,0 +1,103 @@
+{
+  "name": "anything-llm",
+  "version": null,
+  "repo": "mintplex-labs/anything-llm",
+  "sha": "99b6dedc8bf3064d87c150b27ae62b48c0f29370",
+  "subdir": "server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-13059",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-13059"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-29"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/multer/storage/disk.js",
+          "startline": 38,
+          "startcol": 23,
+          "endline": 38,
+          "endcol": 54,
+          "range": false,
+          "code": "fs.createWriteStream(finalPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/utils/files/multer.js",
+          "startline": 18,
+          "startcol": 13,
+          "endline": 23,
+          "endcol": 3,
+          "range": true
+        },
+        {
+          "file": "package/utils/files/multer.js",
+          "startline": 38,
+          "startcol": 13,
+          "endline": 40,
+          "endcol": 3,
+          "range": true
+        },
+        {
+          "file": "package/utils/files/multer.js",
+          "startline": 73,
+          "startcol": 13,
+          "endline": 77,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "0b7bf68f2c02ca68075970fbf85d5a70ca5e94ca",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/utils/files/multer.js",
+            "startline": 19,
+            "startcol": 13,
+            "endline": 24,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/utils/files/multer.js",
+            "startline": 39,
+            "startcol": 13,
+            "endline": 42,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/utils/files/multer.js",
+            "startline": 75,
+            "startcol": 13,
+            "endline": 81,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

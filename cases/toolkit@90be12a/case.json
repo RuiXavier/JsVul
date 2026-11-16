@@ -1,0 +1,66 @@
+{
+  "name": "toolkit",
+  "version": null,
+  "repo": "actions/toolkit",
+  "sha": "90be12a59c20a6ecc43b234c1885fc2852d3212d",
+  "subdir": "packages/core",
+  "siblings": {
+    "@actions/http-client": "packages/http-client"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/core.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-7r3h-m5j6-3q42",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-35954"
+      ],
+      "ghsa": [
+        "GHSA-7r3h-m5j6-3q42"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-74",
+        "CWE-77"
+      ],
+      "class": "stored-command-injection",
+      "originalClass": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/core.ts",
+          "startline": 83,
+          "startcol": 8,
+          "endline": 95,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "4beda9cbc00ba6eefe387a937c21087ccb8ee9df",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/core.ts",
+            "startline": 84,
+            "startcol": 8,
+            "endline": 106,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "name": "cli",
+  "version": null,
+  "repo": "react-native-community/cli",
+  "sha": "02622969fb8efca3fb2a2bb17ace100ddcad68d4",
+  "subdir": "packages/cli-server-api",
+  "siblings": {
+    "@react-native-community/cli-tools": "packages/cli-tools"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-11953",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-11953"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/open/index.js",
+          "startline": 114,
+          "startcol": 21,
+          "endline": 114,
+          "endcol": 83,
+          "range": false,
+          "code": "childProcess.spawn(command, cliArguments, childProcessOptions)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/openURLMiddleware.ts",
+          "startline": 17,
+          "startcol": 1,
+          "endline": 41,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "15089907d1f1301b22c72d7f68846a2ef20df547",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/openURLMiddleware.ts",
+            "startline": 17,
+            "startcol": 1,
+            "endline": 54,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

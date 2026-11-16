@@ -1,0 +1,71 @@
+{
+  "name": "sqlpad",
+  "version": null,
+  "repo": "sqlpad/sqlpad",
+  "sha": "2e15670ca148569e1e29aff5058cd9cb1ca90cb6",
+  "subdir": "server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2022-0944",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-0944"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-1336",
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/lodash/lodash.js",
+          "startline": 14942,
+          "startcol": 16,
+          "endline": 14942,
+          "endcol": 69,
+          "range": false,
+          "code": "Function(importsKeys, sourceURL + 'return ' + source)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/render-connection.js",
+          "startline": 12,
+          "startcol": 1,
+          "endline": 31,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "3f92be386c6cd3e5eba75d85f0700d3ef54daf73",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/render-connection.js",
+            "startline": 17,
+            "startcol": 1,
+            "endline": 34,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

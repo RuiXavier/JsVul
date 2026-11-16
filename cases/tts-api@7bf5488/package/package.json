@@ -1,0 +1,41 @@
+{
+  "name": "tts-api",
+  "version": "2.1.4",
+  "description": "Text to speech REST API for multiple TTS engines",
+  "keywords": [
+    "text-to-speech",
+    "tts",
+    "speech",
+    "voice",
+    "rest-api",
+    "api"
+  ],
+  "homepage": "https://github.com/pedroetb/tts-api",
+  "license": "MIT",
+  "author": "Pedro Trujillo",
+  "contributors": [
+    {
+      "name": "Pedro Trujillo",
+      "email": "pedroetb@gmail.com"
+    }
+  ],
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedroetb/tts-api.git"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "alertifyjs": "^1.11.4",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^4.3.1",
+    "express": "^4.17.1",
+    "pug": "^2.0.4"
+  },
+  "engines": {
+    "node": ">=4.0.0",
+    "npm": ">=2.14.2"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "name": "npm-lockfile",
+  "version": null,
+  "repo": "ljharb/npm-lockfile",
+  "sha": "38f99c3374ca4e9bd75f3ec34f3edb249eb391cf",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/getLockfile.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2022-0841",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-0841"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/getLockfile.js",
+          "startline": 42,
+          "startcol": 3,
+          "endline": 58,
+          "endcol": 4,
+          "range": false,
+          "code": "exec(\n\t\t\t`npm install --ignore-scripts --package-lock --package-lock-only${date ? ` --before=${date}` : ''}${only ? ` --only=${only}` : ''}`,\n\t\t\t{\n\t\t\t\tcwd: tmpDir,\n\t\t\t\tenv: {\n\t\t\t\t\tPATH: `${PATH}:${process.env.PATH}`,\n\t\t\t\t\tNODE_ENV: process.env.NODE_ENV,\n\t\t\t\t},\n\t\t\t},\n\t\t\t(err) => {\n\t\t\t\tif (err) {\n\t\t\t\t\treject(err);\n\t\t\t\t} else {\n\t\t\t\t\tresolve(tmpDir);\n\t\t\t\t}\n\t\t\t}\n\t\t)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/getLockfile.js",
+          "startline": 15,
+          "startcol": 18,
+          "endline": 64,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bfdb84813260f0edbf759f2fde1e8c816c1478b8",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/getLockfile.js",
+            "startline": 15,
+            "startcol": 18,
+            "endline": 67,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

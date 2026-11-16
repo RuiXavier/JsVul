@@ -1,0 +1,59 @@
+{
+  "name": "node-server",
+  "version": null,
+  "repo": "shy2850/node-server",
+  "sha": "ecb0ea6904cbd82667d7805d58326d662b8e3558",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2017-16038",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2017-16038"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/nodeLib/filter/nginx-http-concat.js",
+          "startline": 12,
+          "startcol": 23,
+          "endline": 12,
+          "endcol": 57,
+          "range": false,
+          "code": "fs.readFileSync( filePath,'utf-8')"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/nodeLib/index.js",
+          "startline": 23,
+          "startcol": 17,
+          "endline": 164,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

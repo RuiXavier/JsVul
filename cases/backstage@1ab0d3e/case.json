@@ -1,0 +1,90 @@
+{
+  "name": "backstage",
+  "version": null,
+  "repo": "backstage/backstage",
+  "sha": "1ab0d3ef356758f75c6fce1188003ae0e545a2e6",
+  "subdir": "packages/backend-common",
+  "siblings": {
+    "@backstage/backend-app-api": "packages/backend-app-api",
+    "@backstage/backend-dev-utils": "packages/backend-dev-utils",
+    "@backstage/backend-plugin-api": "packages/backend-plugin-api",
+    "@backstage/backend-tasks": "packages/backend-tasks",
+    "@backstage/catalog-client": "packages/catalog-client",
+    "@backstage/catalog-model": "packages/catalog-model",
+    "@backstage/cli-common": "packages/cli-common",
+    "@backstage/cli-node": "packages/cli-node",
+    "@backstage/config": "packages/config",
+    "@backstage/config-loader": "packages/config-loader",
+    "@backstage/errors": "packages/errors",
+    "@backstage/integration": "packages/integration",
+    "@backstage/integration-aws-node": "packages/integration-aws-node",
+    "@backstage/plugin-auth-node": "plugins/auth-node",
+    "@backstage/plugin-permission-common": "plugins/permission-common",
+    "@backstage/plugin-permission-node": "plugins/permission-node",
+    "@backstage/types": "packages/types"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2fc9-xpp8-2g9h",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-26150"
+      ],
+      "ghsa": [
+        "GHSA-2fc9-xpp8-2g9h"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/fs-extra/node_modules/universalify/index.js",
+          "startline": 9,
+          "startcol": 9,
+          "endline": 9,
+          "endcol": 29,
+          "range": false,
+          "code": "fn.apply(this, args)"
+        },
+        {
+          "file": "package/node_modules/graceful-fs/graceful-fs.js",
+          "startline": 357,
+          "startcol": 14,
+          "endline": 364,
+          "endcol": 9,
+          "range": false,
+          "code": "fs$open(path, flags, mode, function (err, fd) {\n        if (err && (err.code === 'EMFILE' || err.code === 'ENFILE'))\n          enqueue([go$open, [path, flags, mode, cb], err, startTime || Date.now(), Date.now()])\n        else {\n          if (typeof cb === 'function')\n            cb.apply(this, arguments)\n        }\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/paths.ts",
+          "startline": 64,
+          "startcol": 8,
+          "endline": 74,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

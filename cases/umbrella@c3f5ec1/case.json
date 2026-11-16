@@ -1,0 +1,85 @@
+{
+  "name": "umbrella",
+  "version": null,
+  "repo": "thi-ng/umbrella",
+  "sha": "c3f5ec12f324a4e627b26dc45d480c0e761602ea",
+  "subdir": "packages/egf",
+  "siblings": {
+    "@thi.ng/api": "packages/api",
+    "@thi.ng/arrays": "packages/arrays",
+    "@thi.ng/associative": "packages/associative",
+    "@thi.ng/binary": "packages/binary",
+    "@thi.ng/checks": "packages/checks",
+    "@thi.ng/compare": "packages/compare",
+    "@thi.ng/compose": "packages/compose",
+    "@thi.ng/dcons": "packages/dcons",
+    "@thi.ng/dot": "packages/dot",
+    "@thi.ng/equiv": "packages/equiv",
+    "@thi.ng/errors": "packages/errors",
+    "@thi.ng/hex": "packages/hex",
+    "@thi.ng/math": "packages/math",
+    "@thi.ng/memoize": "packages/memoize",
+    "@thi.ng/prefixes": "packages/prefixes",
+    "@thi.ng/random": "packages/random",
+    "@thi.ng/strings": "packages/strings",
+    "@thi.ng/transducers": "packages/transducers",
+    "@thi.ng/transducers-binary": "packages/transducers-binary"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-rj44-gpjc-29r7",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-21412"
+      ],
+      "ghsa": [
+        "GHSA-rj44-gpjc-29r7"
+      ],
+      "snyk": [
+        "SNYK-JS-THINGEGF-1089810"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/tags.ts",
+          "startline": 27,
+          "startcol": 21,
+          "endline": 27,
+          "endcol": 63,
+          "range": false,
+          "code": "execSync(`echo \"${body}\" | gpg --decrypt`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/tags.ts",
+          "startline": 25,
+          "startcol": 11,
+          "endline": 29,
+          "endcol": 22,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

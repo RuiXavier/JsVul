@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": ["package/package-lock.json"], "flags": "", "pnpm": "11.8.0", "omit": ["@actions/http-client"], "siblings": ["@actions/http-client"]}
+  ]
+}

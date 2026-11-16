@@ -1,0 +1,104 @@
+{
+  "name": "conventional-changelog",
+  "version": null,
+  "repo": "conventional-changelog/conventional-changelog",
+  "sha": "373d330c76c54de7b6214a27e5b1577b243ed029",
+  "subdir": "packages/git-client",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-vh25-5764-9wcr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-59433"
+      ],
+      "ghsa": [
+        "GHSA-vh25-5764-9wcr"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/utils.ts",
+          "startline": 48,
+          "startcol": 17,
+          "endline": 48,
+          "endcol": 47,
+          "range": false,
+          "code": "spawnChild(cmd, args, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/GitClient.ts",
+          "startline": 46,
+          "startcol": 3,
+          "endline": 76,
+          "endcol": 3,
+          "range": true
+        },
+        {
+          "file": "package/src/GitClient.ts",
+          "startline": 83,
+          "startcol": 3,
+          "endline": 106,
+          "endcol": 3,
+          "range": true
+        },
+        {
+          "file": "package/src/GitClient.ts",
+          "startline": 166,
+          "startcol": 3,
+          "endline": 187,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "d95c9ffac05af58228bd89fa0ba37ad65741c6a2",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/GitClient.ts",
+            "startline": 46,
+            "startcol": 3,
+            "endline": 81,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/GitClient.ts",
+            "startline": 87,
+            "startcol": 3,
+            "endline": 109,
+            "endcol": 3,
+            "range": true
+          },
+          {
+            "file": "fixed/src/GitClient.ts",
+            "startline": 166,
+            "startcol": 3,
+            "endline": 186,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

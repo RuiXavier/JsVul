@@ -1,0 +1,77 @@
+{
+  "name": "dbgate",
+  "version": null,
+  "repo": "dbgate/dbgate",
+  "sha": "c34f2d4da71dfc0ba9250eece4b4586d2be68bf9",
+  "subdir": "packages/api",
+  "siblings": {
+    "dbgate-datalib": "packages/datalib",
+    "dbgate-filterparser": "packages/filterparser",
+    "dbgate-sqltree": "packages/sqltree",
+    "dbgate-tools": "packages/tools"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2fp9-29gv-p5gm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-50184"
+      ],
+      "ghsa": [
+        "GHSA-2fp9-29gv-p5gm"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-29"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/send/index.js",
+          "startline": 789,
+          "startcol": 16,
+          "endline": 789,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.createReadStream(path, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/controllers/uploads.js",
+          "startline": 46,
+          "startcol": 3,
+          "endline": 48,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "18b11df672b5a887bc17a6b9fdd13f9742c8f98e",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/controllers/uploads.js",
+            "startline": 46,
+            "startcol": 3,
+            "endline": 52,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

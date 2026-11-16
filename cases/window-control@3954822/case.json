@@ -1,0 +1,91 @@
+{
+  "name": "window-control",
+  "version": null,
+  "repo": "bruno-robert/window-control",
+  "sha": "3954822ef3f0307745cdbff21a965278dd0a357b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9mjx-wfqp-j5ph",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25926"
+      ],
+      "ghsa": [
+        "GHSA-9mjx-wfqp-j5ph"
+      ],
+      "snyk": [
+        "SNYK-JS-WINDOWCONTROL-3186345"
+      ],
+      "cwe": [
+        "CWE-78",
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 66,
+          "startcol": 7,
+          "endline": 70,
+          "endcol": 9,
+          "range": false,
+          "code": "exec(`osascript \"${macFocusAndSendKeys}\" ${id} \"${keys}\" ${resetFocus} ${pressEnterOnceDone}`, (error, stdout, stderr) => {\n        if (error) reject(error)\n        if (stderr) reject(stderr)\n        resolve(stdout)\n      })"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 79,
+          "startcol": 7,
+          "endline": 83,
+          "endcol": 9,
+          "range": false,
+          "code": "exec(`${winSendKeysToWindowName} \"${windowTitle}\" \"${keys}\"`, (error, stdout, stderr) => {\n        if (error) reject(error)\n        if (stderr) reject(stderr)\n        resolve(stdout)\n      })"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 89,
+          "startcol": 7,
+          "endline": 93,
+          "endcol": 9,
+          "range": false,
+          "code": "exec(`${sendTextToWindowWithId} ${windowID} \"${keys}\"`, (error, stdout, stderr) => {\n        if (error) reject(error)\n        if (stderr) reject(stderr)\n        resolve(stdout)\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 61,
+          "startcol": 18,
+          "endline": 101,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "075c854534a749d887655a906759f5a7eee95173",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 67,
+            "startcol": 18,
+            "endline": 107,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

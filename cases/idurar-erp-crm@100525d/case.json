@@ -1,0 +1,64 @@
+{
+  "name": "idurar-erp-crm",
+  "version": null,
+  "repo": "idurar/idurar-erp-crm",
+  "sha": "100525d1d3ad4003da2afdf3987b4eab87f3d725",
+  "subdir": "backend",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-948g-2vm7-mfv7",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-47769"
+      ],
+      "ghsa": [
+        "GHSA-948g-2vm7-mfv7"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-23"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/send/index.js",
+          "startline": 790,
+          "startcol": 16,
+          "endline": 790,
+          "endcol": 50,
+          "range": false,
+          "code": "fs.createReadStream(path, options)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/routes/coreRoutes/corePublicRouter.js",
+          "startline": 8,
+          "startcol": 48,
+          "endline": 33,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

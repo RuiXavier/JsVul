@@ -1,0 +1,60 @@
+{
+  "name": "jupyterlab-git",
+  "version": null,
+  "repo": "jupyterlab/jupyterlab-git",
+  "sha": "3dcaf17a0db3161e7256961ac8eb2a8c6f1edaab",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-cj5w-8mjf-r5f8",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-30370"
+      ],
+      "ghsa": [
+        "GHSA-cj5w-8mjf-r5f8"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/commandsAndMenu.tsx",
+          "startline": 131,
+          "startcol": 8,
+          "endline": 1808,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b46482993f76d3a546015c6a94ebed8b77fc2376",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/commandsAndMenu.tsx",
+            "startline": 131,
+            "startcol": 8,
+            "endline": 1790,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

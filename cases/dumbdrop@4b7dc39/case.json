@@ -1,0 +1,71 @@
+{
+  "name": "dumbdrop",
+  "version": null,
+  "repo": "dumbwareio/dumbdrop",
+  "sha": "4b7dc3971729710f21e351f1745bfa0e673653a6",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-24f2-fv38-3274",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-24891"
+      ],
+      "ghsa": [
+        "GHSA-24f2-fv38-3274"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-276"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/server.js",
+          "startline": 83,
+          "startcol": 15,
+          "endline": 83,
+          "endcol": 58,
+          "range": false,
+          "code": "fs.promises.mkdir(dir, { recursive: true })"
+        },
+        {
+          "file": "package/server.js",
+          "startline": 259,
+          "startcol": 26,
+          "endline": 259,
+          "endcol": 56,
+          "range": false,
+          "code": "fs.createWriteStream(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server.js",
+          "startline": 235,
+          "startcol": 26,
+          "endline": 268,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

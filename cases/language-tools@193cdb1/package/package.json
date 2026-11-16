@@ -1,0 +1,121 @@
+{
+  "name": "prisma-insider",
+  "displayName": "Prisma - Insider",
+  "description": "This is the Insider Build of the Prisma VSCode extension (only use it if you are also using the dev version of the CLI.",
+  "version": "20.0.26",
+  "license": "Apache-2.0",
+  "icon": "logo_white.png",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "publisher": "Prisma",
+  "categories": [
+    "Programming Languages"
+  ],
+  "dependencies": {
+    "checkpoint-client": "1.1.19",
+    "crypto": "1.0.1",
+    "chokidar": "3.5.1",
+    "@prisma/language-server": "20.0.26",
+    "vscode-languageclient": "7.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "2.3.2"
+  },
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/prisma/vscode"
+  },
+  "scripts": {
+    "build": "tsc -p ./",
+    "watch": "npm run build -- -w",
+    "test": "jest",
+    "vscode:prepublish": "cd .. && cd .. && tsc --build --clean && npm run compile",
+    "package": "vsce package"
+  },
+  "main": "./dist/src/extension.js",
+  "activationEvents": [
+    "onLanguage:prisma"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "prisma",
+        "aliases": [
+          "Prisma",
+          "prisma"
+        ],
+        "extensions": [
+          ".prisma"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "prisma",
+        "scopeName": "source.prisma",
+        "path": "./syntaxes/prisma.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "source.js.jsx",
+          "source.tsx",
+          "source.vue"
+        ],
+        "scopeName": "inline.prisma",
+        "path": "./syntaxes/prisma.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.prisma": "prisma"
+        }
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Language server configuration",
+      "properties": {
+        "prisma.prismaFmtBinPath": {
+          "scope": "resource",
+          "type": "string",
+          "description": "Option to set the path to the prisma-fmt binary."
+        },
+        "prisma.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the language server."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "prisma.restartLanguageServer",
+        "title": "Restart Language Server",
+        "category": "Prisma"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/glob": "7.1.3",
+    "@types/mocha": "8.2.1",
+    "@types/vscode": "1.52.0",
+    "mocha": "8.3.2",
+    "ovsx": "0.1.0-next.e000fdb",
+    "semver": "7.3.5",
+    "typescript": "4.2.3",
+    "vsce": "1.87.0",
+    "vscode-test": "1.5.1"
+  },
+  "gitHead": "7d51b157647fe1705813a30d1a77b8ccf136b8d4",
+  "publishConfig": {
+    "access": "public"
+  },
+  "preview": true
+}

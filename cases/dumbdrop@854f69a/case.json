@@ -1,0 +1,70 @@
+{
+  "name": "dumbdrop",
+  "version": null,
+  "repo": "dumbwareio/dumbdrop",
+  "sha": "854f69a0c3b889a7aec126473b26a724c1ef7913",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-rx8m-jqm7-vcgp",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-24971"
+      ],
+      "ghsa": [
+        "GHSA-rx8m-jqm7-vcgp"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/server.js",
+          "startline": 405,
+          "startcol": 15,
+          "endline": 405,
+          "endcol": 68,
+          "range": false,
+          "code": "execAsync(`apprise \"${APPRISE_URL}\" -b \"${message}\"`)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server.js",
+          "startline": 393,
+          "startcol": 1,
+          "endline": 410,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "4ff8469d69019d200046a67d326f51703bc4da63",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/server.js",
+            "startline": 393,
+            "startcol": 1,
+            "endline": 416,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

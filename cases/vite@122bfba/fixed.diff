@@ -1,0 +1,167 @@
+diff --git a/src/node/__tests__/utils.spec.ts b/src/node/__tests__/utils.spec.ts
+index 2382179..519d179 100644
+--- a/src/node/__tests__/utils.spec.ts
++++ b/src/node/__tests__/utils.spec.ts
+@@ -15,6 +15,7 @@ import {
+   getServerUrlByHost,
+   injectQuery,
+   isFileReadable,
++  isParentDirectory,
+   mergeWithDefaults,
+   normalizePath,
+   numberToPos,
+@@ -44,6 +45,33 @@ describe('bareImportRE', () => {
+   })
+ })
+ 
++describe('isParentDirectory', () => {
++  const cases = {
++    '/parent': {
++      '/parent': false,
++      '/parenta': false,
++      '/parent/': true,
++      '/parent/child': true,
++      '/parent/child/child2': true,
++    },
++    '/parent/': {
++      '/parent': false,
++      '/parenta': false,
++      '/parent/': true,
++      '/parent/child': true,
++      '/parent/child/child2': true,
++    },
++  }
++
++  for (const [parent, children] of Object.entries(cases)) {
++    for (const [child, expected] of Object.entries(children)) {
++      test(`isParentDirectory("${parent}", "${child}")`, () => {
++        expect(isParentDirectory(parent, child)).toBe(expected)
++      })
++    }
++  }
++})
++
+ describe('injectQuery', () => {
+   if (isWindows) {
+     // this test will work incorrectly on unix systems
+diff --git a/src/node/preview.ts b/src/node/preview.ts
+index 865b78a..c45e8e2 100644
+--- a/src/node/preview.ts
++++ b/src/node/preview.ts
+@@ -26,6 +26,7 @@ import { notFoundMiddleware } from './server/middlewares/notFound'
+ import { proxyMiddleware } from './server/middlewares/proxy'
+ import {
+   getServerUrlByHost,
++  normalizePath,
+   resolveHostname,
+   resolveServerUrls,
+   setupSIGTERMListener,
+@@ -263,7 +264,8 @@ export async function preview(
+ 
+   if (config.appType === 'spa' || config.appType === 'mpa') {
+     // transform index.html
+-    app.use(indexHtmlMiddleware(distDir, server))
++    const normalizedDistDir = normalizePath(distDir)
++    app.use(indexHtmlMiddleware(normalizedDistDir, server))
+ 
+     // handle 404s
+     app.use(notFoundMiddleware())
+diff --git a/src/node/server/middlewares/__tests__/static.spec.ts b/src/node/server/middlewares/__tests__/static.spec.ts
+new file mode 100644
+index 0000000..f6b8302
+--- /dev/null
++++ b/src/node/server/middlewares/__tests__/static.spec.ts
+@@ -0,0 +1,29 @@
++import { describe, expect, test } from 'vitest'
++import { isFileInTargetPath } from '../static'
++
++describe('isFileInTargetPath', () => {
++  const cases = {
++    '/parent': {
++      '/parent': true,
++      '/parenta': false,
++      '/parent/': true,
++      '/parent/child': true,
++      '/parent/child/child2': true,
++    },
++    '/parent/': {
++      '/parent': false,
++      '/parenta': false,
++      '/parent/': true,
++      '/parent/child': true,
++      '/parent/child/child2': true,
++    },
++  }
++
++  for (const [parent, children] of Object.entries(cases)) {
++    for (const [child, expected] of Object.entries(children)) {
++      test(`isFileInTargetPath("${parent}", "${child}")`, () => {
++        expect(isFileInTargetPath(parent, child)).toBe(expected)
++      })
++    }
++  }
++})
+diff --git a/src/node/server/middlewares/indexHtml.ts b/src/node/server/middlewares/indexHtml.ts
+index 086acb5..34ccabf 100644
+--- a/src/node/server/middlewares/indexHtml.ts
++++ b/src/node/server/middlewares/indexHtml.ts
+@@ -35,6 +35,7 @@ import {
+   isCSSRequest,
+   isDevServer,
+   isJSRequest,
++  isParentDirectory,
+   joinUrlSegments,
+   normalizePath,
+   processSrcSetSync,
+@@ -48,6 +49,7 @@ import {
+   BasicMinimalPluginContext,
+   basePluginContextMeta,
+ } from '../pluginContainer'
++import { checkLoadingAccess, respondWithAccessDenied } from './static'
+ 
+ interface AssetNode {
+   start: number
+@@ -454,7 +456,26 @@ export function indexHtmlMiddleware(
+       if (isDev && url.startsWith(FS_PREFIX)) {
+         filePath = decodeURIComponent(fsPathFromId(url))
+       } else {
+-        filePath = path.join(root, decodeURIComponent(url))
++        filePath = normalizePath(
++          path.resolve(path.join(root, decodeURIComponent(url))),
++        )
++      }
++
++      if (isDev) {
++        const servingAccessResult = checkLoadingAccess(server.config, filePath)
++        if (servingAccessResult === 'denied') {
++          return respondWithAccessDenied(filePath, server, res)
++        }
++        if (servingAccessResult === 'fallback') {
++          return next()
++        }
++        servingAccessResult satisfies 'allowed'
++      } else {
++        // `server.fs` options does not apply to the preview server.
++        // But we should disallow serving files outside the output directory.
++        if (!isParentDirectory(root, filePath)) {
++          return next()
++        }
+       }
+ 
+       if (fs.existsSync(filePath)) {
+diff --git a/src/node/server/middlewares/static.ts b/src/node/server/middlewares/static.ts
+index 80e4444..34c245b 100644
+--- a/src/node/server/middlewares/static.ts
++++ b/src/node/server/middlewares/static.ts
+@@ -268,7 +268,10 @@ export function isFileServingAllowed(
+  * @param targetPath - normalized absolute path
+  * @param filePath - normalized absolute path
+  */
+-function isFileInTargetPath(targetPath: string, filePath: string) {
++export function isFileInTargetPath(
++  targetPath: string,
++  filePath: string,
++): boolean {
+   return (
+     isSameFilePath(targetPath, filePath) ||
+     isParentDirectory(targetPath, filePath)

@@ -1,0 +1,84 @@
+{
+  "name": "handlebars.js",
+  "version": null,
+  "repo": "handlebars-lang/handlebars.js",
+  "sha": "f0589701698268578199be25285b2ebea1c1e427",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-f2jv-r9rf-7988",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-23369"
+      ],
+      "ghsa": [
+        "GHSA-f2jv-r9rf-7988"
+      ],
+      "snyk": [
+        "SNYK-JAVA-ORGWEBJARS-1074950",
+        "SNYK-JAVA-ORGWEBJARSBOWER-1074951",
+        "SNYK-JAVA-ORGWEBJARSNPM-1074952",
+        "SNYK-JS-HANDLEBARS-1056767"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/lib/handlebars/compiler/javascript-compiler.js",
+          "startline": 265,
+          "startcol": 14,
+          "endline": 265,
+          "endcol": 42,
+          "range": false,
+          "code": "Function.apply(this, params)"
+        },
+        {
+          "file": "package/lib/handlebars/compiler/javascript-compiler.js",
+          "startline": 133,
+          "startcol": 27,
+          "endline": 142,
+          "endcol": 11,
+          "range": false,
+          "code": "Function.apply(this, [\n          'fn',\n          'props',\n          'container',\n          'depth0',\n          'data',\n          'blockParams',\n          'depths',\n          this.decorators.merge()\n        ])"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/handlebars/runtime.js",
+          "startline": 49,
+          "startcol": 8,
+          "endline": 312,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b6d3de7123eebba603e321f04afdbae608e8fea8",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/handlebars/runtime.js",
+            "startline": 49,
+            "startcol": 8,
+            "endline": 312,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

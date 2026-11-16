@@ -1,0 +1,96 @@
+doctype html
+
+html
+	head
+		title TTS-API
+		link(rel='stylesheet', href='/css/bootstrap/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/alertify/alertify.min.css')
+		link(rel='stylesheet', href='/css/alertify/default.min.css')
+		script(src='/js/alertify/alertify.min.js')
+		script(src='/js/form.js')
+
+	body
+		div(
+			style='padding-top: 15px; padding-bottom: 15px'
+		).container
+			div.row
+				div.col-12
+					h1 TTS-API
+			div.row
+				div.col-12
+					form
+						div.form-group
+							label Voice
+							div.form-check
+								div.form-check-inline
+									label.form-check-label
+										input.form-check-input(
+											type='radio'
+											name='voice'
+											value='google_speech'
+											checked
+										)
+										span GoogleSpeech
+								div.form-check-inline
+									label.form-check-label
+										input.form-check-input(
+											type='radio'
+											name='voice'
+											value='gtts'
+										)
+										span gTTS
+								div.form-check-inline
+									label.form-check-label
+										input.form-check-input(
+											type='radio'
+											name='voice'
+											value='festival'
+										)
+										span Festival
+								div.form-check-inline
+									label.form-check-label
+										input.form-check-input(
+											type='radio'
+											name='voice'
+											value='espeak'
+										)
+										span eSpeak
+						div.form-group
+							label(for='textToSpeech') Text
+							textarea(
+								id='textToSpeech'
+								type='text'
+								name='textToSpeech'
+								placeholder='Text'
+								autofocus
+								minlength='1'
+								maxlength='1000'
+								required
+							).form-control
+						div.form-group
+							label(for='language') Language
+							input(
+								id='language'
+								type='text'
+								name='language'
+								placeholder='Language'
+								value='es'
+								required
+							).form-control
+						div.form-group
+							label(for='speed') Speed
+							input(
+								id='speed'
+								type='number'
+								name='speed'
+								placeholder='Speed'
+								value='1'
+								min='0.4'
+								max='2'
+								step='0.01'
+								required
+							).form-control
+						button(
+							onclick='onSubmit(event)'
+						).btn.btn-primary
+							span Submit

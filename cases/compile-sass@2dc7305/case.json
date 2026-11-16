@@ -1,0 +1,73 @@
+{
+  "name": "compile-sass",
+  "version": null,
+  "repo": "eiskalteschatten/compile-sass",
+  "sha": "2dc7305ffa6e4230530d7fbbd37c4988df3c34b0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-79qm-h35f-hr77",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10799"
+      ],
+      "ghsa": [
+        "GHSA-79qm-h35f-hr77"
+      ],
+      "snyk": [
+        "SNYK-JS-COMPILESASS-551804",
+        "SNYK-JS-RPI-548942"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 147,
+          "startcol": 7,
+          "endline": 154,
+          "endcol": 9,
+          "range": false,
+          "code": "exec(`rm -r ${cssPath}`, function(error) {\n        if (error) {\n          console.error(error);\n          process.exit(1);\n        }\n\n        console.log('Deleted CSS files');\n      })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 142,
+          "startcol": 8,
+          "endline": 159,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "d9ada7797ff93875b6466dea7a78768e90a0f8d2",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 142,
+            "startcol": 8,
+            "endline": 167,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

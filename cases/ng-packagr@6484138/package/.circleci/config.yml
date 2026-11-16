@@ -1,0 +1,89 @@
+version: 2
+defaults: &defaults
+  docker:
+    - image: circleci/node:10.16-browsers
+  working_directory: ~/repo
+
+attach_options: &attach_options
+  at: ~/repo
+
+jobs:
+  install:
+    <<: *defaults
+    steps:
+      # Checkout, Download and cache dependencies
+      - checkout
+      - restore_cache:
+          keys:
+            - v5-dependencies-{{ checksum "yarn.lock" }}
+            - v5-dependencies-
+      # Install dependencies
+      - run: yarn install --frozen-lockfile --non-interactive
+      - save_cache:
+          key: v5-dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  build_and_test:
+    <<: *defaults
+    steps:
+      - attach_workspace: *attach_options
+      # Build and run tests
+      - run: yarn test
+      - persist_to_workspace:
+          root: ~/repo
+          paths: dist
+
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace: *attach_options
+      - run:
+          name: Deploying package to npm registry
+          command: |
+            # CIRCLE_TAG indicates whether the job runs for the tag (as opposed to: the commit on the branch)
+            if [ -z "${CIRCLE_TAG}" ]; then
+              echo "Skipping deployment. This build job runs for a branch."
+              exit 0
+            fi
+            echo "Deploying..."
+            # The git tag that Circle CI checked out
+            GIT_TAG=$(git tag -l --points-at HEAD)
+            # The npm tag for publishing this release either as "latest" or "next"
+            NPM_TAG=latest
+            if [[ "${GIT_TAG}" =~ v([0-9]+)\.([0-9]+)\.([0-9]+)-([a-zA-Z]+)\..* ]]; then
+              NPM_TAG=next
+            fi
+            # Build, pack and publish to npm registry
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            yarn publish:ci
+            pushd dist
+            npm publish --tag ${NPM_TAG}
+
+workflows:
+  version: 2
+  cirunner:
+    jobs:
+      - install:
+          filters:
+            tags:
+              only: /v.*/
+      - build_and_test:
+          filters:
+            branches:
+              ignore: /gh-pages/
+            tags:
+              only: /v.*/
+          requires:
+            - install
+      - deploy:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v.*/

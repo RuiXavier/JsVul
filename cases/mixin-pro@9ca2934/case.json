@@ -1,0 +1,77 @@
+{
+  "name": "mixin-pro",
+  "version": null,
+  "repo": "floatinghotpot/mixin-pro",
+  "sha": "9ca293455d6bb7cd163785afc157cbfcb9a6d957",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "npm:mixin-pro:20160407",
+      "from": "jsvul",
+      "cve": [],
+      "ghsa": [],
+      "snyk": [
+        "npm:mixin-pro:20160407"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/mixin.js",
+          "startline": 161,
+          "startcol": 3,
+          "endline": 161,
+          "endcol": 12,
+          "range": false,
+          "code": "eval(str)"
+        },
+        {
+          "file": "package/mixin.js",
+          "startline": 162,
+          "startcol": 10,
+          "endline": 162,
+          "endcol": 20,
+          "range": false,
+          "code": "eval(name)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/mixin.js",
+          "startline": 159,
+          "startcol": 1,
+          "endline": 163,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "8bb355209f0a082d24b04355b3e8051a6455454f",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/mixin.js",
+            "startline": 159,
+            "startcol": 1,
+            "endline": 166,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

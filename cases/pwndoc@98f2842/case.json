@@ -1,0 +1,72 @@
+{
+  "name": "pwndoc",
+  "version": null,
+  "repo": "pwndoc/pwndoc",
+  "sha": "98f284291d73d3a0b11d3181d845845c192d1080",
+  "subdir": "backend",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/app.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-r3vj-47cf-4672",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-27413"
+      ],
+      "ghsa": [
+        "GHSA-r3vj-47cf-4672"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/routes/template.js",
+          "startline": 65,
+          "startcol": 22,
+          "endline": 65,
+          "endcol": 106,
+          "range": false,
+          "code": "fs.unlinkSync(`${__basedir}/../report-templates/${data.name}.${data.ext || 'docx'}`)"
+        },
+        {
+          "file": "package/src/routes/template.js",
+          "startline": 66,
+          "startcol": 17,
+          "endline": 66,
+          "endcol": 110,
+          "range": false,
+          "code": "fs.writeFileSync(`${__basedir}/../report-templates/${data.name}.${req.body.ext}`, fileBuffer)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/routes/template.js",
+          "startline": 1,
+          "startcol": 18,
+          "endline": 113,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

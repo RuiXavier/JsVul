@@ -1,0 +1,68 @@
+{
+  "name": "genieacs",
+  "version": null,
+  "repo": "genieacs/genieacs",
+  "sha": "2ac536bf8f2dd03c24b2eff35b69578b4efae94e",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/bin/genieacs-ui.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-46704",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-46704"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/ping.ts",
+          "startline": 62,
+          "startcol": 3,
+          "endline": 93,
+          "endcol": 5,
+          "range": false,
+          "code": "exec(cmd, (err, stdout) => {\n    let parsed: PingResult;\n    if (stdout) {\n      const m1 = stdout.match(parseRegExp1);\n      if (m1) {\n        parsed = {\n          packetsTransmitted: +m1[1],\n          packetsReceived: +m1[2],\n          packetLoss: +m1[3],\n          min: +m1[4],\n          avg: +m1[5],\n          max: +m1[6],\n          mdev: +m1[7],\n        };\n      } else {\n        const m2 = stdout.match(parseRegExp2);\n        if (m2) {\n          parsed = {\n            packetsTransmitted: +m2[1],\n            packetsReceived: +m2[2],\n            packetLoss: +m2[3],\n            min: null,\n            avg: null,\n            max: null,\n            mdev: null,\n          };\n        }\n      }\n    }\n\n    callback(err, parsed, stdout);\n  })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/ping.ts",
+          "startline": 33,
+          "startcol": 8,
+          "endline": 94,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7f295beeecc1c1f14308a93c82413bb334045af6",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/ping.ts",
+            "startline": 43,
+            "startcol": 8,
+            "endline": 107,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

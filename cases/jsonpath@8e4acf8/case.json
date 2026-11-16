@@ -1,0 +1,72 @@
+{
+  "name": "jsonpath",
+  "version": null,
+  "repo": "jsonpath-plus/jsonpath",
+  "sha": "8e4acf8aff5f446aa66323e12394ac5615c3b260",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/jsonpath-node.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-hw8r-x6gr-5gjp",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-1302"
+      ],
+      "ghsa": [
+        "GHSA-hw8r-x6gr-5gjp"
+      ],
+      "snyk": [
+        "SNYK-JS-JSONPATHPLUS-8719585"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/Safe-Script.js",
+          "startline": 158,
+          "startcol": 16,
+          "endline": 158,
+          "endcol": 29,
+          "range": false,
+          "code": "func(...args)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/Safe-Script.js",
+          "startline": 117,
+          "startcol": 5,
+          "endline": 137,
+          "endcol": 5,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "30942896d27cb8a806b965a5ca9ef9f686be24ee",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/Safe-Script.js",
+            "startline": 117,
+            "startcol": 5,
+            "endline": 142,
+            "endcol": 5,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

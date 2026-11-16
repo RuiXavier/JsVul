@@ -1,0 +1,64 @@
+{
+  "name": "node-degenerator",
+  "version": null,
+  "repo": "tootallnate/node-degenerator",
+  "sha": "7ad1041853551e393439003a10da56c605115652",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9j49-mfvp-vmhm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-23406"
+      ],
+      "ghsa": [
+        "GHSA-9j49-mfvp-vmhm"
+      ],
+      "snyk": [
+        "SNYK-JAVA-ORGWEBJARSNPM-1568506",
+        "SNYK-JS-PACRESOLVER-1564857"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/index.ts",
+          "startline": 139,
+          "startcol": 14,
+          "endline": 143,
+          "endcol": 4,
+          "range": false,
+          "code": "runInNewContext(\n\t\t\t`${compiled};${returnName}`,\n\t\t\toptions.sandbox,\n\t\t\toptions\n\t\t)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "852043f9621f098ccf3a577a1d9a2ed0de20f402",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/index.ts",
+            "startline": 141,
+            "startcol": 14,
+            "endline": 141,
+            "endcol": 49,
+            "range": false,
+            "code": "vm.run(`${compiled};${returnName}`)"
+          }
+        ]
+      }
+    }
+  ]
+}

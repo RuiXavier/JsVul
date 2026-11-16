@@ -1,0 +1,197 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.4.0
+
+defaults: &defaults
+  parameters:
+    node_version:
+      type: string
+      default: ""
+    elixir_version:
+      type: string
+      default: ""
+  working_directory: ~/snyk-hex-plugin
+
+windows_defaults: &windows_defaults
+  environment:
+    npm_config_loglevel: silent
+  executor:
+    name: win/default
+
+commands:
+  install_node_npm_via_nvm:
+    description: Install Node for when nvm is present
+    parameters:
+      node_version:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Install node@<< parameters.node_version >> (via nvm)
+          command: nvm install << parameters.node_version >>
+      - run:
+          name: Use node@<< parameters.node_version >> (via nvm)
+          command: nvm use << parameters.node_version >>
+  install_deps:
+    description: Install dependencies
+    steps:
+      - run:
+          name: Install dependencies
+          command: npm install
+  install_node_npm_and_nvm:
+    description: Install correct Node version
+    parameters:
+      node_version:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: install node@<< parameters.node_version >>
+          command: |
+            cd ~
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+            nvm install << parameters.node_version >>
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> $BASH_ENV
+            echo 'nvm use << parameters.node_version >>' >> $BASH_ENV
+  show_node_version:
+    description: Log Node and npm version
+    steps:
+      - run:
+          name: Node version
+          command: node --version
+      - run:
+          name: NPM version
+          command: npm --version
+  install_elixir_windows:
+    description: Install Elixir
+    parameters:
+      elixir_version:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Installing Scoop
+          command: iex "& {$(irm get.scoop.sh)} -RunAsAdmin"
+      - run:
+          name: Installing Erlang
+          command: scoop install erlang@24.3.4.4
+      - run:
+          name: Installing Elixir
+          command: scoop install elixir@<< parameters.elixir_version >>
+  setup_snyk_user:
+    steps:
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+  setup_snyk_user_windows:
+    steps:
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo //registry.npmjs.org/:_authToken=%NPM_TOKEN% >> .npmrc
+
+jobs:
+  lint:
+    <<: *defaults
+    docker:
+      - image: cimg/node:<< parameters.node_version >>
+    steps:
+      - checkout
+      - setup_snyk_user
+      - install_deps
+      - show_node_version
+      - run:
+          name: Run lint
+          command: npm run lint
+
+  test-windows:
+    <<: *defaults
+    <<: *windows_defaults
+    environment:
+      Go: << parameters.elixir_version >>
+    steps:
+      - run: git config --global core.autocrlf false
+      - checkout
+      - setup_snyk_user_windows
+      - install_node_npm_via_nvm:
+          node_version: << parameters.node_version >>
+      - install_elixir_windows:
+          elixir_version: << parameters.elixir_version >>
+      - show_node_version
+      - install_deps
+      - run:
+          name: Run tests
+          command: npm test
+
+  test-unix:
+    <<: *defaults
+    docker:
+      - image: cimg/elixir:<< parameters.elixir_version >>
+    steps:
+      - checkout
+      - setup_snyk_user
+      - install_node_npm_and_nvm:
+          node_version: << parameters.node_version >>
+      - show_node_version
+      - install_deps
+      - run:
+          name: Run tests
+          command: npm test
+
+  release:
+    <<: *defaults
+    docker:
+      - image: cimg/node:<< parameters.node_version >>
+    resource_class: small
+    steps:
+      - checkout
+      - setup_snyk_user
+      - install_deps
+      - run:
+          name: Publish to GitHub
+          command: npx semantic-release
+
+workflows:
+  version: 2
+  test_and_release:
+    jobs:
+      - lint:
+          name: Lint
+          context: nodejs-install
+          node_version: "16.13.2"
+      - test-unix:
+          name: Unix with node v<< matrix.node_version >>, elixir v<< matrix.elixir_version >>
+          context: nodejs-install
+          requires:
+            - Lint
+          matrix:
+            parameters:
+              node_version: ["12.22.11", "14.20.0", "16.13.2"]
+              elixir_version: [ "1.14.1", "1.13.1", "1.12.1"]
+      - test-windows:
+          name: Windows with node v<< matrix.node_version >>, elixir v<< matrix.elixir_version >>
+          context: nodejs-install
+          requires:
+            - Lint
+          matrix:
+            parameters:
+              node_version: ["12.22.11", "14.20.0", "16.13.2"]
+              elixir_version: [ "1.14.1", "1.13.1", "1.12.1"]
+
+      # Release
+      - release:
+          name: Release
+          context: nodejs-app-release
+          node_version: "16.13.2"
+          requires:
+            - test-unix
+            - test-windows
+          filters:
+            branches:
+              only:
+                - master

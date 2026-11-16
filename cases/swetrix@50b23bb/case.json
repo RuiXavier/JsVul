@@ -1,0 +1,88 @@
+{
+  "name": "swetrix",
+  "version": null,
+  "repo": "swetrix/swetrix",
+  "sha": "50b23bbdfb35e7be03145f2dc89504825ff0c4e3",
+  "subdir": "backend",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/apps/cloud/src/main.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-59304",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-59304"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/apps/cloud/src/marketplace/cdn/cdn.service.ts",
+          "startline": 24,
+          "startcol": 13,
+          "endline": 24,
+          "endcol": 45,
+          "range": false,
+          "code": "writeFile(filePath, file.buffer)"
+        },
+        {
+          "file": "package/apps/cloud/src/marketplace/cdn/cdn.service.ts",
+          "startline": 28,
+          "startcol": 27,
+          "endline": 28,
+          "endcol": 53,
+          "range": false,
+          "code": "createReadStream(filePath)"
+        },
+        {
+          "file": "package/apps/cloud/src/marketplace/cdn/cdn.service.ts",
+          "startline": 35,
+          "startcol": 13,
+          "endline": 35,
+          "endcol": 29,
+          "range": false,
+          "code": "unlink(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/apps/cloud/src/marketplace/cdn/cdn.service.ts",
+          "startline": 21,
+          "startcol": 3,
+          "endline": 43,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7d8b972630f93a46577f50206074c66082e910ee",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/apps/cloud/src/marketplace/cdn/cdn.service.ts",
+            "startline": 23,
+            "startcol": 3,
+            "endline": 48,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

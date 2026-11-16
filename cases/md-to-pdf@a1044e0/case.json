@@ -1,0 +1,72 @@
+{
+  "name": "md-to-pdf",
+  "version": null,
+  "repo": "simonhaenisch/md-to-pdf",
+  "sha": "a1044e0b6e9064970b6575fe3230d40c72b039ff",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-x949-7cm6-fm6p",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-23639"
+      ],
+      "ghsa": [
+        "GHSA-x949-7cm6-fm6p"
+      ],
+      "snyk": [
+        "SNYK-JS-MDTOPDF-1657880"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/gray-matter/lib/engines.js",
+          "startline": 43,
+          "startcol": 14,
+          "endline": 43,
+          "endcol": 23,
+          "range": false,
+          "code": "eval(str)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/lib/md-to-pdf.ts",
+          "startline": 16,
+          "startcol": 31,
+          "endline": 102,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "a716259c548c82fa1d3b14a3422e9100619d2d8a",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/md-to-pdf.ts",
+            "startline": 16,
+            "startcol": 31,
+            "endline": 109,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

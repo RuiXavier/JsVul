@@ -1,0 +1,52 @@
+{
+  "name": "npm",
+  "version": null,
+  "repo": "npm/npm",
+  "sha": "e3007309aa93e94b69b5094fa1b11070b2ef993c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2013-4116",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2013-4116"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-59"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/lib/npm.js",
+          "startline": 1,
+          "startcol": 3,
+          "endline": 513,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "sourceKinds": [
+        "file"
+      ],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "name": "filesystem-template",
+  "version": null,
+  "repo": "acrontum/filesystem-template",
+  "sha": "7883cb4e87c1bd2bf276f741fa8eeaa2af7565c7",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-m2fc-9h5m-29cm",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-21186"
+      ],
+      "ghsa": [
+        "GHSA-m2fc-9h5m-29cm"
+      ],
+      "snyk": [
+        "SNYK-JS-ACRONTUMFILESYSTEMTEMPLATE-2419071"
+      ],
+      "cwe": [
+        "CWE-77"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/lib/file-utils.ts",
+          "startline": 259,
+          "startcol": 13,
+          "endline": 259,
+          "endcol": 64,
+          "range": false,
+          "code": "exec(`git remote add -f origin ${origin}`, { cwd })"
+        },
+        {
+          "file": "package/src/lib/file-utils.ts",
+          "startline": 277,
+          "startcol": 11,
+          "endline": 277,
+          "endcol": 53,
+          "range": false,
+          "code": "exec(`git pull origin ${branch}`, { cwd })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/lib/file-utils.ts",
+          "startline": 240,
+          "startcol": 26,
+          "endline": 284,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "baeb727b60991ad82d9e63ac660883793abc0acc",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/file-utils.ts",
+            "startline": 240,
+            "startcol": 26,
+            "endline": 284,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

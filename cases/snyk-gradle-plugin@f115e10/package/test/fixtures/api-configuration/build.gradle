@@ -1,0 +1,11 @@
+configurations {
+    api
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  api 'commons-httpclient:commons-httpclient:3.1'
+}

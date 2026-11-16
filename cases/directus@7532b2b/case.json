@@ -1,0 +1,114 @@
+{
+  "name": "directus",
+  "version": null,
+  "repo": "directus/directus",
+  "sha": "7532b2b8fc8dbb6eeaa9bdd72ec8eefa2eb2a95c",
+  "subdir": "api",
+  "siblings": {
+    "@directus/app": "app",
+    "@directus/composables": "packages/composables",
+    "@directus/constants": "packages/constants",
+    "@directus/env": "packages/env",
+    "@directus/errors": "packages/errors",
+    "@directus/extensions": "packages/extensions",
+    "@directus/extensions-registry": "packages/extensions-registry",
+    "@directus/extensions-sdk": "packages/extensions-sdk",
+    "@directus/format-title": "packages/format-title",
+    "@directus/memory": "packages/memory",
+    "@directus/pressure": "packages/pressure",
+    "@directus/schema": "packages/schema",
+    "@directus/schema-builder": "packages/schema-builder",
+    "@directus/specs": "packages/specs",
+    "@directus/storage": "packages/storage",
+    "@directus/storage-driver-azure": "packages/storage-driver-azure",
+    "@directus/storage-driver-cloudinary": "packages/storage-driver-cloudinary",
+    "@directus/storage-driver-gcs": "packages/storage-driver-gcs",
+    "@directus/storage-driver-local": "packages/storage-driver-local",
+    "@directus/storage-driver-s3": "packages/storage-driver-s3",
+    "@directus/storage-driver-supabase": "packages/storage-driver-supabase",
+    "@directus/system-data": "packages/system-data",
+    "@directus/themes": "packages/themes",
+    "@directus/types": "packages/types",
+    "@directus/update-check": "packages/update-check",
+    "@directus/utils": "packages/utils",
+    "@directus/validation": "packages/validation",
+    "directus": "directus"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.ts",
+    "package/src/services/files.ts",
+    "package/src/storage/get-storage-driver.ts",
+    "package/node_modules/@directus/storage-driver-local/src/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-mv33-9f6j-pfmc",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-55746"
+      ],
+      "ghsa": [
+        "GHSA-mv33-9f6j-pfmc"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-434",
+        "CWE-73"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/@directus/storage-driver-local/src/index.ts",
+          "startline": 28,
+          "startcol": 9,
+          "endline": 28,
+          "endcol": 44,
+          "range": false,
+          "code": "mkdir(dirpath, { recursive: true })"
+        },
+        {
+          "file": "package/node_modules/@directus/storage-driver-local/src/index.ts",
+          "startline": 83,
+          "startcol": 23,
+          "endline": 83,
+          "endcol": 50,
+          "range": false,
+          "code": "createWriteStream(fullPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/services/files.ts",
+          "startline": 36,
+          "startcol": 2,
+          "endline": 194,
+          "endcol": 2,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "d84dcc36f75fc5c858d43746b8f9c426c38d696b",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/services/files.ts",
+            "startline": 36,
+            "startcol": 2,
+            "endline": 201,
+            "endcol": 2,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

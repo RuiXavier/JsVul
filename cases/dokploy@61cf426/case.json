@@ -1,0 +1,62 @@
+{
+  "name": "dokploy",
+  "version": null,
+  "repo": "dokploy/dokploy",
+  "sha": "61cf426615a4aa095b150362526aa52f2d1ea115",
+  "subdir": "packages/server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-vq94-qm94-mxp6",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-53375"
+      ],
+      "ghsa": [
+        "GHSA-vq94-qm94-mxp6"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/utils/traefik/application.ts",
+          "startline": 186,
+          "startcol": 28,
+          "endline": 186,
+          "endcol": 74,
+          "range": false,
+          "code": "execAsyncRemote(serverId, `cat ${configPath}`)"
+        },
+        {
+          "file": "package/src/utils/traefik/application.ts",
+          "startline": 191,
+          "startcol": 19,
+          "endline": 191,
+          "endcol": 54,
+          "range": false,
+          "code": "fs.readFileSync(configPath, \"utf8\")"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

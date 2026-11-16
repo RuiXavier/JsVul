@@ -1,0 +1,64 @@
+{
+  "name": "convert-svg",
+  "version": null,
+  "repo": "neocotic/convert-svg",
+  "sha": "5e39f45a5f8011f0a17d3ec3407d40d1cf49a45d",
+  "subdir": "packages/convert-svg-core",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-5gxc-fxcr-9326",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25759"
+      ],
+      "ghsa": [
+        "GHSA-5gxc-fxcr-9326"
+      ],
+      "snyk": [
+        "SNYK-JS-CONVERTSVGCORE-2849633"
+      ],
+      "cwe": [
+        "CWE-94"
+      ],
+      "class": "code-injection",
+      "sinks": [
+        {
+          "file": "package/src/Converter.js",
+          "startline": 214,
+          "startcol": 24,
+          "endline": 214,
+          "endcol": 44,
+          "range": false,
+          "code": "this[_getPage](html)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "7e6031ac7427cf82cf312cb4a25040f2e6efe7a5",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/Converter.js",
+            "startline": 212,
+            "startcol": 24,
+            "endline": 212,
+            "endcol": 43,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

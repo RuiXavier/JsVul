@@ -1,0 +1,50 @@
+{
+  "name": "mcp-remote",
+  "version": null,
+  "repo": "geelen/mcp-remote",
+  "sha": "3ad0fc047653e15b29b01d122848a729feb4ec78",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "mcp",
+  "entry": [
+    "package/src/proxy.ts",
+    "package/src/client.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2025-6514",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-6514"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/open/index.js",
+          "startline": 250,
+          "startcol": 21,
+          "endline": 250,
+          "endcol": 83,
+          "range": false,
+          "code": "childProcess.spawn(command, cliArguments, childProcessOptions)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "607b226a356cb61a239ffaba2fb3db1c9dea4bac",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

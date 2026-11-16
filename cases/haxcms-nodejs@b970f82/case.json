@@ -1,0 +1,53 @@
+{
+  "name": "haxcms-nodejs",
+  "version": null,
+  "repo": "haxtheweb/haxcms-nodejs",
+  "sha": "b970f827d57db97c25784764be8a66096fdc05c6",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/index.js",
+    "package/src/local.js",
+    "package/src/cli.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-g4cf-pp4x-hqgw",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-49141"
+      ],
+      "ghsa": [
+        "GHSA-g4cf-pp4x-hqgw"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/git-interface/dist/index.js",
+          "startline": 27,
+          "startcol": 31,
+          "endline": 27,
+          "endcol": 91,
+          "range": false,
+          "code": "child_process_1.spawn('git', commandArgs, { cwd: this.dir })"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "5131fea6b6be611db76a618f89bd2e164752e9b3",
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

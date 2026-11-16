@@ -1,0 +1,72 @@
+{
+  "name": "ng-packagr",
+  "version": null,
+  "repo": "ng-packagr/ng-packagr",
+  "sha": "6484138a4fe24f09dd5b4a7d2b21d970139b60e0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/src/public_api.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-qm28-7hqv-wg5j",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7735"
+      ],
+      "ghsa": [
+        "GHSA-qm28-7hqv-wg5j"
+      ],
+      "snyk": [
+        "SNYK-JS-NGPACKAGR-1012427"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/lib/styles/stylesheet-processor.ts",
+          "startline": 83,
+          "startcol": 16,
+          "endline": 83,
+          "endcol": 29,
+          "range": false,
+          "code": "execSync(cmd)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/lib/styles/stylesheet-processor.ts",
+          "startline": 58,
+          "startcol": 3,
+          "endline": 103,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "bda0fff3443301f252930a73fdc8fb9502de596d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/styles/stylesheet-processor.ts",
+            "startline": 58,
+            "startcol": 3,
+            "endline": 103,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

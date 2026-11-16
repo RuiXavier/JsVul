@@ -1,0 +1,51 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "2e929387c3e6c00abbbca586d91ae5aecd979b84",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2m8v-572m-ff2v",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-21315"
+      ],
+      "ghsa": [
+        "GHSA-2m8v-572m-ff2v"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/processes.js",
+          "startline": 884,
+          "startcol": 1,
+          "endline": 1206,
+          "endcol": 1,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

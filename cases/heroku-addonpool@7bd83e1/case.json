@@ -1,0 +1,90 @@
+{
+  "name": "heroku-addonpool",
+  "version": null,
+  "repo": "nodef/heroku-addonpool",
+  "sha": "7bd83e1650d8d6e6b8b436c5367c8cd27c4fcb3c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-3q9x-w53p-jg53",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-7634"
+      ],
+      "ghsa": [
+        "GHSA-3q9x-w53p-jg53"
+      ],
+      "snyk": [
+        "SNYK-JS-HEROKUADDONPOOL-564428"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 24,
+          "startcol": 7,
+          "endline": 32,
+          "endcol": 9,
+          "range": false,
+          "code": "cp.exec(`~/heroku addons:info ${key} --app ${app}`, (err, stdout) => {\n        if(err) return frej(err);\n        for(var r of stdout.toString().match(/[^\\r\\n]+/g)) {\n          var k = _camel(r.startsWith('=')? 'name' : r.split(':')[0]);\n          val[k] = r.substring(r.match(/[\\S\\s]+(=|:)\\s+/g)[0].length);\n        }\n        supply.set(key, val);\n        fres(key);\n      })"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 38,
+          "startcol": 7,
+          "endline": 44,
+          "endcol": 9,
+          "range": false,
+          "code": "cp.exec(`~/heroku config -s --app ${app}`, (err, stdout) => {\n        if(err) return frej(err);\n        var pro = Promise.resolve();\n        for(var cfg of stdout.toString().match(/[^\\r\\n]+/g)||[])\n          ((val) => pro = pro.then(() => supplySetOne(val)))(cfg);\n        pro.then(() => fres(supply));\n      })"
+        },
+        {
+          "file": "package/index.js",
+          "startline": 75,
+          "startcol": 40,
+          "endline": 83,
+          "endcol": 6,
+          "range": false,
+          "code": "cp.exec(\n      `~/heroku addons:destroy ${key} -a ${app} --confirm ${app} >/dev/null && `+\n      `~/heroku addons:create ${plan} --as ${key} -a ${app} >/dev/null && `+\n      `~/heroku config -s -a ${app} | grep ^${key}`,\n      (err, stdout) => {\n        const r = stdout.toString();\n        fres(supply.get(key).value = r.substring(r.indexOf('=')+2, r.length-2));\n      }\n    )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 5,
+          "startcol": 18,
+          "endline": 117,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "b1a5b316473ac92d783f3d54ee048d54082da38d",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/index.js",
+            "startline": 9,
+            "startcol": 18,
+            "endline": 122,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

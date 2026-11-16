@@ -1,0 +1,73 @@
+{
+  "name": "librechat",
+  "version": null,
+  "repo": "danny-avila/librechat",
+  "sha": "3c94ff2c04651f3192006cf1718d10f273e14e13",
+  "subdir": "api",
+  "siblings": {
+    "librechat-data-provider": "packages/data-provider"
+  },
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/server/index.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-11170",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-11170"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-115",
+        "CWE-29"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/node_modules/multer/storage/disk.js",
+          "startline": 38,
+          "startcol": 23,
+          "endline": 38,
+          "endcol": 54,
+          "range": false,
+          "code": "fs.createWriteStream(finalPath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/server/routes/files/multer.js",
+          "startline": 16,
+          "startcol": 13,
+          "endline": 20,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "00d204e9379b94839886320718594e097490e1a0",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/server/routes/files/multer.js",
+            "startline": 16,
+            "startcol": 13,
+            "endline": 21,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "tts-api",
+  "version": null,
+  "repo": "pedroetb/tts-api",
+  "sha": "7bf548835becc04fa07a8622fd89e29a6b797a02",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2019-25158",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-25158"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/app.js",
+          "startline": 46,
+          "startcol": 3,
+          "endline": 46,
+          "endcol": 17,
+          "range": false,
+          "code": "exec(cmd, cbk)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

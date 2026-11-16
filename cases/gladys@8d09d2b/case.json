@@ -1,0 +1,70 @@
+{
+  "name": "gladys",
+  "version": null,
+  "repo": "gladysassistant/gladys",
+  "sha": "8d09d2be050b4f505fefe4b2528f9b9b1d07f830",
+  "subdir": "server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2023-43256",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2023-43256"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/services/rtsp-camera/api/rtspCamera.controller.js",
+          "startline": 61,
+          "startcol": 26,
+          "endline": 61,
+          "endcol": 55,
+          "range": false,
+          "code": "fs.createReadStream(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/services/rtsp-camera/api/rtspCamera.controller.js",
+          "startline": 8,
+          "startcol": 18,
+          "endline": 99,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "f27d0ea4689c3deca5739b5f9ed45a2ddbf00b7b",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/services/rtsp-camera/api/rtspCamera.controller.js",
+            "startline": 9,
+            "startcol": 18,
+            "endline": 105,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "name": "headlamp",
+  "version": null,
+  "repo": "kubernetes-sigs/headlamp",
+  "sha": "e6cec4d3b48bc36bd3ac8255773cab5336e9d7cd",
+  "subdir": "app",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/electron/main.ts",
+    "package/mac/scripts/codeSign.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-34rf-485x-g5h7",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2025-53542"
+      ],
+      "ghsa": [
+        "GHSA-34rf-485x-g5h7"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78",
+        "CWE-88"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/mac/scripts/codeSign.js",
+          "startline": 17,
+          "startcol": 5,
+          "endline": 19,
+          "endcol": 6,
+          "range": false,
+          "code": "execSync(\n      `codesign -s ${teamID} --deep --force --options runtime --entitlements ${entitlementsPath} ${config.app}`\n    )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/mac/scripts/codeSign.js",
+          "startline": 5,
+          "startcol": 19,
+          "endline": 25,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "5bc0a9dd87acdf1e04be14619acde687eefa35fb",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/mac/scripts/codeSign.js",
+            "startline": 5,
+            "startcol": 19,
+            "endline": 26,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

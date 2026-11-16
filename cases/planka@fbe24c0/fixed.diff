@@ -1,0 +1,45 @@
+diff --git a/api/controllers/attachments/download-thumbnail.js b/api/controllers/attachments/download-thumbnail.js
+index 9da37b7..9233be8 100644
+--- a/api/controllers/attachments/download-thumbnail.js
++++ b/api/controllers/attachments/download-thumbnail.js
+@@ -14,10 +14,6 @@ module.exports = {
+       regex: /^[0-9]+$/,
+       required: true,
+     },
+-    filename: {
+-      type: 'string',
+-      required: true,
+-    },
+   },
+ 
+   exits: {
+@@ -54,14 +50,14 @@ module.exports = {
+       sails.config.custom.attachmentsPath,
+       attachment.dirname,
+       'thumbnails',
+-      inputs.filename,
++      'cover-256.jpg',
+     );
+ 
+     if (!fs.existsSync(filePath)) {
+       throw Errors.ATTACHMENT_NOT_FOUND;
+     }
+ 
+-    this.res.type(attachment.filename);
++    this.res.type('image/jpeg');
+     this.res.set('Cache-Control', 'private, max-age=900'); // TODO: move to config
+ 
+     return exits.success(fs.createReadStream(filePath));
+diff --git a/config/routes.js b/config/routes.js
+index 1bcd4db..3302c62 100644
+--- a/config/routes.js
++++ b/config/routes.js
+@@ -80,7 +80,7 @@ module.exports.routes = {
+     skipAssets: false,
+   },
+ 
+-  'GET /attachments/:id/download/thumbnails/:filename': {
++  'GET /attachments/:id/download/thumbnails/cover-256.jpg': {
+     action: 'attachments/download-thumbnail',
+     skipAssets: false,
+   },

@@ -1,0 +1,65 @@
+{
+  "name": "git-diff-apply",
+  "version": null,
+  "repo": "kellyselden/git-diff-apply",
+  "sha": "bfcc903a961d9f17bde1889cf49745a2dffefd73",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-84cm-v6jp-gjmr",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10776"
+      ],
+      "ghsa": [
+        "GHSA-84cm-v6jp-gjmr"
+      ],
+      "snyk": [
+        "SNYK-JS-GITDIFFAPPLY-540774",
+        "SNYK-JS-GITDIFFAPPLY-540774,",
+        "SNYK-JS-SCP-1009828",
+        "npm:command-exists:20180512"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/src/run.js",
+          "startline": 10,
+          "startcol": 26,
+          "endline": 10,
+          "endcol": 55,
+          "range": false,
+          "code": "execPromise(command, options)"
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "106d61d3ae723b4257c2a13e67b95eb40a27e0b5",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/run.js",
+            "startline": 10,
+            "startcol": 26,
+            "endline": 10,
+            "endcol": 54,
+            "range": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "uptime-kuma",
+  "version": null,
+  "repo": "louislam/uptime-kuma",
+  "sha": "32dc76a08515c3730ddaa11153004225f8d7e53b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/server/server.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-2qgm-m29m-cj2h",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2024-56331"
+      ],
+      "ghsa": [
+        "GHSA-2qgm-m29m-cj2h"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/server/monitor-types/real-browser-monitor-type.js",
+          "startline": 191,
+          "startcol": 5,
+          "endline": 218,
+          "endcol": 5,
+          "range": true,
+          "code": null
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "6cfae01a0d3727c517afe512fc8fec1d99acf875",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/server/monitor-types/real-browser-monitor-type.js",
+            "startline": 191,
+            "startcol": 5,
+            "endline": 226,
+            "endcol": 5,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

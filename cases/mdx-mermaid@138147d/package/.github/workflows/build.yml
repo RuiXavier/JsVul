@@ -1,0 +1,59 @@
+name: build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  release:
+    branches: [main]
+
+jobs:
+  checks:
+    if: github.event_name != 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Build
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+      - name: Test
+        run: |
+          yarn test
+      - name: Build docs
+        run: |
+          cd doc
+          yarn install --frozen-lockfile
+          yarn build
+          cd ..
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  gh-release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - uses: webfactory/ssh-agent@v0.5.0
+        with:
+          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+      - name: Release to GitHub Pages
+        env:
+          USE_SSH: true
+          GIT_USER: git
+        run: |
+          git config --global user.email "oss@samuelwall.co.uk"
+          git config --global user.name "sjwall"
+          yarn install --frozen-lockfile
+          yarn build
+          cd doc
+          yarn install --frozen-lockfile
+          yarn deploy

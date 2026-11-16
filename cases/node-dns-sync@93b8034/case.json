@@ -1,0 +1,71 @@
+{
+  "name": "node-dns-sync",
+  "version": null,
+  "repo": "skoranga/node-dns-sync",
+  "sha": "93b8034e9475ae65102dac15fffe065616fede1b",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package/lib/dns-sync.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-wh69-wc6q-7888",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-11079"
+      ],
+      "ghsa": [
+        "GHSA-wh69-wc6q-7888"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-77",
+        "CWE-94"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/node_modules/shelljs/src/exec-child.js",
+          "startline": 19,
+          "startcol": 9,
+          "endline": 27,
+          "endcol": 3,
+          "range": false,
+          "code": "childProcess.exec(cmd, execOptions, function (err) {\n  if (!err) {\n    process.exitCode = 0;\n  } else if (err.code === undefined) {\n    process.exitCode = 1;\n  } else {\n    process.exitCode = err.code;\n  }\n})"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/dns-sync.js",
+          "startline": 22,
+          "startcol": 14,
+          "endline": 40,
+          "endcol": 5,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "cb10a5ac7913eacc031ade7d91596277f31645dc",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/dns-sync.js",
+            "startline": 36,
+            "startcol": 14,
+            "endline": 58,
+            "endcol": 5,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

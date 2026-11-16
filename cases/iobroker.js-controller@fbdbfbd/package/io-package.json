@@ -1,0 +1,542 @@
+{
+    "common": {
+        "name": "js-controller",
+        "version": "2.0.22",
+        "platform": "Javascript/Node.js",
+        "controller": true,
+        "title": "JS controller",
+        "titleLang": {
+            "en": "JS controller",
+            "de": "JS-Controller",
+            "ru": "Контроллер JS",
+            "pt": "Controlador JS",
+            "nl": "JS-controller",
+            "fr": "Contrôleur JS",
+            "it": "Controller JS",
+            "es": "Controlador JS",
+            "pl": "Kontroler JS",
+            "zh-cn": "JS控制器"
+        },
+        "news": {
+            "2.0.22": {
+              "en": "see CHANGELOG.md",
+              "de": "Sehe CHANGELOG.md",
+              "ru": "см. CHANGELOG.md",
+              "pt": "veja CHANGELOG.md",
+              "nl": "zie CHANGELOG.md",
+              "fr": "voir CHANGELOG.md",
+              "it": "vedi CHANGELOG.md",
+              "es": "ver CHANGELOG.md",
+              "pl": "zobacz CHANGELOG.md"
+            },
+            "1.5.13": {
+                "en": "Make sure Info Adapter tab is displayed automatically on install\nOptimize messages for CLI host commands\nReplace winston-syslog dependency to prevent build errors on node.js 10+ when installing or updating iobroker\nRefresh of default SSL certificates",
+                "de": "Sicherstellen, dass die Registerkarte Info Adapter bei der Installation automatisch angezeigt wird.\nMeldungen für CLI-Hostbefehle optimiert.\nZur Vermeidung von Buildfehler unter node.js 10+ wurde die Abhängigkeit zu winston-syslog angepasst.\nAktualisierung der Standard SSL-Zertifikate für den Admin.",
+                "ru": "Убедитесь, что вкладка Info Adapter отображается автоматически при установке\nОптимизировать сообщения для команд хоста CLI\nЗаменить зависимость winston-syslog, чтобы предотвратить ошибки сборки на node.js 10+ при установке или обновлении iobroker\nОбновить сертификаты по умолчанию",
+                "pt": "Certifique-se de que a guia Adaptador de Informações é exibida automaticamente ao instalar\nOtimizar mensagens para comandos do host CLI\nReiniciar a dependência do winston-syslog para evitar erros de compilação no node.js 10+ ao instalar ou atualizar o iobroker\nRefresh de certificados padrão",
+                "nl": "Zorg ervoor dat het tabblad Info Adapter automatisch wordt weergegeven tijdens de installatie\n Berichten optimaliseren voor CLI-hostopdrachten\nVerbeter de winston-syslog-afhankelijkheid om build-fouten te voorkomen op node.js 10+ bij het installeren of bijwerken van iobroker\nVernieuwen van SSL standaardcertificaten",
+                "fr": "Assurez-vous que l’onglet Info Adaptateur est affiché automatiquement lors de l’installation\nOptimize des messages pour les commandes d’hôte CLI\nRemplacez la dépendance winston-syslog pour éviter les erreurs de construction de node.js 10+ lors de l’installation ou de la mise à jour de iobroker\nRefresh des certificats par défaut",
+                "it": "Assicurarsi che la scheda Scheda info sia visualizzata automaticamente su installazione\nI messaggi ottimizzati per i comandi host CLI\nSostituisce la dipendenza winston-syslog per prevenire errori di generazione su node.js 10+ durante l'installazione o l'aggiornamento di iobroker\nRefresh dei certificati predefiniti",
+                "es": "Asegúrese de que la pestaña del Adaptador de información se muestre automáticamente en la instalación\nOptimice los mensajes para los comandos del host CLI\nReemplace la dependencia de winston-syslog para evitar errores de compilación en node.js 10+ al instalar o actualizar iobroker\nRefrescar los certificados predeterminados",
+                "pl": "Upewnij się, że zakładka Info Adapter jest wyświetlana automatycznie podczas instalacji nOptymalizuj komunikaty dla poleceń hosta CLI nReplace zależność winston-syslog, aby zapobiec błędom kompilacji na node.js 10+ podczas instalacji lub aktualizacji iobroker n Odśwież domyślne certyfikaty",
+                "zh-cn": "确保在安装\nOptimize消息上自动显示Info Adapter选项卡以显示CLI主机命令\n更新winston-syslog依赖关系以防止在安装或更新iobroker时对node.js 10+进行构建错误\n刷新默认SSL证书"
+            },
+            "1.5.12": {
+                "en": "Install instance of info adapter too on first setup of controller",
+                "de": "Installiere eine Instanz des info Adapters beim ersten Setup des Controllers",
+                "ru": "установить экземпляр информационного адаптера тоже при первой настройке контроллера",
+                "pt": "instale a instância do adaptador de informações também na primeira configuração do controlador",
+                "nl": "installeer ook een instantie van de info-adapter bij de eerste configuratie van de controller",
+                "fr": "Installez également l'instance de l'info-adaptateur lors de la première configuration du contrôleur.",
+                "it": "Installa anche l'istanza dell'adattatore di informazioni sulla prima configurazione del controller",
+                "es": "Instale la instancia del adaptador de información también en la primera configuración del controlador",
+                "pl": "zainstaluj również instancję adaptera informacyjnego przy pierwszej konfiguracji kontrolera",
+                "zh-cn": "在首次设置控制器时也安装info适配器的实例"
+            },
+            "1.5.11": {
+                "en": "Allow to install specific versions/fix installing specific versions\nRead cache of repository before download the whole file\nif npm returns code 1 it is OK\nfix instances enumeration\nrevert greenlock version to 2.7.1",
+                "de": "Erlaube die Installation bestimmter Versionen / behebe die Installation bestimmter Versionen\nLesen Sie den Cache des Repositorys, bevor Sie die gesamte Datei herunterladen\nWenn npm den Code 1 zurückgibt, ist es OK\nInstanzen-Aufzählung korrigieren\nGreenlock-Version auf 2.7.1 zurücksetzen",
+                "ru": "Разрешить установку определенных версий / исправить установку определенных версий\nПрочитайте кеш репозитория перед загрузкой всего файла\nесли npm возвращает код 1, все в порядке\nисправить перечисление экземпляров\nвернуть версию greenlock на 2.7.1",
+                "pt": "Permitir a instalação de versões específicas / corrigir a instalação de versões específicas\nLeia o cache do repositório antes de baixar o arquivo inteiro\nse npm retornar o código 1, tudo bem\ncorrigir enumeração de instâncias\nreverter a versão greenlock para 2.7.1",
+                "nl": "Sta toe om specifieke versies te installeren / repareer de installatie van specifieke versies\nLees de cache van de repository voordat je het hele bestand downloadt\nals npm code 1 retourneert, is het OK\nfix instanties opsomming\nzet greenlock-versie terug naar 2.7.1",
+                "fr": "Autoriser l'installation de versions spécifiques / corriger l'installation de versions spécifiques\nLire le cache du référentiel avant de télécharger le fichier entier\nsi npm retourne le code 1 c'est ok\ncorrection des énumérations d'instances\nrevenir à la version 2.7 de greenlock",
+                "it": "Consentire l'installazione di versioni specifiche / correggere l'installazione di versioni specifiche\nLeggi la cache del repository prima di scaricare l'intero file\nse npm restituisce il codice 1, è OK\ncorregge l'enumerazione delle istanze\nripristinare la versione di Greenlock alla 2.7.1",
+                "es": "Permitir instalar versiones específicas / corregir instalar versiones específicas\nLea la memoria caché del repositorio antes de descargar el archivo completo\nSi npm devuelve el código 1, está bien.\narreglar instancias enumeración\nrevertir la versión de Greenlock a 2.7.1",
+                "pl": "Pozwól zainstalować określone wersje / fix instalując określone wersje\nPrzeczytaj cache repozytorium przed pobraniem całego pliku\njeśli npm zwróci kod 1, jest OK\npoprawiono wyliczanie instancji\nprzywróć wersję Greenlock do wersji 2.7.1",
+                "zh-cn": "允许安装特定版本/修复安装特定版本\n在下载整个文件之前读取存储库的缓存\n如果npm返回代码1就可以了\n修复实例枚举\n将greenlock版本恢复为2.7.1"
+            },
+            "1.5.9": {
+                "en": "Handle optional npm errors correctly on installs\nMake sure to only iterate over correct adapters when names start the same\nInstall correct adapter version when moving or reinstalling\nOnly download repository if changed",
+                "de": "Behandeln Sie optionale npm-Fehler bei Installationen korrekt\nnVergewissern Sie sich, dass die korrekten Adapter nur dann durchlaufen werden, wenn die Namen die gleichen Adapter starten",
+                "ru": "Правильно обрабатывать необязательные ошибки npm при установке\nnУбедитесь в том, что перебираете правильные адаптеры только при одинаковых именах имен",
+                "pt": "Manipule erros opcionais do npm corretamente em instalações\nnCertifique-se de somente iterar sobre adaptadores corretos quando os nomes iniciarem o mesmo\nnInstalar a versão correta do adaptador ao mover ou reinstalar\nnApenas o repositório de download se tiver sido alterado",
+                "nl": "Beheer optionele npm-fouten correct bij installaties\nnControleer zeker alleen correcte adapters als identiteiten hetzelfde beginnen\nnSteek de juiste adapterversie bij het verplaatsen of opnieuw installeren\nnGebruik alleen de repository als deze is gewijzigd",
+                "fr": "Gestion des erreurs npm facultatives correctement lors de l’installation\nnAssurez-vous de n’itérer que sur les bons adaptateurs lorsque les noms commencent par la même version de l’adaptateur correct lors du déplacement ou de la réinstallation du\nnSi-modifié le référentiel de téléchargement.",
+                "it": "Gestisci correttamente gli errori npm opzionali\nnAccertati di eseguire iterazioni solo sugli adattatori corretti quando i nomi iniziano lo stesso\nnInstallare la versione corretta dell'adattatore durante lo spostamento o la reinstallazione\nnSpoglia il repository di download se modificato",
+                "es": "Maneje los errores npm opcionales correctamente en las instalaciones\nnAsegúrese de iterar solo sobre los adaptadores correctos cuando los nombres inicien la misma\nnInstale la versión correcta del adaptador al mover o reinstalar\nnSólo descargue el repositorio si se cambió",
+                "pl": "Prawidłowe obchodzenie się z opcjonalnymi błędami npm w instalacjach n Upewnij się, że iteracja tylko przez prawidłowe karty, gdy nazwy zaczynają się tak samo Zainstaluj poprawną wersję adaptera podczas przenoszenia lub ponownej instalacji Tylko pobranie repozytorium w przypadku zmiany",
+                "zh-cn": "在安装时正确处理可选的npm错误\nn确保仅在名称开始时迭代正确的适配器\nn在移动或重新安装时安装正确的适配器版本\nn仅在下载存储库时更改"
+            },
+            "1.5.7": {
+                "en": "let's encrypt was fixed\nFix iob script\nAlways install the version from repository and not the latest from npm\nRoot should always npm install with --unsafe-perm\niobroker stop was fixed",
+                "de": "Lass uns verschlüsseln wurde behoben\nIob -Skript korrigieren\nInstallieren Sie die Version immer aus dem Repository und nicht die neueste aus npm\nRoot sollte npm immer mit --unsafe-perm installieren\nIobroker-Stopp wurde behoben",
+                "ru": "«давайте шифровать» было исправлено\nИсправить скрипт iob\nВсегда устанавливайте версию из репозитория, а не самую последнюю из npm\nRoot всегда должен устанавливать npm с помощью --unsafe-perm\nостановка iobroker была исправлена",
+                "pt": "vamos criptografar foi corrigido\nCorrigir o script iob\nSempre instale a versão do repositório e não a mais recente do npm\nRaiz deve sempre instalar npm com --unsafe-perm\niobroker stop foi corrigido",
+                "nl": "laten we coderen was opgelost\nFix iob script\nInstalleer altijd de versie van de repository en niet de laatste van npm\nRoot moet altijd npm installeren met --unsafe-perm\niobroker stop was opgelost",
+                "fr": "chiffrons a été corrigé\nCorrection du script iob\nToujours installer la version depuis le référentiel et non la dernière depuis npm\nRoot devrait toujours installer npm avec --unsafe-perm\niobroker stop a été corrigé",
+                "it": "Let's Encrypt è stato corretto\nCorreggere lo script iob\nInstalla sempre la versione dal repository e non l'ultima da npm\nIl root dovrebbe sempre installare npm con --unsafe-perm\nl'arresto di iobroker è stato corretto",
+                "es": "Vamos a cifrar fue corregido\nCorregido el script iob\nSiempre instale la versión desde el repositorio y no la última desde npm\nLa raíz siempre debe instalar npm con --unsafe-perm\nla parada de iobroker fue arreglada",
+                "pl": "zaszyfrujmy zostało naprawione\nNapraw skrypt iob\nZawsze instaluj wersję z repozytorium, a nie najnowszą z npm\nKatalog główny powinien zawsze być npm install with --unsafe-perm\nZatrzymanie iobroker zostało naprawione",
+                "zh-cn": "让我们加密是固定的\n修复iob脚本\n始终从存储库安装版本，而不是从npm安装最新版本\nRoot应始终使用--unsafe-perm安装npm\niobroker停止是固定的"
+            },
+            "1.5.3": {
+                "en": "see CHANGELOG.md",
+                "de": "Sehe CHANGELOG.md",
+                "ru": "см. CHANGELOG.md",
+                "pt": "veja CHANGELOG.md",
+                "nl": "zie CHANGELOG.md",
+                "fr": "voir CHANGELOG.md",
+                "it": "vedi CHANGELOG.md",
+                "es": "ver CHANGELOG.md",
+                "pl": "zobacz CHANGELOG.md"
+            },
+            "1.4.2": {
+                "en": "see CHANGELOG.md",
+                "de": "Sehe CHANGELOG.md",
+                "ru": "см. CHANGELOG.md",
+                "pt": "veja CHANGELOG.md",
+                "nl": "zie CHANGELOG.md",
+                "fr": "voir CHANGELOG.md",
+                "it": "vedi CHANGELOG.md",
+                "es": "ver CHANGELOG.md",
+                "pl": "zobacz CHANGELOG.md"
+            },
+            "1.4.0": {
+                "en": "see CHANGELOG.md",
+                "de": "Sehe CHANGELOG.md",
+                "ru": "см. CHANGELOG.md",
+                "pt": "veja CHANGELOG.md",
+                "nl": "zie CHANGELOG.md",
+                "fr": "voir CHANGELOG.md",
+                "it": "vedi CHANGELOG.md",
+                "es": "ver CHANGELOG.md",
+                "pl": "zobacz CHANGELOG.md"
+            },
+            "1.3.0": {
+                "en": "socket.io Version was downgraded because of bug\nBetter npm5 support",
+                "de": "socket.io Die Version wurde aufgrund eines Fehlers heruntergestuft\nBessere npm5-Unterstützung",
+                "ru": "Версия socket.io была понижена из-за ошибки\nЛучшая поддержка npm5",
+                "pt": "A versão socket.io foi rebaixada por causa do erro\nMelhor suporte npm5",
+                "nl": "socket.io De versie is gedowngraded vanwege een bug\nBetere npm5-ondersteuning",
+                "fr": "La version de socket.io a été déclassée à cause d'un bug\nMeilleur support npm5",
+                "it": "socket.io La versione è stata declassata a causa di un bug\nMigliore supporto per npm5",
+                "es": "La versión de socket.io se ha degradado debido a errores\nMejor soporte npm5",
+                "pl": "Wersja socket.io została obniżona z powodu błędu\nLepsza obsługa npm5"
+            },
+            "1.2.7": {
+                "en": "see CHANGELOG.md",
+                "de": "Sehe CHANGELOG.md",
+                "ru": "см. CHANGELOG.md",
+                "pt": "veja CHANGELOG.md",
+                "nl": "zie CHANGELOG.md",
+                "fr": "voir CHANGELOG.md",
+                "it": "vedi CHANGELOG.md",
+                "es": "ver CHANGELOG.md",
+                "pl": "zobacz CHANGELOG.md"
+            }
+        },
+        "desc": {
+            "en": "Javascript/Node.js implementation of ioBroker controller",
+            "de": "Javascript/Node.js Implementierung des ioBroker-Controllers",
+            "ru": "Javascript/Node.js реализация контроллера ioBroker",
+            "pt": "Implementação do Javascript/Node.js do controlador ioBroker",
+            "nl": "Javascript/Node.js implementatie van ioBroker-controller",
+            "fr": "Implémentation Javascript/Node.js du contrôleur ioBroker",
+            "it": "Implementazione Javascript/Node.js del controller ioBroker",
+            "es": "Implementación de JavaScript/Node.js del controlador ioBroker",
+            "pl": "Implementacja JavaScript/Node.js kontrolera ioBroker",
+            "zh-cn": "Javascript / Node.js实现了ioBroker控制器"
+        },
+        "messagebox": true,
+        "readme": "https://github.com/ioBroker/ioBroker.js-controller/blob/master/README.md",
+        "authors": [
+            "bluefox <bluefox@gmail.com>",
+            "hobbyquaker <hq@ccu.io>"
+        ],
+        "license": "MIT",
+        "type": "general",
+        "unsafePerm": true
+    },
+    "objects": [
+        {
+            "_id": "_design/system",
+            "language": "javascript",
+            "common": {
+                "dontDelete": true
+            },
+            "views": {
+                "host": {
+                    "map": "function(doc) { if (doc.type === 'host') emit(doc._id, doc) }"
+                },
+                "adapter": {
+                    "map": "function(doc) { if (doc.type === 'adapter') emit(doc._id, doc) }"
+                },
+                "instance": {
+                    "map": "function(doc) { if (doc.type === 'instance') emit(doc._id, doc) }"
+                },
+                "instanceStats": {
+                    "map": "function(doc) { if (doc.type === 'instance') emit(doc._id, parseInt(doc._id.split('.').pop(), 10)) }",
+                    "reduce": "_stats"
+                },
+                "meta": {
+                    "map": "function(doc) { if (doc.type === 'meta') emit(doc._id, doc) }"
+                },
+                "device": {
+                    "map": "function(doc) { if (doc.type === 'device') emit(doc._id, doc) }"
+                },
+                "channel": {
+                    "map": "function(doc) { if (doc.type === 'channel') emit(doc._id, doc) }"
+                },
+                "state": {
+                    "map": "function(doc) { if (doc.type === 'state') emit(doc._id, doc) }"
+                },
+                "enum": {
+                    "map": "function(doc) { if (doc.type === 'enum') emit(doc._id, doc) }"
+                },
+                "script": {
+                    "map": "function(doc) { if (doc.type === 'script') emit(doc._id, doc) }"
+                },
+                "group": {
+                    "map": "function(doc) { if (doc.type === 'group') emit(doc.common.name, doc) }"
+                },
+                "user": {
+                    "map": "function(doc) { if (doc.type === 'user') emit(doc.common.name, doc) }"
+                },
+                "config": {
+                    "map": "function(doc) { if (doc.type === 'config') emit(doc.common.name, doc) }"
+                }
+            },
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1092
+            }
+        },
+        {
+            "_id": "system.group.administrator",
+            "type": "group",
+            "common": {
+                "name": {
+                    "en": "Administrator",
+                    "de": "Administrator",
+                    "ru": "Администратор",
+                    "pt": "Administrador",
+                    "nl": "Beheerder",
+                    "fr": "Administrateur",
+                    "it": "Amministratore",
+                    "es": "Administrador",
+                    "pl": "Administrator",
+                    "zh-cn": "管理员"
+                },
+                "description": {
+                    "en": "Can do everything with System",
+                    "de": "Kann alles mit System machen",
+                    "ru": "Может делать все с помощью системы",
+                    "pt": "Pode fazer tudo com o sistema",
+                    "nl": "Kan alles doen met System",
+                    "fr": "Peut tout faire avec le système",
+                    "it": "Può fare tutto con il sistema",
+                    "es": "Puede hacer todo con System",
+                    "pl": "Potrafi zrobić wszystko dzięki Systemowi",
+                    "zh-cn": "可以用系统做任何事情"
+                },
+                "members": [
+                    "system.user.admin"
+                ],
+                "dontDelete": true,
+                "acl": {
+                    "object": {
+                        "list": true,
+                        "read": true,
+                        "write": true,
+                        "delete": true
+                    },
+                    "state": {
+                        "list": true,
+                        "read": true,
+                        "write": true,
+                        "create": true,
+                        "delete": true
+                    },
+                    "users": {
+                        "list": true,
+                        "read": true,
+                        "write": true,
+                        "create": true,
+                        "delete": true
+                    },
+                    "other": {
+                        "execute": true,
+                        "http": true,
+                        "sendto": true
+                    },
+                    "file": {
+                        "list": true,
+                        "read": true,
+                        "write": true,
+                        "create": true,
+                        "delete": true
+                    }
+                }
+            },
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1604
+            }
+        },
+        {
+            "_id": "system.group.user",
+            "type": "group",
+            "common": {
+                "name": {
+                    "en": "User",
+                    "de": "Benutzer",
+                    "ru": "Пользователь",
+                    "pt": "Do utilizador",
+                    "nl": "Gebruiker",
+                    "fr": "Utilisateur",
+                    "it": "Utente",
+                    "es": "Usuario",
+                    "pl": "Użytkownik",
+                    "zh-cn": "用户"
+                },
+                "description": {
+                    "en": "Cannot modify everything",
+                    "de": "Kann nicht alles ändern",
+                    "ru": "Не может изменять все",
+                    "pt": "Não é possível modificar tudo",
+                    "nl": "Kan niet alles wijzigen",
+                    "fr": "Impossible de tout modifier",
+                    "it": "Non è possibile modificare tutto",
+                    "es": "No se puede modificar todo",
+                    "pl": "Nie można modyfikować wszystkiego",
+                    "zh-cn": "用户无法修改所有内容"
+                },
+                "members": [],
+                "dontDelete": true,
+                "url": "https://github.com/ioBroker/ioBroker.js-controller/archive/master.zip",
+                "meta": "https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/io-package.json",
+                "acl": {
+                    "object": {
+                        "list": true,
+                        "read": true,
+                        "write": false,
+                        "delete": false
+                    },
+                    "state": {
+                        "list": true,
+                        "read": true,
+                        "write": true,
+                        "create": true,
+                        "delete": false
+                    },
+                    "users": {
+                        "list": true,
+                        "read": true,
+                        "write": false,
+                        "create": false,
+                        "delete": false
+                    },
+                    "other": {
+                        "execute": false,
+                        "http": true,
+                        "sendto": false
+                    },
+                    "file": {
+                        "list": true,
+                        "read": true,
+                        "write": false,
+                        "create": false,
+                        "delete": false
+                    }
+                }
+            },
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1604
+            }
+        },
+        {
+            "_id": "enum.rooms",
+            "common": {
+                "icon": "home",
+                "name": {
+                    "en": "Rooms",
+                    "de": "Räume",
+                    "ru": "Комнаты",
+                    "pt": "Quartos",
+                    "nl": "Kamers",
+                    "fr": "Pièces",
+                    "it": "Camere",
+                    "es": "Habitaciones",
+                    "pl": "Pokoje",
+                    "zh-cn": "客房"
+                },
+                "desc": {
+                    "en": "List of the rooms",
+                    "de": "Liste der Räumen",
+                    "ru": "Список комнат",
+                    "pt": "Lista dos quartos",
+                    "nl": "Lijst met kamers",
+                    "fr": "Liste des chambres",
+                    "it": "Elenco delle stanze",
+                    "es": "Lista de las habitaciones",
+                    "pl": "Lista pokoi",
+                    "zh-cn": "房间清单"
+                },
+                "members": [],
+                "dontDelete": true
+            },
+            "type": "enum",
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1911
+            }
+        },
+        {
+            "_id": "enum.functions",
+            "common": {
+                "icon": "lightbulb_outline",
+                "name": {
+                    "en": "Functions",
+                    "de": "Funktionen",
+                    "ru": "функции",
+                    "pt": "Funções",
+                    "nl": "functies",
+                    "fr": "Les fonctions",
+                    "it": "funzioni",
+                    "es": "Funciones",
+                    "pl": "Funkcje",
+                    "zh-cn": "职能"
+
+                },
+                "desc": {
+                    "en": "List of the functions",
+                    "de": "Liste der Funktionen",
+                    "ru": "Список функций",
+                    "pt": "Lista das funções",
+                    "nl": "Lijst met functies",
+                    "fr": "Liste des fonctions",
+                    "it": "Elenco delle funzioni",
+                    "es": "Lista de las funciones",
+                    "pl": "Lista funkcji",
+                    "zh-cn": "功能列表"
+
+                },
+                "members": [],
+                "dontDelete": true
+            },
+            "type": "enum",
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1911
+            }
+        },
+        {
+            "_id": "system.config",
+            "type": "config",
+            "common": {
+                "name": "System configuration",
+                "city": "",
+                "country": "",
+                "longitude": "",
+                "latitude": "",
+                "language": "",
+                "tempUnit": "°C",
+                "currency": "",
+                "dontDelete": true,
+                "dateFormat": "DD.MM.YYYY",
+                "isFloatComma": true,
+                "licenseConfirmed": false,
+                "defaultHistory": "",
+                "activeRepo": "default",
+                "diag": "extended",
+                "tabs": [
+                    "tab-intro",
+                    "tab-info",
+                    "tab-adapters",
+                    "tab-instances",
+                    "tab-objects",
+                    "tab-log",
+                    "tab-scenes",
+                    "tab-javascript",
+                    "tab-text2command-0",
+                    "tab-node-red-0"
+                ]
+            },
+            "native": {},
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1604
+            }
+        },
+        {
+            "_id": "system.repositories",
+            "type": "config",
+            "common": {
+                "name": "System repositories",
+                "dontDelete": true
+            },
+            "native": {
+                "repositories": {
+                    "default": {
+                        "link": "http://download.iobroker.net/sources-dist.json",
+                        "json": null
+                    },
+                    "latest": {
+                        "link": "http://download.iobroker.net/sources-dist-latest.json",
+                        "json": null
+                    }
+                },
+                "oldRepositories": {
+                    "sources": {
+                        "link": "conf/sources-dist.json",
+                        "json": null
+                    },
+                    "online": {
+                        "link": "https://raw.githubusercontent.com/ioBroker/ioBroker.repositories/master/sources-dist.json",
+                        "json": null
+                    }
+                }
+            },
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1604
+            }
+        },
+        {
+            "_id": "system.certificates",
+            "type": "config",
+            "common": {
+                "name": "System certificates"
+            },
+            "native": {
+                "certificates": {
+                    "defaultPrivate": "-----BEGIN RSA PRIVATE KEY-----\r\nMIIEogIBAAKCAQEAw7qYEzaJW8oBUGFjczWD6pkYePnKkP5sUCP1UINkW9ozOsWDv6uWewLb0aoSotbpWB/uN4s+yjiulgpNic15Z1d+q8Yt9SaADapkwACjwCqUdrdQIts9dT09N594pD7Bh1oyCzXaZM3Zb6j9tnT/pkVGuVdmgW0SoE8UDlDgLy7D6ddtiwqD9w8uQfb3cB5ws8yV6I8fnbmTeA5bX7rcs0IjYjUy4gKX24VknyEe/orwkBUBOwiqdGBkYz0aoz12lVktfbP6oj1OGVfIBeTVhdi2/utxs/9XI6OGPaP4EJ/KqjYCAlPqfCDW5WPXb9f+vvC/rxyJKoZ5DoN/d2cefQIDAQABAoIBAClVbmggTEGmF0DyUB40Xvdb/V8O4UhdcmI6NcQa+0aqfccbjwcbJVw07lcIo4bf+8cwdw4jyc7KyZPF+TnwuoKoZ4e/AlWTG9fG9B/YArzCQTgQ3kt+ISxxEkx80O1ek2ASHB9h8Az5q8F43pt5ecOTPaxGWM9cSWKxUHr1eWJ9DnNTc+xYOyn0EOl7FxHEbP7Dkh+s1iIhFdgWLAbVaWI/N9h0VTvhUqAOUE9Fmo7DLMFK+H04LV/frnGkfmtqQ9UYY4bguk7SfrelEmIxQAAxVj1BfoR+SrTi3xkmDJinFkpneiYHalknBA/K4M3/thzc9ob1x7TU9j+Yoq+wn8ECgYEA/jLC5+ZY8N5xYhUriAkTpyStUkKke28aS/t5O0SIYZzunqLX1EE1q6rMSKhUYRi8EUYyn2NhfdUmj4QfSDgN37NzFe+u6/upjNJ1wt2awIXr41IPp/GIo/6loEDDXhDCaRq0EPOKDwJJQHFcpjZF3lb7rFfcDBQtXIkrzvqV7KMCgYEAxR29rGrCAlWY3H9wkTMJoFzMrT5aG8Q9w1JVtxkZUhqbP6X7v2asGXIciv3LFIgIXsMVGvU8b1vNiyeSIXCl/BxFho0NnjJTlBq3N6GQLriTVHDuzq4aFMAdyaZdF4IEK6teV8zDCx0u8hKtzZ7HBriyIJYP+hRWifB/mddRWl8CgYA8IKm1zOjQ4O0U9Ej9vpfle2l8AcOCZv9jZbKBcG6KGGLhJ0fCL0KQvq/fp+F9rioeM+qZhRp0d0zNucTkgk3V0k6wq6dGrpqmcsnkNCL80zC+7pRBd4KIuB1ZULhlsbUqw2RAdjr73eCR2768mi3gr9aMJ6QnP0aTkubH6MI53QKBgGgptzmNkMg7A3RBw/J2zfd4EpDaCjPyF9FHiRQgp0jD1pZj2Azk7LzlmD+6rb5DxGiPHnAId89A6/VFC+uv44a+Sd84WqHmZlQ1aexz7AVEdFaC9y8wwYeFnjgZOchaZGnPPSOYiNkuqsgxJrcp2HKs1zRxGDBG3xQ1irh5F/xxAoGAR+CNHzn2suVeSypyBhSg0/UG21lw+iLsprexsd8BqwjGVoqaolU2HGFEPXTmraYUMDKWpWARrQKh8sd4kUMcetYncGZZ0LjozTrmcyHAXWN+TTGmveuBDc+K9y8TEVeVm/M3UN+EMhe5HkliEAD2VDKY5VsRaPCeryP/F4pYMp8=\r\n-----END RSA PRIVATE KEY-----\r\n",
+                    "defaultPublic": "-----BEGIN CERTIFICATE-----\r\nMIIDdjCCAl6gAwIBAgIBATANBgkqhkiG9w0BAQUFADA+MREwDwYDVQQDEwhpb2Jyb2tlcjEWMBQGA1UEChMNaW9Ccm9rZXIgR21iSDERMA8GA1UECxMIaW9icm9rZXIwHhcNMTkwNzA4MDE0ODMzWhcNMjQwNzA4MDE0ODMzWjA+MREwDwYDVQQDEwhpb2Jyb2tlcjEWMBQGA1UEChMNaW9Ccm9rZXIgR21iSDERMA8GA1UECxMIaW9icm9rZXIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDDupgTNolbygFQYWNzNYPqmRh4+cqQ/mxQI/VQg2Rb2jM6xYO/q5Z7AtvRqhKi1ulYH+43iz7KOK6WCk2JzXlnV36rxi31JoANqmTAAKPAKpR2t1Ai2z11PT03n3ikPsGHWjILNdpkzdlvqP22dP+mRUa5V2aBbRKgTxQOUOAvLsPp122LCoP3Dy5B9vdwHnCzzJXojx+duZN4DltfutyzQiNiNTLiApfbhWSfIR7+ivCQFQE7CKp0YGRjPRqjPXaVWS19s/qiPU4ZV8gF5NWF2Lb+63Gz/1cjo4Y9o/gQn8qqNgICU+p8INblY9dv1/6+8L+vHIkqhnkOg393Zx59AgMBAAGjfzB9MAwGA1UdEwEB/wQCMAAwDwYDVR0PAQH/BAUDAwe/gDATBgNVHREEDDAKgghpb2Jyb2tlcjAdBgNVHQ4EFgQUo3LIVwV/L/Pn62Cfl4ATsgXOULQwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdIwQCMAAwDQYJKoZIhvcNAQEFBQADggEBALk8tvsAVZ5jXXwcxJH6EZjhswtqD/CDd+Oi3n6xoxLbZdeR2+1fFHT6fpdDEYe/2C34E1T4kXcLkuu2RXzbp75ClWvJSPYys/LPQr+53JHxcgRmbEBzKTmwsxrtxAFPOId4zwDOAT52tpW+8ACVWrHndKqmVr9Hfk8uRpAzDgZMJAgKsbaC4iyBKuKo0xcdOqmAstsUVpfcMvMojw5hnOlNRXnvXqEyeNRKXXymTQlo0cnG9Y7KIPiP0Pr4PhgpJXdrSJsEEpYA6DtTcXm/UIijSm5IL1XQoE3TgO906GxAESao/WGnh0gTysjMTTz9ipVbf8vySxkpUp6oGia1sz0=\r\n-----END CERTIFICATE-----\r\n"
+                }
+            },
+            "acl": {
+                "owner": "system.user.admin",
+                "ownerGroup": "system.group.administrator",
+                "object": 1536
+            }
+        }
+    ]
+}

@@ -1,0 +1,71 @@
+{
+  "name": "moment",
+  "version": null,
+  "repo": "moment/moment",
+  "sha": "f2a813afcfd0dd6e63812ea74c46ecc627f6a6a6",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-8hfj-j24r-96c4",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-24785"
+      ],
+      "ghsa": [
+        "GHSA-8hfj-j24r-96c4"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-22",
+        "CWE-27"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/lib/locale/locales.js",
+          "startline": 78,
+          "startcol": 13,
+          "endline": 78,
+          "endcol": 47,
+          "range": false,
+          "code": "aliasedRequire('./locale/' + name)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/lib/locale/locales.js",
+          "startline": 65,
+          "startcol": 1,
+          "endline": 87,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "4211bfc8f15746be4019bba557e29a7ba83d54c5",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/lib/locale/locales.js",
+            "startline": 70,
+            "startcol": 1,
+            "endline": 93,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

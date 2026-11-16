@@ -1,0 +1,70 @@
+{
+  "name": "planka",
+  "version": null,
+  "repo": "plankanban/planka",
+  "sha": "fbe24c0fc0a066f72757d328654ccdf9f54ca5ea",
+  "subdir": "server",
+  "siblings": {},
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/api/controllers/attachments/download-thumbnail.js"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2022-2653",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-2653"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-22"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/api/controllers/attachments/download-thumbnail.js",
+          "startline": 67,
+          "startcol": 26,
+          "endline": 67,
+          "endcol": 55,
+          "range": false,
+          "code": "fs.createReadStream(filePath)"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/api/controllers/attachments/download-thumbnail.js",
+          "startline": 29,
+          "startcol": 3,
+          "endline": 68,
+          "endcol": 3,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "ac1df5201dfdaf68d37f7e1b272bc137870d7418",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/api/controllers/attachments/download-thumbnail.js",
+            "startline": 25,
+            "startcol": 3,
+            "endline": 64,
+            "endcol": 3,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

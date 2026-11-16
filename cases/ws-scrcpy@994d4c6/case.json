@@ -1,0 +1,69 @@
+{
+  "name": "ws-scrcpy",
+  "version": null,
+  "repo": "netristv/ws-scrcpy",
+  "sha": "994d4c67394d63ecdf6cfbc51f48c8e71c686e6e",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "application",
+  "entry": [
+    "package/src/server/index.ts"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-3845",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2021-3845"
+      ],
+      "ghsa": [],
+      "snyk": [],
+      "cwe": [
+        "CWE-610",
+        "CWE-73"
+      ],
+      "class": "path-traversal",
+      "sinks": [
+        {
+          "file": "package/src/server/services/HttpServer.ts",
+          "startline": 64,
+          "startcol": 17,
+          "endline": 73,
+          "endcol": 19,
+          "range": false,
+          "code": "fs.readFile(pathname, (readErr, data) => {\n                    if (readErr) {\n                        res.statusCode = 500;\n                        res.end(`Error getting the file: ${statErr}.`);\n                    } else {\n                        // if the file is found, set Content-type and send data\n                        res.setHeader('Content-type', map[ext] || 'text/plain');\n                        res.end(data);\n                    }\n                })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/src/server/services/HttpServer.ts",
+          "startline": 39,
+          "startcol": 5,
+          "endline": 80,
+          "endcol": 5,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "e83cf65438bef83a3503b25358bba97bcc156fef",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/src/server/services/HttpServer.ts",
+            "startline": 39,
+            "startcol": 5,
+            "endline": 85,
+            "endcol": 5,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

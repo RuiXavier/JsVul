@@ -1,0 +1,276 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@5.0.0
+  node: circleci/node@5.0.2
+
+defaults: &defaults
+  resource_class: small
+  docker:
+    - image: cimg/node:14.18
+  working_directory: ~/snyk-docker-plugin
+
+windows_defaults: &windows_defaults
+  executor:
+    name: win/default
+    shell: bash.exe
+  parameters:
+    node_version:
+      type: string
+      default: ""
+  working_directory: ~/snyk-docker-plugin
+
+windows_big: &windows_big
+  executor:
+    name: win/default
+    shell: bash.exe
+    size: large
+  parameters:
+    node_version:
+      type: string
+      default: ""
+  working_directory: ~/snyk-docker-plugin
+
+
+release_defaults: &release_defaults
+  resource_class: small
+  docker:
+    - image: node:14
+  working_directory: ~/snyk-docker-plugin
+
+commands:
+  install_deps:
+    description: Install dependencies
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-npm-cache-{{ checksum "package.json" }}
+            - v2-npm-cache-
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm install
+      - save_cache:
+          key: v2-npm-cache-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules/
+  checkout_and_merge:
+    steps:
+      - checkout
+      - run:
+          name: Checkout main
+          command: git checkout origin/main
+      - run:
+          name: Merge test branch
+          command: |
+            git config user.name "CircleCI"
+            git config user.email "noop"
+            git merge --no-edit "$CIRCLE_BRANCH"
+      - attach_workspace:
+          at: ~/snyk-docker-plugin
+  notify_slack_on_failure:
+    steps:
+      - run:
+          name: Notify Slack on failure
+          command: |
+            if [[ "$CIRCLE_BRANCH" == "main" ]]; then
+              ./.circleci/slack-notify-failure.sh "${CIRCLE_JOB}"
+            fi
+          when: on_fail
+  notify_slack_on_success:
+    steps:
+      - run:
+          name: Notify Slack on success
+          command: ./.circleci/slack-notify-success.sh
+  install_node_npm:
+    description: Install specific Node version
+    parameters:
+      node_version:
+        type: string
+        default: ""
+    steps:
+      - node/install:
+          node-version: << parameters.node_version >>
+      - run:
+          name: Use currently installed node version
+          command: nvm list | awk '/<< parameters.node_version >>/ {print $1}' | xargs nvm use
+
+jobs:
+  install:
+    <<: *defaults
+    steps:
+      - install_deps
+  lint:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/snyk-docker-plugin
+      - run: npm run lint
+      - notify_slack_on_failure
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: ~/snyk-docker-plugin
+      - run: npm test
+      - notify_slack_on_failure
+  test_windows:
+    <<: *windows_defaults
+    steps:
+      - checkout
+      - install_node_npm:
+          node_version: << parameters.node_version >>
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm install
+      - run: npm run test-windows
+  test_jest:
+    <<: *defaults
+    resource_class: medium
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm install
+      - run: npm run test-jest
+      - notify_slack_on_failure
+  test_jest_windows:
+    <<: *windows_big
+    steps:
+      - checkout
+      - install_node_npm:
+          node_version: << parameters.node_version >>
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm install
+      - run: 
+          command: npm run test-jest-windows
+          no_output_timeout: 20m
+  build:
+    <<: *defaults
+    steps:
+      - checkout_and_merge
+      - run:
+          name: Use snyk-main npmjs user
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+      - run: npm install
+      - run: npm run build
+      - notify_slack_on_failure
+  build_cli:
+    <<: *defaults
+    resource_class: medium
+    steps:
+      - checkout_and_merge
+      - run:
+          name: Build Snyk CLI with latest changes
+          command: ./.circleci/build-cli.sh
+      - notify_slack_on_failure
+  build_and_test_latest_go_binary:
+    <<: *defaults
+    resource_class: medium
+    steps:
+      - setup_remote_docker:
+          # We want support for the --platform flag. CircleCI uses
+          # 17.09.0-ce by default which is way too old.
+          version: 20.10.14 
+      - checkout_and_merge
+      - run:
+          name: Build a Go binary with latest Go version
+          command: ./.circleci/build-go-binary-latest.sh
+      - run:
+          name: Run Go binaries unit test
+          command: npx jest test/unit/go-binaries.spec.ts
+      - notify_slack_on_failure
+  release:
+    <<: *release_defaults
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run:
+          name: Release on GitHub
+          command: npx semantic-release
+      - notify_slack_on_success
+      - notify_slack_on_failure
+
+workflows:
+  version: 2
+  test_and_release:
+    when:
+      # do not run on a pipeline schedule
+      not:
+        equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+    jobs:
+      - install:
+          name: Install
+          context: nodejs-install
+      - lint:
+          name: Lint
+          context: nodejs-install
+          requires:
+            - Install
+      - build:
+          name: Build
+          requires:
+            - Lint
+      - test:
+          name: Test
+          context: nodejs-install
+          requires:
+            - Build
+      - test_windows:
+          name: Test Windows
+          context: nodejs-install
+          node_version: "12"
+          requires:
+            - Build
+      - test_jest_windows:
+          name: Test Jest Windows
+          context: nodejs-install
+          node_version: "12"
+          requires:
+            - Build
+      - build_cli:
+          name: Build CLI with changes
+          context: nodejs-install
+          requires:
+            - Build
+      - release:
+          name: Release to GitHub
+          context: nodejs-lib-release
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - Lint
+            - Build
+            - Test
+            - Test Windows
+            - Test Jest Windows
+  go_regression_test:
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+        - equal: [ "Build and test Go binaries", << pipeline.schedule.name >> ]
+    jobs:
+      - install:
+          name: Install
+          context: nodejs-install
+      - build_and_test_latest_go_binary:
+          name: Build Go binary
+          context: nodejs-install
+          requires:
+            - Install

@@ -1,0 +1,64 @@
+{
+  "name": "exec-local-bin",
+  "version": null,
+  "repo": "saeedseyfi/exec-local-bin",
+  "sha": "92db00bde9d6e2d83410849f898df12f075b73b0",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-f259-h6m8-hm8m",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2022-25923"
+      ],
+      "ghsa": [
+        "GHSA-f259-h6m8-hm8m"
+      ],
+      "snyk": [
+        "SNYK-JS-EXECLOCALBIN-3157956"
+      ],
+      "cwe": [
+        "CWE-77",
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/index.js",
+          "startline": 9,
+          "startcol": 28,
+          "endline": 16,
+          "endcol": 11,
+          "range": false,
+          "code": "exec(cmd, options, (error, stdout, stderr) => {\n            if (stderr) {\n                reject(error);\n                return;\n            }\n\n            resolve(stdout);\n        })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/index.js",
+          "startline": 3,
+          "startcol": 18,
+          "endline": 26,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

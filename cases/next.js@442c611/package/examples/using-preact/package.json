@@ -1,0 +1,17 @@
+{
+  "name": "using-preact",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "module-alias": "^2.0.0",
+    "next": "latest",
+    "preact": "^7.2.0",
+    "preact-compat": "^3.14.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,88 @@
+{
+  "name": "systeminformation",
+  "version": null,
+  "repo": "sebhildebrandt/systeminformation",
+  "sha": "4f98f2ff208f355b7e242661cf9c4594a702dbec",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-m57p-p67h-mq74",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2020-26274"
+      ],
+      "ghsa": [
+        "GHSA-m57p-p67h-mq74"
+      ],
+      "snyk": [],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/internet.js",
+          "startline": 144,
+          "startcol": 9,
+          "endline": 157,
+          "endcol": 11,
+          "range": false,
+          "code": "exec(cmd, function (error, stdout) {\n          let result = -1;\n          if (!error) {\n            const line = stdout.toString().split('=');\n            if (line.length > 1) {\n              const parts = line[1].split('/');\n              if (parts.length > 1) {\n                result = parseFloat(parts[1]);\n              }\n            }\n          }\n          if (callback) { callback(result); }\n          resolve(result);\n        })"
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 160,
+          "startcol": 9,
+          "endline": 173,
+          "endcol": 11,
+          "range": false,
+          "code": "exec('ping -s -a ' + hostSanitized + ' 56 2 | grep avg', { timeout: 3000 }, function (error, stdout) {\n          let result = -1;\n          if (!error) {\n            const line = stdout.toString().split('=');\n            if (line.length > 1) {\n              const parts = line[1].split('/');\n              if (parts.length > 1) {\n                result = parseFloat(parts[1].replace(',', '.'));\n              }\n            }\n          }\n          if (callback) { callback(result); }\n          resolve(result);\n        })"
+        },
+        {
+          "file": "package/lib/internet.js",
+          "startline": 178,
+          "startcol": 11,
+          "endline": 193,
+          "endcol": 13,
+          "range": false,
+          "code": "exec('ping ' + hostSanitized + ' -n 1', util.execOptsWin, function (error, stdout) {\n            if (!error) {\n              let lines = stdout.toString().split('\\r\\n');\n              lines.shift();\n              lines.forEach(function (line) {\n                if ((line.toLowerCase().match(/ms/g) || []).length === 3) {\n                  let l = line.replace(/ +/g, ' ').split(' ');\n                  if (l.length > 6) {\n                    result = parseFloat(l[l.length - 1]);\n                  }\n                }\n              });\n            }\n            if (callback) { callback(result); }\n            resolve(result);\n          })"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/util.js",
+          "startline": 501,
+          "startcol": 1,
+          "endline": 529,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": "1faadcbf68f1b1fdd5eb2054f68fc932be32ac99",
+        "patch": null,
+        "locations": [
+          {
+            "file": "fixed/lib/util.js",
+            "startline": 501,
+            "startcol": 1,
+            "endline": 531,
+            "endcol": 1,
+            "range": true
+          }
+        ]
+      }
+    }
+  ]
+}

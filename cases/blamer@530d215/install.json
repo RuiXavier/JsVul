@@ -1,0 +1,5 @@
+{
+  "dirs": [
+    {"dir": "package", "lock": "package/pnpm-lock.yaml", "other_locks": ["package/yarn.lock"], "flags": "--config.auto-install-peers=false", "pnpm": "11.8.0"}
+  ]
+}

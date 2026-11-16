@@ -1,0 +1,69 @@
+{
+    "dnsServers": ["1.1.1.1", "8.8.8.8"],
+    "checkServerServices": [
+        {
+            "url": "https://ports.yougetsignal.com/check-port.php",
+            "headers": {"content-type": "application/x-www-form-urlencoded"},
+            "method": "post",
+            "body": "remoteAddress=$IP&portNumber=$PORT",
+            "regexpFailure": "is closed",
+            "regexpSuccess": "is open"
+        },
+        {
+            "url": "https://canyouseeme.org",
+            "headers": {"content-type": "application/x-www-form-urlencoded"},
+            "method": "post",
+            "body": "port=$PORT",
+            "regexpFailure": "Error:",
+            "regexpSuccess": "Success:"
+        },
+        {
+            "url": "http://ifconfig.co/port/$PORT?ip=$IP",
+            "regexpFailure": "reachable\": false",
+            "regexpSuccess": "reachable\": true"
+        }
+    ],
+    "selfCheckServices_disabled": [
+        {
+            "url": "https://rejetto-check_hfs.web.val.run?url=$URL",
+            "regexpFailure": "false",
+            "regexpSuccess": "true"
+        },
+        {
+            "url": "https://byhmniehcu2jzoeododjam6i5a0yszsf.lambda-url.eu-central-1.on.aws/?url=$URL",
+            "regexpFailure": "false",
+            "regexpSuccess": "true"
+        }
+    ],
+    "selfCheckServices": [
+        {
+            "url": "http://hfstest.rejetto.com/v3?url=$URL",
+            "regexpFailure": "\"error\"",
+            "regexpSuccess": "\"good\""
+        }
+    ],
+    "publicIpServices": [
+        "http://ipv4.icanhazip.com",
+        { "v": 6, "type": "http", "url": "http://ipv6.icanhazip.com" },
+        {
+            "v": 4, "type": "dns",
+            "ips": ["208.67.222.222", "208.67.220.220"],
+            "name": "myip.opendns.com", "dnsRecord": "A"
+        },
+        {
+            "v": 4, "type": "dns",
+            "ips": ["216.239.32.10", "216.239.34.10", "216.239.36.10", "216.239.38.10"],
+            "name": "o-o.myaddr.l.google.com", "dnsRecord": "TXT"
+        },
+        {
+            "v": 6, "type": "dns",
+            "ips": ["2620:0:ccc::2", "2620:0:ccd::2"],
+            "name": "myip.opendns.com", "dnsRecord": "AAAA"
+        },
+        {
+            "v": 6, "type": "dns",
+            "ips": ["2001:4860:4802:32::a", "2001:4860:4802:34::a", "2001:4860:4802:36::a", "2001:4860:4802:38::a"],
+            "name": "o-o.myaddr.l.google.com", "dnsRecord": "TXT"
+        }
+    ]
+}

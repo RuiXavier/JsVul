@@ -1,0 +1,63 @@
+{
+  "name": "cli-lambda-deploy",
+  "version": null,
+  "repo": "awspilot/cli-lambda-deploy",
+  "sha": "3621b27347bdff96b5f444c0e31eba06e527005c",
+  "from": [
+    "jsvul"
+  ],
+  "origin": "repository",
+  "role": "library",
+  "entry": [
+    "package"
+  ],
+  "capabilities": null,
+  "vulnerabilities": [
+    {
+      "id": "GHSA-934x-72xh-5hrg",
+      "from": "jsvul",
+      "cve": [
+        "CVE-2019-10777"
+      ],
+      "ghsa": [
+        "GHSA-934x-72xh-5hrg"
+      ],
+      "snyk": [
+        "SNYK-JS-AWSLAMBDA-540839"
+      ],
+      "cwe": [
+        "CWE-78"
+      ],
+      "class": "command-injection",
+      "sinks": [
+        {
+          "file": "package/lib/main.js",
+          "startline": 187,
+          "startcol": 2,
+          "endline": 325,
+          "endcol": 5,
+          "range": false,
+          "code": "exec( $zipCmd, { maxBuffer: 1024 * 1024 } ,function( err, stdout, stderr ) {\n\t\tprocess.chdir($cwd)\n\t\tif ( err ) {\n\t\t\tconsole.log(\"Error generating zip file\")\n\t\t\tthrow err;\n\t\t}\n\t\tvar buffer = fs.readFileSync( tmpfile )\n\n\t\t// var params = {\n\t\t// \tFunctionName: $config.FunctionName,\n\t\t// \tFunctionZip: buffer,\n\t\t// \tHandler: $config.Handler,\n\t\t// \tMode: 'event',\n\t\t// \tRole: $config.Role,\n\t\t// \tRuntime: $config.Runtime || 'nodejs10.x',\n\t\t// \tDescription: $config.Description,\n\t\t// \tMemorySize: $config.MemorySize,\n\t\t// \tTimeout: $config.Timeout\n\t\t// }\n\n\t\tif (typeof $config.Environment !== \"object\")\n\t\t\t$config.Environment = {}\n\n\t\tif (typeof $config.Environment.Variables !== \"object\")\n\t\t\t$config.Environment.Variables = {}\n\n\t\tif (typeof $config.Tags !== \"object\")\n\t\t\t$config.Tags = {}\n\n\t\tvar paramsV2 = {\n\t\t\tCode: { ZipFile: buffer, },\n\t\t\tDescription: $config.Description,\n\t\t\tFunctionName: $config.FunctionName,\n\t\t\tHandler: $config.Handler,\n\t\t\tMemorySize: $config.MemorySize,\n\t\t\tPublish: true,\n\t\t\tRole: $config.Role,\n\t\t\tRuntime: $config.Runtime || 'nodejs10.x',\n\t\t\tTimeout: $config.Timeout,\n\t\t\tEnvironment: $config.Environment,\n\t\t\tLayers: $config.Layers || [],\n\t\t\tTags: $config.Tags,\n\t\t\t//VpcConfig: {}\n\t\t};\n\n\t\t// remove temp file\n\t\tfs.unlinkSync( tmpfile )\n\n\t\tlambdaV2.createFunction( paramsV2, function( err, data ) {\n\t\t\tif ( err && err.code !== 'ResourceConflictException') {\n\t\t\t\tconsole.log(\"ERROR:\", err )\n\t\t\t\tif ( _this.settings.exitOnError !== false )\n\t\t\t\t\tprocess.exit(-1);\n\n\t\t\t\treturn\n\t\t\t}\n\n\t\t\tif ( err && err.code === 'ResourceConflictException') {\n\n\t\t\t\t// console.log(\"function exists, should update config and code\")\n\t\t\t\tvar paramsV2 = {\n\t\t\t\t\tDescription: $config.Description,\n\t\t\t\t\tFunctionName: $config.FunctionName,\n\t\t\t\t\tHandler: $config.Handler,\n\t\t\t\t\tMemorySize: $config.MemorySize,\n\t\t\t\t\tRole: $config.Role,\n\t\t\t\t\tRuntime: $config.Runtime || 'nodejs10.x',\n\t\t\t\t\tTimeout: $config.Timeout,\n\t\t\t\t\tEnvironment: $config.Environment,\n\t\t\t\t\tLayers: $config.Layers || [],\n\t\t\t\t\t//Tags: $config.Tags,\n\t\t\t\t\t//VpcConfig: {}\n\t\t\t\t};\n\n\t\t\t\t// interesting: tags not supported by updateFunctionConfiguration but it will remve tags\n\t\t\t\tlambdaV2.updateFunctionConfiguration(paramsV2, function(err, data) {\n\t\t\t\t\tif ( err) {\n\t\t\t\t\t\tconsole.log(\"ERROR:\", err )\n\t\t\t\t\t\tif ( _this.settings.exitOnError !== false )\n\t\t\t\t\t\t\tprocess.exit(-1)\n\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tvar paramsV2 = {\n\t\t\t\t\t\tFunctionName: $config.FunctionName,\n\t\t\t\t\t\t//DryRun: true || false,\n\t\t\t\t\t\tPublish: true,\n\t\t\t\t\t\t// RevisionId: 'STRING_VALUE',\n\t\t\t\t\t\tZipFile: buffer,\n\t\t\t\t\t};\n\t\t\t\t\tlambdaV2.updateFunctionCode(paramsV2, function(err, data2) {\n\t\t\t\t\t\tif ( err) {\n\t\t\t\t\t\t\tconsole.log(\"ERROR:\", err )\n\t\t\t\t\t\t\tif ( _this.settings.exitOnError !== false )\n\t\t\t\t\t\t\t\tprocess.exit(-1)\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\n\t\t\t\t\t\t// lambdaV2.listTags({ Resource: data.FunctionArn }, function(err, data) {\n\t\t\t\t\t\t// \tconsole.log( err, data )\n\t\t\t\t\t\t// });\n\n\t\t\t\t\t\t// lambdaV2.listTags({ Resource: data.FunctionArn }, function(err, data) {\n\t\t\t\t\t\t// \tconsole.log( err, data )\n\t\t\t\t\t\t// });\n\n\t\t\t\t\t\tif (Object.keys($config.Tags).length) {\n\t\t\t\t\t\t\tlambdaV2.tagResource({ Resource: data.FunctionArn, Tags: $config.Tags }, function(err, data) {\n\t\t\t\t\t\t\t\tif (err) console.log(\"WARNING: tagResource failed on function \", $config.FunctionName )\n\t\t\t\t\t\t\t\tconsole.log( \"Deployed!\" );\n\t\t\t\t\t\t\t});\n\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\n\t\t\t\t\t\t// @todo: listTags, diff with $config.Tags, untagResource not in $config.Tags, tagResource with $config.Tags\n\t\t\t\t\t\tconsole.log( \"Deployed!\" );\n\t\t\t\t\t\treturn;\n\t\t\t\t\t});\n\n\n\t\t\t\t})\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tconsole.log( \"Deployed!\" );\n\t\t});\n\n\n\t\t// lambda.uploadFunction( params, function( err, data ) {\n\t\t// \tif ( err ) {\n\t\t// \t\tconsole.log(\"upload error:\", err )\n\t\t// \t\tprocess.exit(-1)\n\t\t// \t}\n\t\t//\n\t\t// \tconsole.log( \"Deployed!\" );\n\t\t// });\n\n\t} )"
+        }
+      ],
+      "originalSink": [
+        {
+          "file": "package/lib/main.js",
+          "startline": 95,
+          "startcol": 27,
+          "endline": 326,
+          "endcol": 1,
+          "range": true
+        }
+      ],
+      "sources": [],
+      "poc": null,
+      "fix": {
+        "version": null,
+        "commit": null,
+        "patch": null,
+        "locations": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "@sequa-ai/sequa-mcp",
+  "version": "1.0.13",
+  "description": "A proxy for the Model Context Protocol (MCP) that connects local STDIO with remote MCP servers",
+  "keywords": ["mcp", "model-context-protocol", "proxy", "ai", "sequa"],
+  "author": "Sequa AI GmbH",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sequa-ai/sequa-mcp"
+  },
+  "homepage": "https://github.com/sequa-ai/sequa-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/sequa-ai/sequa-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "module",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "dist/index.js",
+  "bin": {
+    "sequa-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "start": "DEBUG=true node dist/index.js",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "express": "^5.1.0",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.2"
+  }
+}
